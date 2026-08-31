@@ -48,3 +48,9 @@
 - Never render duplicate control layers. Respect the adapter's `VideoControlsMode`: Vimeo native controls only; MP4 custom app controls.
 
 - Fullscreen is app-managed for reliability; do not re-enable Vimeo HTML fullscreen. Preserve playback/resume state across fullscreen transitions.
+
+- Use `POST /masterclasses/generate_certificate.php` from course detail only when `certificate.generated == false`.
+- Treat `CERTIFICATE_ALREADY_GENERATED` as an idempotent certificate result when the documented response includes `data.download_url`; do not trigger another generation attempt.
+- Keep the existing certificate download/open service unchanged after generation; generation only refreshes the in-memory certificate metadata.
+- Course intro must expose a visible localized “View chapters” action that scrolls to the existing chapter section.
+- Selecting a chapter, or moving Previous/Next between chapters, must reset the course detail scroll position to the top.

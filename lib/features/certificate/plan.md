@@ -11,3 +11,5 @@
 ## Deferred
 - Sharing/export flow.
 - Certificate metadata not returned by the API (recipient, certificate number, formatted issue date).
+
+- Existing persistent certificate download/open behavior remains unchanged; masterclass generation now hands this feature the newly returned download URL.

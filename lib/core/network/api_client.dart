@@ -33,8 +33,15 @@ class ApiClient {
     String path, {
     Map<String, Object?> body = const {},
     bool authenticated = true,
+    Set<String> acceptedErrorCodes = const {},
   }) =>
-      _send('POST', path, body: body, authenticated: authenticated);
+      _send(
+        'POST',
+        path,
+        body: body,
+        authenticated: authenticated,
+        acceptedErrorCodes: acceptedErrorCodes,
+      );
 
   Future<Map<String, dynamic>> _send(
     String method,
@@ -42,6 +49,7 @@ class ApiClient {
     Map<String, Object?> query = const {},
     Map<String, Object?> body = const {},
     required bool authenticated,
+    Set<String> acceptedErrorCodes = const {},
   }) async {
     if (!await _networkInfo.isConnected) {
       throw const AppException(AppErrorType.noInternet);
@@ -103,6 +111,9 @@ class ApiClient {
       final status = decoded['status'];
       if (status != true) {
         final code = decoded['error_code']?.toString();
+        if (code != null && acceptedErrorCodes.contains(code)) {
+          return decoded;
+        }
         final exception = AppException(
           _mapError(code, response.statusCode),
           errorCode: code,

@@ -62,6 +62,17 @@ class CourseDetail {
   final List<CourseChapter> chapters;
   final CourseCertificate certificate;
 
+  CourseDetail copyWith({
+    CourseCertificate? certificate,
+  }) =>
+      CourseDetail(
+        courseId: courseId,
+        title: title,
+        intro: intro,
+        chapters: chapters,
+        certificate: certificate ?? this.certificate,
+      );
+
   factory CourseDetail.fromJson(Map<String, dynamic> json) => CourseDetail(
         courseId: (json['course_id'] as num).toInt(),
         title: json['course_title']?.toString() ?? '',

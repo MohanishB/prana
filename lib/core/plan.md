@@ -34,3 +34,5 @@
 - Partial-file protection.
 - Shared `FileDownloadCubit` and reusable `DownloadableFileTile`.
 - Local file opening through the platform file viewer.
+
+- Added narrowly scoped accepted API error-envelope support for idempotent endpoint contracts such as `CERTIFICATE_ALREADY_GENERATED`, while preserving normal centralized auth/session error handling.

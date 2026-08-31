@@ -51,9 +51,65 @@ class CourseScreen extends StatelessWidget {
   }
 }
 
-class _CourseContent extends StatelessWidget {
+
+class _CourseContent extends StatefulWidget {
   const _CourseContent({required this.course});
+
   final CourseDetail course;
+
+  @override
+  State<_CourseContent> createState() => _CourseContentState();
+}
+
+class _CourseContentState extends State<_CourseContent> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _chaptersKey = GlobalKey();
+
+  CourseDetail get course => widget.course;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToChapters() {
+    final chaptersContext = _chaptersKey.currentContext;
+    if (chaptersContext == null) return;
+
+    Scrollable.ensureVisible(
+      chaptersContext,
+      duration: const Duration(milliseconds: 450),
+      curve: Curves.easeInOut,
+      alignment: 0.05,
+    );
+  }
+
+  void _scrollToTopAfterChapterChange() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
+  void _selectChapter(BuildContext context, int index) {
+    context.read<CourseViewCubit>().selectChapter(index);
+    _scrollToTopAfterChapterChange();
+  }
+
+  void _previousChapter(BuildContext context) {
+    context.read<CourseViewCubit>().previous(course);
+    _scrollToTopAfterChapterChange();
+  }
+
+  void _nextChapter(BuildContext context) {
+    context.read<CourseViewCubit>().next(course);
+    _scrollToTopAfterChapterChange();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +121,17 @@ class _CourseContent extends StatelessWidget {
             : null;
 
         return SingleChildScrollView(
+          controller: _scrollController,
           child: ResponsiveContent(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (chapter == null)
-                  _CourseIntro(course: course)
+                  _CourseIntro(
+                    course: course,
+                    onViewChapters:
+                        course.chapters.isEmpty ? null : _scrollToChapters,
+                  )
                 else ...[
                   Text(
                     context.l10n.chapterNumber(chapter.position),
@@ -81,7 +142,10 @@ class _CourseContent extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(chapter.title, style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    chapter.title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   CourseTabBar(
                     selected: view.tab,
@@ -96,36 +160,41 @@ class _CourseContent extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 CourseNavigationButtons(
                   onPrevious: view.chapterIndex >= 0
-                      ? () => context.read<CourseViewCubit>().previous(course)
+                      ? () => _previousChapter(context)
                       : null,
                   onNext: view.chapterIndex < course.chapters.length - 1
-                      ? () => context.read<CourseViewCubit>().next(course)
+                      ? () => _nextChapter(context)
                       : null,
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 if (chapter == null) ...[
-                  Text(
-                    context.l10n.chapters,
-                    style: Theme.of(context).textTheme.titleMedium,
+                  KeyedSubtree(
+                    key: _chaptersKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          context.l10n.chapters,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        for (var i = 0; i < course.chapters.length; i++) ...[
+                          _ChapterCard(
+                            chapter: course.chapters[i],
+                            onTap: () => _selectChapter(context, i),
+                          ),
+                          if (i != course.chapters.length - 1)
+                            const SizedBox(height: AppSpacing.sm),
+                        ],
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  for (var i = 0; i < course.chapters.length; i++) ...[
-                    _ChapterCard(
-                      chapter: course.chapters[i],
-                      onTap: () =>
-                          context.read<CourseViewCubit>().selectChapter(i),
-                    ),
-                    if (i != course.chapters.length - 1)
-                      const SizedBox(height: AppSpacing.sm),
-                  ],
-                  if (course.certificate.canDownload) ...[
-                    const SizedBox(height: AppSpacing.xl),
-                    _CourseCertificateCard(
-                      courseId: course.courseId,
-                      courseTitle: course.title,
-                      certificate: course.certificate,
-                    ),
-                  ],
+                  const SizedBox(height: AppSpacing.xl),
+                  _CertificateSection(
+                    courseId: course.courseId,
+                    courseTitle: course.title,
+                    certificate: course.certificate,
+                  ),
                 ],
               ],
             ),
@@ -136,17 +205,38 @@ class _CourseContent extends StatelessWidget {
   }
 }
 
+
 class _CourseIntro extends StatelessWidget {
-  const _CourseIntro({required this.course});
+  const _CourseIntro({
+    required this.course,
+    required this.onViewChapters,
+  });
+
   final CourseDetail course;
+  final VoidCallback? onViewChapters;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(course.intro.tabTitle.isEmpty ? context.l10n.courseIntro : course.intro.tabTitle,
-            style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          course.intro.tabTitle.isEmpty
+              ? context.l10n.courseIntro
+              : course.intro.tabTitle,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        if (onViewChapters != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: onViewChapters,
+              icon: const Icon(Icons.menu_book_outlined),
+              label: Text(context.l10n.viewChapters),
+            ),
+          ),
+        ],
         if (course.intro.imageUrl.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           ClipRRect(
@@ -387,6 +477,98 @@ class _NotesTab extends StatelessWidget {
   }
 }
 
+
+
+class _CertificateSection extends StatelessWidget {
+  const _CertificateSection({
+    required this.courseId,
+    required this.courseTitle,
+    required this.certificate,
+  });
+
+  final int courseId;
+  final String courseTitle;
+  final CourseCertificate certificate;
+
+  @override
+  Widget build(BuildContext context) {
+    final detailState = context.watch<CourseDetailCubit>().state;
+    final loadedState =
+        detailState is CourseDetailLoaded ? detailState : null;
+
+    if (certificate.canDownload) {
+      return _CourseCertificateCard(
+        courseId: courseId,
+        courseTitle: courseTitle,
+        certificate: certificate,
+      );
+    }
+
+    final isGenerating = loadedState?.isGeneratingCertificate ?? false;
+    final generationError = loadedState?.certificateGenerationError;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.workspace_premium_outlined,
+                  color: AppColors.gold,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    context.l10n.certificate,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              certificate.generated
+                  ? context.l10n.certificateApiUnavailable
+                  : context.l10n.certificateNotGenerated,
+            ),
+            if (generationError != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                generationError.userMessage(context),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+              ),
+            ],
+            if (!certificate.generated) ...[
+              const SizedBox(height: AppSpacing.md),
+              FilledButton.icon(
+                onPressed: isGenerating
+                    ? null
+                    : context.read<CourseDetailCubit>().generateCertificate,
+                icon: isGenerating
+                    ? const SizedBox.square(
+                        dimension: AppSizes.loadingIndicatorSmall,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.workspace_premium_outlined),
+                label: Text(
+                  isGenerating
+                      ? context.l10n.generatingCertificate
+                      : context.l10n.getCertificate,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _CourseCertificateCard extends StatelessWidget {
   const _CourseCertificateCard({

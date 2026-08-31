@@ -6,3 +6,5 @@
 - Never invent certificate metadata not present in the current backend response.
 - Static UI chrome must use localization.
 - No `setState`; asynchronous file state is owned by the shared file-download Cubit.
+
+- Certificate generation belongs to the masterclass course-detail flow. This feature continues to own/open/download already-generated certificate files and must not duplicate the generation API call.
