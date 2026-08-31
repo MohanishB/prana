@@ -44,3 +44,12 @@ Do not scatter numeric paddings/margins/radii throughout feature screens.
 ## Dependencies
 Core must never import from a feature.
 External SDKs should be hidden behind interfaces where practical.
+
+
+## Networking and session
+- All HTTP calls go through `ApiClient`; feature screens must never make requests directly.
+- `ApiClient` owns base URL, bearer header, authenticated `student_id`, timeout, response envelope parsing and token-expiry handling.
+- Request/response logging is debug-only and redacts credentials/tokens.
+- Connectivity is checked centrally through `NetworkInfo`.
+- Session persistence uses secure storage; never persist access tokens in plain preferences/files.
+- Validation/regex belongs in `core/validation`.

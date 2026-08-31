@@ -10,6 +10,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_cubit.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../../auth/bloc/auth_bloc.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -92,7 +93,9 @@ class AccountScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.md),
               TextButton(
-                onPressed: () {},
+                onPressed: () => context.read<AuthBloc>().add(
+                  const AuthLogoutRequested(),
+                ),
                 child: Text(
                   l10n.signOut,
                   style: const TextStyle(color: AppColors.brick),

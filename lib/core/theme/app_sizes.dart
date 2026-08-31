@@ -3,6 +3,7 @@ abstract final class AppSizes {
   static const navigationBarHeight = 72.0;
 
   static const iconSmall = 18.0;
+  static const loadingIndicatorSmall = 20.0;
   static const iconMedium = 22.0;
   static const iconLarge = 48.0;
 

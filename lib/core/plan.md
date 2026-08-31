@@ -17,3 +17,11 @@
 - Add local cache abstraction.
 - Expand design tokens only when repeated values appear; avoid token bloat.
 - Add accessibility helpers for minimum tap sizes and text scaling.
+
+## API foundation completed
+- API client and centralized base URL/endpoints.
+- Debug request/response logger with secret redaction.
+- Internet reachability check.
+- Secure session storage/manager.
+- Central token/session invalidation.
+- Shared validators.

@@ -3,15 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_names.dart';
+import '../../../core/errors/app_error_localization.dart';
 import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_gradients.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../bloc/masterclass_cubit.dart';
+import '../data/masterclass_models.dart';
 
 class MasterclassScreen extends StatelessWidget {
   const MasterclassScreen({super.key});
@@ -22,8 +25,9 @@ class MasterclassScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: PranaAppBar(title: l10n.masterclass),
-      body: BlocBuilder<MasterclassCubit, MasterclassSection>(
-        builder: (context, section) {
+      body: BlocBuilder<MasterclassCubit, MasterclassState>(
+        builder: (context, state) {
+          final section = state.section;
           return SingleChildScrollView(
             child: ResponsiveContent(
               child: Column(
@@ -47,7 +51,7 @@ class MasterclassScreen extends StatelessWidget {
                   if (section == MasterclassSection.workshops)
                     const _Workshops()
                   else
-                    const _Masterclasses(),
+                    _Masterclasses(state: state),
                 ],
               ),
             ),
@@ -159,43 +163,43 @@ class _DoneCard extends StatelessWidget {
   }
 }
 
+
 class _Masterclasses extends StatelessWidget {
-  const _Masterclasses();
+  const _Masterclasses({required this.state});
+  final MasterclassState state;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-
+    if (state.loading && state.courses.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.error != null && state.courses.isEmpty) {
+      return AppErrorView(
+        message: state.error!.userMessage(context),
+        retryLabel: l10n.retry,
+        onRetry: context.read<MasterclassCubit>().loadCourses,
+      );
+    }
+    if (state.courses.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Text(l10n.noMasterclasses),
+      );
+    }
     return Column(
       children: [
-        _CourseCard(
-          progress: .42,
-          title: l10n.ayurvedaHerbalism,
-          subtitle: l10n.courseProgressPending,
-          badge: l10n.resumeChapter3,
-          onTap: () => context.goNamed(
-            RouteNames.course,
-            pathParameters: const {'courseId': 'ayurveda-herbalism'},
+        for (var i = 0; i < state.courses.length; i++) ...[
+          _CourseCard(
+            course: state.courses[i],
+            onTap: () => context.goNamed(
+              RouteNames.course,
+              pathParameters: {'courseId': '${state.courses[i].id}'},
+            ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _CourseCard(
-          progress: 1,
-          title: l10n.ayurvedicNutrition,
-          subtitle: l10n.allChaptersComplete,
-          badge: l10n.certificateReady,
-          onTap: () => context.pushNamed(
-            RouteNames.certificate,
-            pathParameters: const {'certificateId': 'nutrition-001'},
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _CourseCard(
-          progress: 0,
-          title: l10n.herbsWomensHealth,
-          subtitle: l10n.sixChaptersDuration,
-          badge: l10n.notStarted,
-        ),
+          if (i != state.courses.length - 1)
+            const SizedBox(height: AppSpacing.md),
+        ],
         const SizedBox(height: AppSpacing.lg),
         Text(
           l10n.masterclassesLifetime,
@@ -207,22 +211,14 @@ class _Masterclasses extends StatelessWidget {
 }
 
 class _CourseCard extends StatelessWidget {
-  const _CourseCard({
-    required this.progress,
-    required this.title,
-    required this.subtitle,
-    required this.badge,
-    this.onTap,
-  });
-
-  final double progress;
-  final String title;
-  final String subtitle;
-  final String badge;
-  final VoidCallback? onTap;
+  const _CourseCard({required this.course, required this.onTap});
+  final MasterclassCourse course;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final progress = course.progressPercent.clamp(0, 100) / 100;
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -243,7 +239,7 @@ class _CourseCard extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        '${(progress * 100).round()}%',
+                        '${course.progressPercent}%',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                     ),
@@ -255,19 +251,35 @@ class _CourseCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
+                    Text(course.title,
                         style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: AppSpacing.xxs),
-                    Text(subtitle,
-                        style: Theme.of(context).textTheme.bodySmall),
-                    const SizedBox(height: AppSpacing.xs),
                     Text(
-                      badge,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.brick,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      l10n.chapterProgress(
+                        course.completedChapters,
+                        course.totalChapters,
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
+                    if (course.shortDescription.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        course.shortDescription,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                    if (course.certificateGenerated) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        l10n.certificateReady,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: AppColors.success,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ],
                   ],
                 ),
               ),

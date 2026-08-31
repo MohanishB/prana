@@ -10,7 +10,7 @@ abstract final class ApiErrorHandler {
     AppErrorType fallback = AppErrorType.generic,
   }) {
     if (error is AppException) return error;
-    if (error is SocketException) {
+    if (error is SocketException || error is HandshakeException) {
       return AppException(
         AppErrorType.noInternet,
         cause: error,

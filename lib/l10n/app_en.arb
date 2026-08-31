@@ -111,5 +111,88 @@
   "errorInvalidResponse": "We couldn't read the server response. Please try again.",
   "errorLibraryLoad": "We couldn't load the video library. Please try again.",
   "errorLibrarySearch": "We couldn't search the video library. Please try again.",
-  "errorGeneric": "Something went wrong. Please try again."
+  "errorGeneric": "Something went wrong. Please try again.",
+  "loginWelcome": "Welcome back",
+  "loginSubtitle": "Sign in to continue your PRANA journey.",
+  "email": "Email",
+  "password": "Password",
+  "signIn": "Sign in",
+  "emailRequired": "Please enter your email address.",
+  "emailInvalid": "Please enter a valid email address.",
+  "passwordRequired": "Please enter your password.",
+  "errorInvalidCredentials": "The email or password is incorrect. Please try again.",
+  "errorAccountInactive": "Your account is inactive. Please contact PRANA support.",
+  "errorSessionExpired": "Your session has expired. Please sign in again.",
+  "errorAccessDenied": "You don't have permission to access this content.",
+  "errorCourseNotAssigned": "This masterclass is not available in your account.",
+  "errorCourseNotFound": "We couldn't find this masterclass.",
+  "errorValidation": "Some information is missing or invalid. Please check and try again.",
+  "errorServer": "PRANA is temporarily unavailable. Please try again shortly.",
+  "noMasterclasses": "You don't have any masterclasses yet.",
+  "chapterProgress": "{completed} of {total} chapters completed",
+  "@chapterProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "chapterContents": "{videos} videos · {quizzes} quiz · {notes} notes",
+  "@chapterContents": {
+    "placeholders": {
+      "videos": {
+        "type": "int"
+      },
+      "quizzes": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      }
+    }
+  },
+  "intro": "Intro",
+  "videos": "Videos",
+  "quiz": "Quiz",
+  "notes": "Notes",
+  "chapters": "Chapters",
+  "previous": "Prev",
+  "next": "Next",
+  "noVideos": "No videos are available for this chapter.",
+  "quizUnavailable": "There is no quiz for this chapter.",
+  "chapterQuiz": "Chapter quiz",
+  "startQuiz": "Start quiz",
+  "quizSubmissionComingSoon": "Quiz submission will be enabled when the submit-quiz API is integrated.",
+  "questionShort": "Q",
+  "noNotes": "No notes are available for this chapter.",
+  "chapterNumber": "CHAPTER {number}",
+  "@chapterNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "quizQuestions": "{count} questions",
+  "@quizQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizScore": "Score: {correct} of {total}",
+  "@quizScore": {
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }
