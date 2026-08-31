@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../app/route_names.dart';
 import '../../../core/errors/app_error_localization.dart';
+import '../../../core/files/downloadable_file.dart';
 import '../../../core/localization/app_localizations_x.dart';
+import '../../../core/services/dependencies.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_error_view.dart';
+import '../../../core/widgets/downloadable_file_tile.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../bloc/course_detail_cubit.dart';
@@ -100,16 +105,27 @@ class _CourseContent extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 if (chapter == null) ...[
-                  Text(context.l10n.chapters,
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    context.l10n.chapters,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   for (var i = 0; i < course.chapters.length; i++) ...[
                     _ChapterCard(
                       chapter: course.chapters[i],
-                      onTap: () => context.read<CourseViewCubit>().selectChapter(i),
+                      onTap: () =>
+                          context.read<CourseViewCubit>().selectChapter(i),
                     ),
                     if (i != course.chapters.length - 1)
                       const SizedBox(height: AppSpacing.sm),
+                  ],
+                  if (course.certificate.canDownload) ...[
+                    const SizedBox(height: AppSpacing.xl),
+                    _CourseCertificateCard(
+                      courseId: course.courseId,
+                      courseTitle: course.title,
+                      certificate: course.certificate,
+                    ),
                   ],
                 ],
               ],
@@ -332,21 +348,75 @@ class _NotesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (notes.isEmpty) return Text(context.l10n.noNotes);
+
+    final service = context.read<AppDependencies>().fileDownloadService;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
         child: Column(
           children: [
             for (var i = 0; i < notes.length; i++) ...[
-              ListTile(
-                leading: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.brick),
-                title: Text(notes[i].title),
-                trailing: const Icon(Icons.download_outlined),
-                onTap: notes[i].url.isEmpty ? null : () => _openExternal(notes[i].url),
+              DownloadableFileTile(
+                service: service,
+                file: DownloadableFile(
+                  id: 'note_${notes[i].id}',
+                  title: notes[i].title,
+                  remoteUrl: notes[i].url,
+                  folder: 'notes',
+                ),
+                leading: const Icon(
+                  Icons.picture_as_pdf_outlined,
+                  color: AppColors.brick,
+                ),
               ),
               if (i != notes.length - 1) const Divider(),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class _CourseCertificateCard extends StatelessWidget {
+  const _CourseCertificateCard({
+    required this.courseId,
+    required this.courseTitle,
+    required this.certificate,
+  });
+
+  final int courseId;
+  final String courseTitle;
+  final CourseCertificate certificate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: const Icon(
+          Icons.workspace_premium_outlined,
+          color: AppColors.gold,
+        ),
+        title: Text(context.l10n.certificateReady),
+        subtitle: certificate.generatedOn.isEmpty
+            ? Text(context.l10n.tapToViewCertificate)
+            : Text(
+                context.l10n.certificateGeneratedOn(
+                  certificate.generatedOn,
+                ),
+              ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.pushNamed(
+          RouteNames.certificate,
+          pathParameters: {'certificateId': '$courseId'},
+          queryParameters: {
+            'title': courseTitle,
+            'url': certificate.downloadUrl,
+            if (certificate.generatedOn.isNotEmpty)
+              'generatedOn': certificate.generatedOn,
+          },
         ),
       ),
     );

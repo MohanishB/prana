@@ -272,12 +272,20 @@ class _CourseCard extends StatelessWidget {
                     ],
                     if (course.certificateGenerated) ...[
                       const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        l10n.certificateReady,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w700,
-                            ),
+                      TextButton.icon(
+                        onPressed: () => context.pushNamed(
+                          RouteNames.certificate,
+                          pathParameters: {'certificateId': '${course.id}'},
+                          queryParameters: {
+                            'title': course.title,
+                            if (course.certificateDownloadUrl.isNotEmpty)
+                              'url': course.certificateDownloadUrl,
+                            if (course.certificateGeneratedOn.isNotEmpty)
+                              'generatedOn': course.certificateGeneratedOn,
+                          },
+                        ),
+                        icon: const Icon(Icons.workspace_premium_outlined),
+                        label: Text(l10n.certificateReady),
                       ),
                     ],
                   ],

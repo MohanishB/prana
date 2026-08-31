@@ -4,6 +4,7 @@ import '../../features/auth/data/auth_repository.dart';
 import '../../features/library/data/library_repository.dart';
 import '../../features/library/data/mock_library_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
+import '../files/file_download_service.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
 import '../session/session_manager.dart';
@@ -17,6 +18,7 @@ class AppDependencies {
     required this.authRepository,
     required this.masterclassRepository,
     required this.sessionManager,
+    required this.fileDownloadService,
   });
 
   final LibraryRepository libraryRepository;
@@ -24,12 +26,14 @@ class AppDependencies {
   final AuthRepository authRepository;
   final MasterclassRepository masterclassRepository;
   final SessionManager sessionManager;
+  final FileDownloadService fileDownloadService;
 
   factory AppDependencies.bootstrap() {
     final secureStorage = FlutterSecureStorage();
     final sessionManager = SessionManager(SecureSessionStore(secureStorage));
+    final networkInfo = DefaultNetworkInfo();
     final api = ApiClient(
-      networkInfo: DefaultNetworkInfo(),
+      networkInfo: networkInfo,
       sessionManager: sessionManager,
     );
     return AppDependencies(
@@ -38,6 +42,7 @@ class AppDependencies {
       authRepository: ApiAuthRepository(api, sessionManager),
       masterclassRepository: ApiMasterclassRepository(api),
       sessionManager: sessionManager,
+      fileDownloadService: LocalFileDownloadService(networkInfo: networkInfo),
     );
   }
 }

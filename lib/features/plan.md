@@ -6,7 +6,7 @@
 - Consult placeholder boundary.
 - Library with static videos, YouTube playback and transcript-aware search.
 - Account.
-- Certificate screen.
+- Certificate screen with persistent download/open support.
 - BLoC/Cubit state boundaries.
 - Localized feature UI.
 - Centralized core design tokens.
@@ -19,7 +19,7 @@
 - Progress, quiz and completion APIs.
 - Consultation availability and booking.
 - Payment checkout session integration.
-- Certificate generation/download.
+- Certificate list/generation API (download from existing `my_courses.php` URL is implemented).
 - YouTube catalogue/transcript search backend.
 - Notifications/reminders.
 

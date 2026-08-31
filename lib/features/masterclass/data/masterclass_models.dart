@@ -9,6 +9,8 @@ class MasterclassCourse {
     required this.completedChapters,
     required this.progressPercent,
     required this.certificateGenerated,
+    required this.certificateDownloadUrl,
+    required this.certificateGeneratedOn,
   });
   final int id;
   final String title;
@@ -19,6 +21,8 @@ class MasterclassCourse {
   final int completedChapters;
   final int progressPercent;
   final bool certificateGenerated;
+  final String certificateDownloadUrl;
+  final String certificateGeneratedOn;
 
   factory MasterclassCourse.fromJson(Map<String, dynamic> json) {
     final certificate = json['certificate'];
@@ -33,6 +37,12 @@ class MasterclassCourse {
       progressPercent: (json['progress_pct'] as num?)?.toInt() ?? 0,
       certificateGenerated:
           certificate is Map && certificate['generated'] == true,
+      certificateDownloadUrl: certificate is Map
+          ? certificate['download_url']?.toString() ?? ''
+          : '',
+      certificateGeneratedOn: certificate is Map
+          ? certificate['generated_on']?.toString() ?? ''
+          : '',
     );
   }
 }
@@ -43,11 +53,14 @@ class CourseDetail {
     required this.title,
     required this.intro,
     required this.chapters,
+    required this.certificate,
   });
+
   final int courseId;
   final String title;
   final CourseIntro intro;
   final List<CourseChapter> chapters;
+  final CourseCertificate certificate;
 
   factory CourseDetail.fromJson(Map<String, dynamic> json) => CourseDetail(
         courseId: (json['course_id'] as num).toInt(),
@@ -59,6 +72,30 @@ class CourseDetail {
             .whereType<Map>()
             .map((e) => CourseChapter.fromJson(e.cast<String, dynamic>()))
             .toList(growable: false),
+        certificate: CourseCertificate.fromJson(
+          (json['certificate'] as Map?)?.cast<String, dynamic>() ?? const {},
+        ),
+      );
+}
+
+class CourseCertificate {
+  const CourseCertificate({
+    required this.generated,
+    required this.generatedOn,
+    required this.downloadUrl,
+  });
+
+  final bool generated;
+  final String generatedOn;
+  final String downloadUrl;
+
+  bool get canDownload => generated && downloadUrl.trim().isNotEmpty;
+
+  factory CourseCertificate.fromJson(Map<String, dynamic> json) =>
+      CourseCertificate(
+        generated: json['generated'] == true,
+        generatedOn: json['generated_on']?.toString() ?? '',
+        downloadUrl: json['download_url']?.toString() ?? '',
       );
 }
 
