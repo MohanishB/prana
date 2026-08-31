@@ -12,6 +12,7 @@ abstract final class AppColors {
   static const success = Color(0xFF2E7D52);
   static const amber = Color(0xFFB4762A);
 
+  static const black = Color(0xFF000000);
   static const white = Color(0xFFFFFFFF);
   static const whiteMuted = Color(0xB3FFFFFF);
   static const whiteOverlay = Color(0x33FFFFFF);

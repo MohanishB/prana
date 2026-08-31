@@ -34,3 +34,17 @@
 - `my_courses.php` may still expose certificate status for the masterclass list; do not make the course detail screen depend on list state.
 - Never show a certificate as downloadable unless `generated == true` and `download_url` is non-empty.
 - Never fabricate certificate recipient, certificate ID, issue date, or other metadata that the selected API does not return.
+
+## Video playback rules
+- Parse all three backend video URL fields: `video_url`, `vimeo_video_url`, and `main_video_url`.
+- Course playback must use `main_video_url`.
+- If `main_video_url` contains `vimeo`, use the shared Vimeo adapter; otherwise use the network/MP4 adapter.
+- Keep provider detection and Vimeo WebView code out of feature presentation screens.
+- Resume is keyed by backend `video_id` and is local-device state until a server progress API exists.
+- Do not infer course completion from local video position.
+
+- Do not show redundant copy that playback position is saved automatically; resume should work silently.
+
+- Never render duplicate control layers. Respect the adapter's `VideoControlsMode`: Vimeo native controls only; MP4 custom app controls.
+
+- Fullscreen is app-managed for reliability; do not re-enable Vimeo HTML fullscreen. Preserve playback/resume state across fullscreen transitions.

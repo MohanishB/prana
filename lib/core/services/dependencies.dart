@@ -9,6 +9,9 @@ import '../network/api_client.dart';
 import '../network/network_info.dart';
 import '../session/session_manager.dart';
 import '../session/session_store.dart';
+import '../video/default_video_player_factory.dart';
+import '../video/video_player_factory.dart';
+import '../video/video_progress_store.dart';
 import 'payment_gateway.dart';
 
 class AppDependencies {
@@ -19,6 +22,8 @@ class AppDependencies {
     required this.masterclassRepository,
     required this.sessionManager,
     required this.fileDownloadService,
+    required this.videoPlayerFactory,
+    required this.videoProgressStore,
   });
 
   final LibraryRepository libraryRepository;
@@ -27,6 +32,8 @@ class AppDependencies {
   final MasterclassRepository masterclassRepository;
   final SessionManager sessionManager;
   final FileDownloadService fileDownloadService;
+  final VideoPlayerFactory videoPlayerFactory;
+  final VideoProgressStore videoProgressStore;
 
   factory AppDependencies.bootstrap() {
     final secureStorage = FlutterSecureStorage();
@@ -43,6 +50,8 @@ class AppDependencies {
       masterclassRepository: ApiMasterclassRepository(api),
       sessionManager: sessionManager,
       fileDownloadService: LocalFileDownloadService(networkInfo: networkInfo),
+      videoPlayerFactory: const DefaultVideoPlayerFactory(),
+      videoProgressStore: LocalVideoProgressStore(),
     );
   }
 }

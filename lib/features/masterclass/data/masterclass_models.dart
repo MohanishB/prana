@@ -156,23 +156,41 @@ class CourseChapter {
       );
 }
 
+
 class CourseVideo {
   const CourseVideo({
     required this.id,
     required this.title,
-    required this.url,
+    required this.videoUrl,
+    required this.vimeoVideoUrl,
+    required this.mainVideoUrl,
     required this.thumbnailUrl,
     required this.position,
   });
+
   final int id;
   final String title;
-  final String url;
+
+  /// Legacy/self-hosted URL retained by the backend during migration.
+  final String videoUrl;
+
+  /// Vimeo-specific URL supplied by the backend.
+  final String vimeoVideoUrl;
+
+  /// Source of truth for playback.
+  final String mainVideoUrl;
+
   final String thumbnailUrl;
   final int position;
+
+  bool get canPlay => mainVideoUrl.trim().isNotEmpty;
+
   factory CourseVideo.fromJson(Map<String, dynamic> json) => CourseVideo(
         id: (json['video_id'] as num).toInt(),
         title: json['title']?.toString() ?? '',
-        url: json['video_url']?.toString() ?? '',
+        videoUrl: json['video_url']?.toString() ?? '',
+        vimeoVideoUrl: json['vimeo_video_url']?.toString() ?? '',
+        mainVideoUrl: json['main_video_url']?.toString() ?? '',
         thumbnailUrl: json['thumbnail_url']?.toString() ?? '',
         position: (json['position'] as num?)?.toInt() ?? 0,
       );
