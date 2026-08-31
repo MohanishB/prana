@@ -144,6 +144,10 @@ class ApiClient {
       'VALIDATION_ERROR' => AppErrorType.validation,
       'COURSE_NOT_ASSIGNED' => AppErrorType.courseNotAssigned,
       'COURSE_NOT_FOUND' => AppErrorType.courseNotFound,
+      'CHAPTER_NOT_FOUND' => AppErrorType.chapterNotFound,
+      'QUIZ_NOT_AVAILABLE' => AppErrorType.quizNotAvailable,
+      'INCOMPLETE_ANSWERS' => AppErrorType.incompleteQuizAnswers,
+      'QUIZ_ALREADY_SUBMITTED' => AppErrorType.quizAlreadySubmitted,
       _ when statusCode >= 500 => AppErrorType.server,
       _ => AppErrorType.generic,
     };

@@ -17,7 +17,12 @@
 - Web LMS screenshots are content/behavior references; do not reproduce desktop layout on mobile.
 - Never invent progress, watched duration, file size, pass percentage, retake policy, WhatsApp URLs, live-session URLs, or access windows when the API does not provide them.
 - `CourseViewCubit` owns chapter/tab navigation state. Do not introduce `setState`.
-- Quiz submission stays disabled until `/masterclasses/submit_quiz.php` is selected for integration.
+- Quiz submission uses `POST /masterclasses/submit_quiz.php` through `MasterclassRepository`; screens never call the API directly.
+- Quiz answers are one-time/non-reversible. Require every API question to have a selected answer and show a confirmation before submission.
+- `CourseQuizCubit` owns editable quiz answers/submission state. Do not use `setState`.
+- After grading, render only the API-provided student answer and `is_correct`; never infer or fabricate the correct answer because the API intentionally does not return it.
+- Ignore empty option text in presentation (some True/False questions include blank option slots), but preserve backend option numbers for submitted answers.
+- `QUIZ_ALREADY_SUBMITTED` must not cause a second submission; recover the completed quiz from fresh course detail when possible.
 - API-provided titles/descriptions/questions/notes are domain content and are not ARB strings. UI chrome remains localized.
 
 

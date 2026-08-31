@@ -9,12 +9,14 @@
 - API-driven course intro, chapter list and chapter detail experience.
 - Chapter tabs: Intro, Videos, Quiz (when available), Notes (when available).
 - Completed quiz answers/scores are rendered from `course_detail.php`.
+- `POST /masterclasses/submit_quiz.php` is integrated with one-answer-per-question selection, complete-answer validation, irreversible-submit confirmation, loading/error states, and API-graded results.
+- Quiz selections/submission are owned by `CourseQuizCubit`; successful results update the in-memory chapter quiz without resetting chapter navigation.
+- Blank backend option slots are hidden from the quiz UI while real `option_no` values remain the submission source of truth.
 - Notes use the shared persistent download service. They are downloaded once, kept locally, and can be reopened without another download.
 - Previous/Next chapter navigation is presentation state owned by `CourseViewCubit`.
 - UI follows the approved mobile wireframe while mapping to the web LMS content structure.
 
 ## Explicitly deferred
-- `POST /masterclasses/submit_quiz.php`: start/answer/submit remains disabled until that API is selected.
 - Per-video watched/progress state: the current backend contract does not provide video-watch tracking.
 - Certificate generation remains driven by `my_courses.php`; generated certificates use its `download_url`.
 - WhatsApp group link: no backend field/URL has been supplied.
@@ -23,7 +25,6 @@
 - Consultation/Calendly/prescription/payment flows: separate features; contracts not supplied.
 
 ## Next
-- Integrate quiz submission when selected.
 - Replace the lightweight HTML-to-text presentation with the approved shared rich HTML renderer if/when a dependency is approved.
 - Add repository/model/BLoC/widget tests with representative API fixtures.
 

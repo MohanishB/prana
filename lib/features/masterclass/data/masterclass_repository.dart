@@ -8,6 +8,11 @@ abstract interface class MasterclassRepository {
   Future<List<MasterclassCourse>> getMyCourses();
   Future<CourseDetail> getCourseDetail(int courseId);
   Future<CourseCertificate> generateCertificate(int courseId);
+  Future<CourseQuiz> submitQuiz({
+    required int courseId,
+    required int chapterId,
+    required Map<int, int> answers,
+  });
 }
 
 final class ApiMasterclassRepository implements MasterclassRepository {
@@ -79,4 +84,48 @@ final class ApiMasterclassRepository implements MasterclassRepository {
       );
     }
   }
+  @override
+  Future<CourseQuiz> submitQuiz({
+    required int courseId,
+    required int chapterId,
+    required Map<int, int> answers,
+  }) async {
+    try {
+      final response = await _api.post(
+        ApiConstants.submitQuiz,
+        body: {
+          'course_id': courseId,
+          'chapter_id': chapterId,
+          'answers': answers.map(
+            (quizId, optionNo) => MapEntry(quizId.toString(), optionNo),
+          ),
+        },
+      );
+      final data = response['data'];
+      if (data is! Map<String, dynamic>) throw const FormatException();
+      return CourseQuiz.fromSubmission(data);
+    } on AppException catch (error, stackTrace) {
+      if (error.errorCode == 'QUIZ_ALREADY_SUBMITTED') {
+        final detail = await getCourseDetail(courseId);
+        for (final chapter in detail.chapters) {
+          if (chapter.id == chapterId && chapter.quiz.completed) {
+            return chapter.quiz;
+          }
+        }
+      }
+      throw ApiErrorHandler.normalize(
+        error,
+        stackTrace: stackTrace,
+        fallback: AppErrorType.invalidResponse,
+      );
+    } on Object catch (error, stackTrace) {
+      throw ApiErrorHandler.normalize(
+        error,
+        stackTrace: stackTrace,
+        fallback: AppErrorType.invalidResponse,
+      );
+    }
+  }
+
+
 }
