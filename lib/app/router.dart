@@ -14,10 +14,12 @@ import '../features/library/domain/library_video.dart';
 import '../features/library/presentation/library_screen.dart';
 import '../features/library/presentation/video_detail_screen.dart';
 import '../features/masterclass/bloc/course_detail_cubit.dart';
-import '../features/masterclass/bloc/masterclass_cubit.dart'; 
+import '../features/masterclass/bloc/masterclass_cubit.dart';
+import '../features/masterclass/data/masterclass_models.dart'; 
 
 
 import '../features/masterclass/presentation/course_screen.dart';
+import '../features/masterclass/presentation/course_video_screen.dart';
 
 import '../features/shell/presentation/prana_shell.dart';
 import 'route_names.dart';
@@ -77,6 +79,24 @@ final GoRouter appRouter = GoRouter(
                       child: CourseScreen(courseId: courseId),
                     );
                   },
+                  routes: [
+                    GoRoute(
+                      path: 'video/:videoId',
+                      name: RouteNames.courseVideo,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: (context, state) {
+                        final video = state.extra;
+                        if (video is! CourseVideo) {
+                          return Scaffold(
+                            body: Center(
+                              child: Text(context.l10n.videoNotFound),
+                            ),
+                          );
+                        }
+                        return CourseVideoScreen(video: video);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -5,6 +5,7 @@ abstract final class RouteNames {
   static const library = 'library';
   static const account = 'account';
   static const course = 'course';
+  static const courseVideo = 'courseVideo';
   static const certificate = 'certificate';
   static const libraryVideo = 'libraryVideo';
 }

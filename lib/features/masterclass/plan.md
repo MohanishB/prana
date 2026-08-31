@@ -34,3 +34,18 @@
 - `my_courses.php` certificate metadata remains supported for list-level certificate status/navigation.
 - `generated == true` plus a non-empty `download_url` is required before a certificate download action is shown.
 - Files are cached in app documents storage and reopened locally when already downloaded.
+
+## In-app course video playback
+- `CourseVideo` maps `video_url`, `vimeo_video_url`, and `main_video_url`.
+- `main_video_url` is the playback source of truth.
+- Vimeo `main_video_url` values use the shared Vimeo adapter.
+- Non-Vimeo `main_video_url` values use the existing MP4/network adapter.
+- Resume progress remains provider-neutral and persists across app restarts.
+
+- Vimeo native controls/fullscreen are enabled; the extra auto-save helper text is removed while resume behavior is unchanged.
+
+- Removed duplicate Vimeo/Flutter controls by making control mode an adapter capability.
+
+- Added app-managed fullscreen with landscape/immersive system UI and back-to-exit-fullscreen behavior while preserving the same player/resume state.
+
+- Positioned the app-managed fullscreen button outside the Vimeo iframe so it cannot overlap Vimeo native controls.

@@ -211,5 +211,15 @@
         "type": "String"
       }
     }
+  },
+  "errorVideoPlayback": "We couldn't play this video. Please try again.",
+  "errorVideoProviderUnsupported": "This video provider isn't supported yet.",
+  "videoResumedAt": "Resumed from {position}",
+  "@videoResumedAt": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      }
+    }
   }
 }

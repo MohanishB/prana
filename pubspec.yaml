@@ -21,6 +21,8 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   path_provider: ^2.1.5
   open_filex: ^4.7.0
+  video_player: ^2.9.5
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   flutter_test:

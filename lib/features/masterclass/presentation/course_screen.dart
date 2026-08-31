@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/route_names.dart';
 import '../../../core/errors/app_error_localization.dart';
@@ -222,7 +221,16 @@ class _VideoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: video.url.isEmpty ? null : () => _openExternal(video.url),
+        onTap: !video.canPlay
+            ? null
+            : () => context.pushNamed(
+                  RouteNames.courseVideo,
+                  pathParameters: {
+                    'courseId': '${context.read<CourseDetailCubit>().courseId}',
+                    'videoId': '${video.id}',
+                  },
+                  extra: video,
+                ),
         borderRadius: BorderRadius.circular(AppRadius.md),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.sm),
@@ -508,9 +516,3 @@ class _MediaFallback extends StatelessWidget {
       );
 }
 
-Future<void> _openExternal(String rawUrl) async {
-  final uri = Uri.tryParse(rawUrl);
-  if (uri != null) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-}

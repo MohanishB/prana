@@ -22,6 +22,9 @@ extension AppErrorLocalization on AppException {
       AppErrorType.downloadFailed => context.l10n.errorDownloadFailed,
       AppErrorType.fileOpenFailed => context.l10n.errorFileOpenFailed,
       AppErrorType.fileNotDownloaded => context.l10n.errorFileNotDownloaded,
+      AppErrorType.videoPlayback => context.l10n.errorVideoPlayback,
+      AppErrorType.videoProviderUnsupported =>
+        context.l10n.errorVideoProviderUnsupported,
       AppErrorType.generic => context.l10n.errorGeneric,
     };
   }

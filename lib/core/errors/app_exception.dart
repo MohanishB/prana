@@ -15,6 +15,8 @@ enum AppErrorType {
   downloadFailed,
   fileOpenFailed,
   fileNotDownloaded,
+  videoPlayback,
+  videoProviderUnsupported,
   generic,
 }
 
