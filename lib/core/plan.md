@@ -25,3 +25,12 @@
 - Secure session storage/manager.
 - Central token/session invalidation.
 - Shared validators.
+
+
+## File downloads completed
+- Shared `FileDownloadService` for persistent local downloads.
+- Existing-file detection to prevent duplicate downloads.
+- Connectivity-aware downloads with timeout/error handling.
+- Partial-file protection.
+- Shared `FileDownloadCubit` and reusable `DownloadableFileTile`.
+- Local file opening through the platform file viewer.

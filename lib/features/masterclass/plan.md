@@ -9,14 +9,14 @@
 - API-driven course intro, chapter list and chapter detail experience.
 - Chapter tabs: Intro, Videos, Quiz (when available), Notes (when available).
 - Completed quiz answers/scores are rendered from `course_detail.php`.
-- Notes open the backend-provided PDF/file URL.
+- Notes use the shared persistent download service. They are downloaded once, kept locally, and can be reopened without another download.
 - Previous/Next chapter navigation is presentation state owned by `CourseViewCubit`.
 - UI follows the approved mobile wireframe while mapping to the web LMS content structure.
 
 ## Explicitly deferred
 - `POST /masterclasses/submit_quiz.php`: start/answer/submit remains disabled until that API is selected.
 - Per-video watched/progress state: the current backend contract does not provide video-watch tracking.
-- Certificate download API.
+- Certificate generation remains driven by `my_courses.php`; generated certificates use its `download_url`.
 - WhatsApp group link: no backend field/URL has been supplied.
 - Masterclass live-session ingestion: endpoint/data contract not supplied.
 - Workshops: API and business rules remain a separate milestone.
@@ -26,3 +26,11 @@
 - Integrate quiz submission when selected.
 - Replace the lightweight HTML-to-text presentation with the approved shared rich HTML renderer if/when a dependency is approved.
 - Add repository/model/BLoC/widget tests with representative API fixtures.
+
+
+## Notes and certificate downloads
+- Chapter notes use each chapter's `notes[].file_url` from `course_detail.php`.
+- Course certificate availability now uses `data.certificate` from `course_detail.php` as the primary source on the course screen.
+- `my_courses.php` certificate metadata remains supported for list-level certificate status/navigation.
+- `generated == true` plus a non-empty `download_url` is required before a certificate download action is shown.
+- Files are cached in app documents storage and reopened locally when already downloaded.

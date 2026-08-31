@@ -139,6 +139,9 @@ final GoRouter appRouter = GoRouter(
       name: RouteNames.certificate,
       builder: (context, state) => CertificateScreen(
         certificateId: state.pathParameters['certificateId']!,
+        title: state.uri.queryParameters['title'],
+        downloadUrl: state.uri.queryParameters['url'],
+        generatedOn: state.uri.queryParameters['generatedOn'],
       ),
     ),
   ],

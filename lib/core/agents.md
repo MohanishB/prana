@@ -53,3 +53,13 @@ External SDKs should be hidden behind interfaces where practical.
 - Connectivity is checked centrally through `NetworkInfo`.
 - Session persistence uses secure storage; never persist access tokens in plain preferences/files.
 - Validation/regex belongs in `core/validation`.
+
+
+## Downloaded files
+- Reusable file download/open behavior belongs in `core/files`.
+- Downloaded files must be stored in the application documents directory, grouped by a stable feature folder.
+- Always check for an existing local file before performing a network request.
+- Partial downloads must use a temporary `.part` file and must never be treated as complete.
+- Download/open failures must use typed `AppException` values and localized UI messages.
+- Presentation must use BLoC/Cubit for download state; do not use `setState`.
+- Do not duplicate download logic in Notes, Certificates, or future downloadable-content features.

@@ -194,5 +194,22 @@
         "type": "int"
       }
     }
+  },
+  "downloadedOpenFile": "Downloaded · tap to open",
+  "tapToDownloadAndOpen": "Tap to download and open",
+  "openFile": "Open file",
+  "downloadFile": "Download file",
+  "errorDownloadFailed": "We couldn't download this file. Please try again.",
+  "errorFileOpenFailed": "We couldn't open this file on your device.",
+  "errorFileNotDownloaded": "This file hasn't been downloaded yet.",
+  "certificatePdf": "Certificate PDF",
+  "tapToViewCertificate": "Tap to view your certificate.",
+  "certificateGeneratedOn": "Generated on {date}",
+  "@certificateGeneratedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   }
 }

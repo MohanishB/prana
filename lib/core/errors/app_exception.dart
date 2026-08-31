@@ -12,6 +12,9 @@ enum AppErrorType {
   server,
   libraryLoad,
   librarySearch,
+  downloadFailed,
+  fileOpenFailed,
+  fileNotDownloaded,
   generic,
 }
 
