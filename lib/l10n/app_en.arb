@@ -221,5 +221,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "viewChapters": "View chapters",
+  "getCertificate": "Get certificate",
+  "generatingCertificate": "Generating certificate...",
+  "certificateNotGenerated": "Your certificate has not been generated yet."
 }

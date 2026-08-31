@@ -63,3 +63,5 @@ External SDKs should be hidden behind interfaces where practical.
 - Download/open failures must use typed `AppException` values and localized UI messages.
 - Presentation must use BLoC/Cubit for download state; do not use `setState`.
 - Do not duplicate download logic in Notes, Certificates, or future downloadable-content features.
+
+- API callers may explicitly whitelist a documented application error code only when that endpoint contract intentionally returns usable data for that code. Token/session errors must never be whitelisted.

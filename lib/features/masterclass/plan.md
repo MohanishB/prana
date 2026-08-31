@@ -49,3 +49,7 @@
 - Added app-managed fullscreen with landscape/immersive system UI and back-to-exit-fullscreen behavior while preserving the same player/resume state.
 
 - Positioned the app-managed fullscreen button outside the Vimeo iframe so it cannot overlap Vimeo native controls.
+
+- Integrated certificate generation into course detail using the documented authenticated POST endpoint. On success, the existing course certificate metadata is replaced in memory so the established download/open flow becomes available immediately.
+- Added a localized “View chapters” action near the course intro that smoothly scrolls to the chapter list.
+- Chapter selection and Previous/Next chapter navigation now return the course detail scroll position to the top.
