@@ -96,6 +96,7 @@ class AccountScreen extends StatelessWidget {
                     _AccountTile(
                       icon: Icons.help_outline,
                       title: l10n.faqs,
+                      onTap: () => context.pushNamed(RouteNames.faqs),
                     ),
                     _AccountTile(
                       icon: Icons.mail_outline,

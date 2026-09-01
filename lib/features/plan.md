@@ -29,3 +29,4 @@
 - Localization coverage tests.
 - Tablet and landscape QA.
 - Accessibility and text-scaling QA.
+- FAQ: authenticated API-driven expandable FAQ list with support note.

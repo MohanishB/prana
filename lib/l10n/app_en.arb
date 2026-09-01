@@ -112,7 +112,7 @@
   "errorLibraryLoad": "We couldn't load the video library. Please try again.",
   "errorLibrarySearch": "We couldn't search the video library. Please try again.",
   "errorGeneric": "Something went wrong. Please try again.",
-  "loginWelcome": "Welcome back",
+  "loginWelcome": "Welcome",
   "loginSubtitle": "Sign in to continue your PRANA journey.",
   "email": "Email",
   "password": "Password",
@@ -274,5 +274,17 @@
   "errorPhotoUpload": "We couldn't upload the profile photo. Please try again.",
   "changeProfilePhoto": "Change profile photo",
   "profilePhotoFormat": "Please select a JPG, JPEG, or PNG image.",
-  "profilePhotoTooLarge": "Profile photo must be 5 MB or smaller."
+  "profilePhotoTooLarge": "Profile photo must be 5 MB or smaller.",
+  "faqTitle": "Frequently asked questions",
+  "faqDescription": "Find quick answers to common questions about the academy, courses, and learning experience.",
+  "faqQuestionCount": "{count, plural, =1{1 question} other{{count} questions}}",
+  "@faqQuestionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noFaqsAvailable": "No FAQs are available right now.",
+  "needMoreHelp": "Need more help?"
 }
