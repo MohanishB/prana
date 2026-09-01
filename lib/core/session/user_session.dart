@@ -20,8 +20,33 @@ class UserSession {
   final DateTime expiresAt;
 
   bool get isExpired => !DateTime.now().isBefore(expiresAt);
+  bool get isWithinRefreshWindow =>
+      DateTime.now().isBefore(expiresAt.add(const Duration(days: 7)));
 
   String get fullName => '$firstName $lastName'.trim();
+
+
+  UserSession copyWith({
+    int? studentId,
+    String? accessToken,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? phone,
+    String? photoUrl,
+    DateTime? expiresAt,
+  }) {
+    return UserSession(
+      studentId: studentId ?? this.studentId,
+      accessToken: accessToken ?? this.accessToken,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      photoUrl: photoUrl ?? this.photoUrl,
+      expiresAt: expiresAt ?? this.expiresAt,
+    );
+  }
 
   Map<String, String> toMap() => {
         'student_id': '$studentId',

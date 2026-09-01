@@ -3,7 +3,6 @@ import 'dart:io';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/session/session_manager.dart';
-import '../../../core/session/user_session.dart';
 import 'account_models.dart';
 
 abstract interface class AccountRepository {
@@ -73,15 +72,12 @@ final class ApiAccountRepository implements AccountRepository {
     final current = _sessionManager.current;
     if (current == null) return;
     await _sessionManager.setSession(
-      UserSession(
-        studentId: current.studentId,
-        accessToken: current.accessToken,
+      current.copyWith(
         firstName: profile.firstName,
         lastName: profile.lastName,
         email: profile.email,
         phone: profile.phone,
         photoUrl: profile.photoUrl,
-        expiresAt: current.expiresAt,
       ),
     );
   }

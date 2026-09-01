@@ -4,6 +4,7 @@ enum AppErrorType {
   invalidResponse,
   invalidCredentials,
   accountInactive,
+  refreshWindowExpired,
   unauthorized,
   forbidden,
   courseNotAssigned,
