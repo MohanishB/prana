@@ -112,7 +112,7 @@
   "errorLibraryLoad": "We couldn't load the video library. Please try again.",
   "errorLibrarySearch": "We couldn't search the video library. Please try again.",
   "errorGeneric": "Something went wrong. Please try again.",
-  "loginWelcome": "Welcome",
+  "loginWelcome": "Welcome back",
   "loginSubtitle": "Sign in to continue your PRANA journey.",
   "email": "Email",
   "password": "Password",

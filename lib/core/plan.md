@@ -48,3 +48,12 @@
 - [x] Support file parts in centralized multipart requests.
 - [x] Standardize input decoration for account and authentication forms.
 
+## Refresh token integration
+- [x] Add refresh-token endpoint constant.
+- [x] Preserve stored expired sessions long enough to attempt the backend refresh window.
+- [x] Refresh access token at app startup.
+- [x] Refresh before authenticated calls when the local token is expired.
+- [x] Retry an authenticated request once after token-invalid/token-missing responses.
+- [x] Persist refreshed token/expiry while retaining student profile/session metadata.
+- [x] Clear the session on terminal refresh failures.
+- [x] Redact refresh token values in API logs.

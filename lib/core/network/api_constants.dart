@@ -2,6 +2,7 @@ abstract final class ApiConstants {
   static const baseUrl =
       'https://www.pranabydimpleacademy.com/lms/asdqw/student_app_webservices';
   static const login = '/auth/login.php';
+  static const refreshToken = '/auth/refresh_token.php';
   static const myCourses = '/masterclasses/my_courses.php';
   static const courseDetail = '/masterclasses/course_detail.php';
   static const generateCertificate =

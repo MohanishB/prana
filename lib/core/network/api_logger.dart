@@ -9,6 +9,7 @@ abstract final class ApiLogger {
     'new_password',
     'confirm_password',
     'access_token',
+    'token',
     'authorization',
     'device_token',
   };

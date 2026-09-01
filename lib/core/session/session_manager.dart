@@ -14,9 +14,6 @@ class SessionManager {
 
   Future<UserSession?> restore() async {
     _current = await _store.read();
-    if (_current?.isExpired == true) {
-      await clear();
-    }
     return _current;
   }
 

@@ -75,3 +75,10 @@ External SDKs should be hidden behind interfaces where practical.
 - Multipart requests may include binary files, but logs must contain only safe file metadata, never file bytes.
 - Account text fields inherit the centralized `InputDecorationTheme`; avoid screen-specific field styling.
 
+## Refresh token
+- Restore persisted sessions before deciding authentication state.
+- Refresh the stored access token on app start through `/auth/refresh_token.php`.
+- Authenticated API calls must proactively refresh expired tokens.
+- A `TOKEN_INVALID`/`TOKEN_MISSING` response may trigger one refresh-and-retry only; never create retry loops.
+- Clear the local session only for terminal refresh failures such as invalid token, inactive account, or expired refresh window.
+- Never log raw refresh tokens.

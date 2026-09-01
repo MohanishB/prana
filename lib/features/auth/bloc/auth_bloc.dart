@@ -51,7 +51,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late final StreamSubscription<UserSession?> _subscription;
 
   Future<void> _onStarted(AuthStarted event, Emitter<AuthState> emit) async {
-    final session = await _sessionManager.restore();
+    final session = await _repository.restoreSession();
     emit(session == null
         ? const AuthUnauthenticated()
         : AuthAuthenticated(session));

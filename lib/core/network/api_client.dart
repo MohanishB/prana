@@ -5,6 +5,7 @@ import 'dart:io';
 import '../errors/api_error_handler.dart';
 import '../errors/app_exception.dart';
 import '../session/session_manager.dart';
+import '../session/user_session.dart';
 import 'api_constants.dart';
 import 'api_logger.dart';
 import 'network_info.dart';
@@ -27,7 +28,12 @@ class ApiClient {
     Map<String, Object?> query = const {},
     bool authenticated = true,
   }) =>
-      _send('GET', path, query: query, authenticated: authenticated);
+      _send(
+        'GET',
+        path,
+        query: query,
+        authenticated: authenticated,
+      );
 
   Future<Map<String, dynamic>> post(
     String path, {
@@ -43,29 +49,102 @@ class ApiClient {
         acceptedErrorCodes: acceptedErrorCodes,
       );
 
+  Future<UserSession> refreshSession([UserSession? session]) async {
+    final current = session ?? _sessionManager.current;
+    if (current == null) {
+      throw const AppException(AppErrorType.unauthorized);
+    }
+
+    if (!current.isWithinRefreshWindow && current.isExpired) {
+      await _sessionManager.clear();
+      throw const AppException(
+        AppErrorType.refreshWindowExpired,
+        errorCode: 'REFRESH_WINDOW_EXPIRED',
+      );
+    }
+
+    try {
+      final json = await _send(
+        'POST',
+        ApiConstants.refreshToken,
+        body: {
+          'student_id': current.studentId,
+          'token': current.accessToken,
+        },
+        authenticated: false,
+        allowRefreshRetry: false,
+        clearSessionOnTokenError: false,
+      );
+
+      final data = json['data'];
+      if (data is! Map<String, dynamic>) {
+        throw const AppException(AppErrorType.invalidResponse);
+      }
+
+      final token = data['access_token']?.toString().trim() ?? '';
+      final expiresIn = (data['expires_in'] as num?)?.toInt() ?? 0;
+      if (token.isEmpty || expiresIn <= 0) {
+        throw const AppException(AppErrorType.invalidResponse);
+      }
+
+      final refreshed = current.copyWith(
+        accessToken: token,
+        expiresAt: DateTime.now().add(Duration(seconds: expiresIn)),
+      );
+      await _sessionManager.setSession(refreshed);
+      return refreshed;
+    } on AppException catch (error) {
+      if (_isTerminalRefreshError(error)) {
+        await _sessionManager.clear();
+      }
+      rethrow;
+    }
+  }
 
   Future<Map<String, dynamic>> postMultipart(
     String path, {
     Map<String, String> fields = const {},
     Map<String, File> files = const {},
     bool authenticated = true,
+  }) =>
+      _postMultipart(
+        path,
+        fields: fields,
+        files: files,
+        authenticated: authenticated,
+        allowRefreshRetry: true,
+      );
+
+  Future<Map<String, dynamic>> _postMultipart(
+    String path, {
+    required Map<String, String> fields,
+    required Map<String, File> files,
+    required bool authenticated,
+    required bool allowRefreshRetry,
   }) async {
     if (!await _networkInfo.isConnected) {
       throw const AppException(AppErrorType.noInternet);
     }
 
-    final session = _sessionManager.current;
+    var session = _sessionManager.current;
+    if (authenticated) {
+      if (session == null) {
+        throw const AppException(AppErrorType.unauthorized);
+      }
+      if (session.isExpired) {
+        session = await refreshSession(session);
+      }
+    }
+
     final effectiveFields = <String, String>{...fields};
     if (authenticated) {
-      if (session == null) throw const AppException(AppErrorType.unauthorized);
-      effectiveFields.putIfAbsent('student_id', () => '${session.studentId}');
+      effectiveFields.putIfAbsent('student_id', () => '${session!.studentId}');
     }
 
     final uri = Uri.parse('${ApiConstants.baseUrl}$path');
     final logBody = <String, Object?>{
       ...effectiveFields,
-      for (final entry in files.entries)
-        entry.key: '<file>',
+      for (final entry in files.entries) entry.key: '<file>',
     };
     ApiLogger.request(method: 'POST', uri: uri, body: logBody);
 
@@ -129,11 +208,24 @@ class ApiClient {
 
       if (decoded['status'] != true) {
         final code = decoded['error_code']?.toString();
+        if (authenticated &&
+            allowRefreshRetry &&
+            _isTokenError(code, response.statusCode)) {
+          await refreshSession(session);
+          return _postMultipart(
+            path,
+            fields: fields,
+            files: files,
+            authenticated: authenticated,
+            allowRefreshRetry: false,
+          );
+        }
+
         final exception = AppException(
           _mapError(code, response.statusCode),
           errorCode: code,
         );
-        if (_isTokenError(code, response.statusCode)) {
+        if (authenticated && _isTokenError(code, response.statusCode)) {
           await _sessionManager.clear();
         }
         throw exception;
@@ -162,21 +254,31 @@ class ApiClient {
     Map<String, Object?> body = const {},
     required bool authenticated,
     Set<String> acceptedErrorCodes = const {},
+    bool allowRefreshRetry = true,
+    bool clearSessionOnTokenError = true,
   }) async {
     if (!await _networkInfo.isConnected) {
       throw const AppException(AppErrorType.noInternet);
     }
 
-    final session = _sessionManager.current;
+    var session = _sessionManager.current;
+    if (authenticated) {
+      if (session == null) {
+        throw const AppException(AppErrorType.unauthorized);
+      }
+      if (session.isExpired) {
+        session = await refreshSession(session);
+      }
+    }
+
     final effectiveQuery = <String, Object?>{...query};
     final effectiveBody = <String, Object?>{...body};
 
     if (authenticated) {
-      if (session == null) throw const AppException(AppErrorType.unauthorized);
       if (method == 'GET') {
-        effectiveQuery.putIfAbsent('student_id', () => session.studentId);
+        effectiveQuery.putIfAbsent('student_id', () => session!.studentId);
       } else {
-        effectiveBody.putIfAbsent('student_id', () => session.studentId);
+        effectiveBody.putIfAbsent('student_id', () => session!.studentId);
       }
     }
 
@@ -204,9 +306,12 @@ class ApiClient {
           'Bearer ${session!.accessToken}',
         );
       }
-      if (method != 'GET') request.write(jsonEncode(effectiveBody));
+      if (method != 'GET') {
+        request.write(jsonEncode(effectiveBody));
+      }
 
-      final response = await request.close().timeout(ApiConstants.requestTimeout);
+      final response =
+          await request.close().timeout(ApiConstants.requestTimeout);
       final raw = await utf8.decoder.bind(response).join();
       ApiLogger.response(
         method: method,
@@ -223,18 +328,38 @@ class ApiClient {
       final status = decoded['status'];
       if (status != true) {
         final code = decoded['error_code']?.toString();
+
+        if (authenticated &&
+            allowRefreshRetry &&
+            _isTokenError(code, response.statusCode)) {
+          await refreshSession(session);
+          return _send(
+            method,
+            path,
+            query: query,
+            body: body,
+            authenticated: authenticated,
+            acceptedErrorCodes: acceptedErrorCodes,
+            allowRefreshRetry: false,
+          );
+        }
+
         if (code != null && acceptedErrorCodes.contains(code)) {
           return decoded;
         }
+
         final exception = AppException(
           _mapError(code, response.statusCode),
           errorCode: code,
         );
-        if (_isTokenError(code, response.statusCode)) {
+        if (clearSessionOnTokenError &&
+            authenticated &&
+            _isTokenError(code, response.statusCode)) {
           await _sessionManager.clear();
         }
         throw exception;
       }
+
       return decoded;
     } on AppException {
       rethrow;
@@ -247,10 +372,18 @@ class ApiClient {
       statusCode == HttpStatus.unauthorized &&
       (code == 'TOKEN_MISSING' || code == 'TOKEN_INVALID');
 
+  bool _isTerminalRefreshError(AppException error) =>
+      error.type == AppErrorType.unauthorized ||
+      error.type == AppErrorType.accountInactive ||
+      error.type == AppErrorType.refreshWindowExpired ||
+      error.errorCode == 'STUDENT_NOT_FOUND' ||
+      error.errorCode == 'REFRESH_WINDOW_EXPIRED';
+
   AppErrorType _mapError(String? code, int statusCode) {
     return switch (code) {
       'INVALID_CREDENTIALS' => AppErrorType.invalidCredentials,
       'ACCOUNT_INACTIVE' => AppErrorType.accountInactive,
+      'REFRESH_WINDOW_EXPIRED' => AppErrorType.refreshWindowExpired,
       'TOKEN_MISSING' || 'TOKEN_INVALID' => AppErrorType.unauthorized,
       'STUDENT_ID_MISMATCH' => AppErrorType.forbidden,
       'VALIDATION_ERROR' => AppErrorType.validation,

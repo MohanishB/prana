@@ -11,6 +11,7 @@ extension AppErrorLocalization on AppException {
       AppErrorType.invalidResponse => context.l10n.errorInvalidResponse,
       AppErrorType.invalidCredentials => context.l10n.errorInvalidCredentials,
       AppErrorType.accountInactive => context.l10n.errorAccountInactive,
+      AppErrorType.refreshWindowExpired => context.l10n.errorSessionExpired,
       AppErrorType.unauthorized => context.l10n.errorSessionExpired,
       AppErrorType.forbidden => context.l10n.errorAccessDenied,
       AppErrorType.courseNotAssigned => context.l10n.errorCourseNotAssigned,

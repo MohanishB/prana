@@ -9,3 +9,9 @@
 - `TOKEN_INVALID` and `TOKEN_MISSING` clear the local session centrally in `ApiClient`.
 - Device token is temporary/static until Firebase messaging is integrated.
 - Never add `setState` for authentication behavior.
+
+## Session restoration
+- `AuthStarted` must restore the persisted session through `AuthRepository.restoreSession()`.
+- Startup restoration refreshes the token before emitting the authenticated state when network access is available.
+- Transient refresh failures may keep the locally stored session so the app can recover when connectivity returns.
+- Terminal refresh failures must resolve to the unauthenticated/login state.
