@@ -54,6 +54,9 @@ External SDKs should be hidden behind interfaces where practical.
 - Session persistence uses secure storage; never persist access tokens in plain preferences/files.
 - Validation/regex belongs in `core/validation`.
 
+- Multipart endpoints must also go through `ApiClient`; authenticated `student_id` injection and token handling stay centralized.
+- Logger redaction must cover every credential field name, including current/new/confirm password fields.
+
 
 ## Downloaded files
 - Reusable file download/open behavior belongs in `core/files`.
@@ -65,3 +68,10 @@ External SDKs should be hidden behind interfaces where practical.
 - Do not duplicate download logic in Notes, Certificates, or future downloadable-content features.
 
 - API callers may explicitly whitelist a documented application error code only when that endpoint contract intentionally returns usable data for that code. Token/session errors must never be whitelisted.
+
+## Shared profile/session UI
+- `UserSession` includes optional `photoUrl` and must remain backward-compatible with stored sessions that predate the field.
+- `PranaAppBar` renders the authenticated session avatar and listens to session changes.
+- Multipart requests may include binary files, but logs must contain only safe file metadata, never file bytes.
+- Account text fields inherit the centralized `InputDecorationTheme`; avoid screen-specific field styling.
+

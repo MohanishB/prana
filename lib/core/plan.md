@@ -36,3 +36,15 @@
 - Local file opening through the platform file viewer.
 
 - Added narrowly scoped accepted API error-envelope support for idempotent endpoint contracts such as `CERTIFICATE_ALREADY_GENERATED`, while preserving normal centralized auth/session error handling.
+
+## Account API support completed
+- Multipart form POST support for profile updates.
+- Account-specific API error mappings.
+- Password request fields added to debug-log redaction.
+
+## Shared profile UI support
+- [x] Persist optional profile photo URL in the session.
+- [x] Make app-bar avatar react to session profile changes.
+- [x] Support file parts in centralized multipart requests.
+- [x] Standardize input decoration for account and authentication forms.
+

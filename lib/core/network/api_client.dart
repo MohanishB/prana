@@ -43,6 +43,118 @@ class ApiClient {
         acceptedErrorCodes: acceptedErrorCodes,
       );
 
+
+  Future<Map<String, dynamic>> postMultipart(
+    String path, {
+    Map<String, String> fields = const {},
+    Map<String, File> files = const {},
+    bool authenticated = true,
+  }) async {
+    if (!await _networkInfo.isConnected) {
+      throw const AppException(AppErrorType.noInternet);
+    }
+
+    final session = _sessionManager.current;
+    final effectiveFields = <String, String>{...fields};
+    if (authenticated) {
+      if (session == null) throw const AppException(AppErrorType.unauthorized);
+      effectiveFields.putIfAbsent('student_id', () => '${session.studentId}');
+    }
+
+    final uri = Uri.parse('${ApiConstants.baseUrl}$path');
+    final logBody = <String, Object?>{
+      ...effectiveFields,
+      for (final entry in files.entries)
+        entry.key: '<file>',
+    };
+    ApiLogger.request(method: 'POST', uri: uri, body: logBody);
+
+    try {
+      final boundary =
+          '----prana${DateTime.now().microsecondsSinceEpoch.toRadixString(16)}';
+      final request = await _httpClient.postUrl(uri);
+      request.headers.set(
+        HttpHeaders.contentTypeHeader,
+        'multipart/form-data; boundary=$boundary',
+      );
+      request.headers.set(HttpHeaders.acceptHeader, ContentType.json.mimeType);
+      if (authenticated) {
+        request.headers.set(
+          HttpHeaders.authorizationHeader,
+          'Bearer ${session!.accessToken}',
+        );
+      }
+
+      for (final entry in effectiveFields.entries) {
+        request.write('--$boundary\r\n');
+        request.write(
+          'Content-Disposition: form-data; name="${entry.key}"\r\n\r\n',
+        );
+        request.write(entry.value);
+        request.write('\r\n');
+      }
+
+      for (final entry in files.entries) {
+        final file = entry.value;
+        final fileName = file.uri.pathSegments.isEmpty
+            ? 'upload'
+            : file.uri.pathSegments.last;
+        request.write('--$boundary\r\n');
+        request.write(
+          'Content-Disposition: form-data; name="${entry.key}"; '
+          'filename="$fileName"\r\n',
+        );
+        request.write(
+          'Content-Type: ${_contentTypeForPath(file.path)}\r\n\r\n',
+        );
+        await request.addStream(file.openRead());
+        request.write('\r\n');
+      }
+      request.write('--$boundary--\r\n');
+
+      final response =
+          await request.close().timeout(ApiConstants.requestTimeout);
+      final raw = await utf8.decoder.bind(response).join();
+      ApiLogger.response(
+        method: 'POST',
+        uri: uri,
+        statusCode: response.statusCode,
+        body: raw,
+      );
+
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map<String, dynamic>) {
+        throw const AppException(AppErrorType.invalidResponse);
+      }
+
+      if (decoded['status'] != true) {
+        final code = decoded['error_code']?.toString();
+        final exception = AppException(
+          _mapError(code, response.statusCode),
+          errorCode: code,
+        );
+        if (_isTokenError(code, response.statusCode)) {
+          await _sessionManager.clear();
+        }
+        throw exception;
+      }
+      return decoded;
+    } on AppException {
+      rethrow;
+    } on Object catch (error, stackTrace) {
+      throw ApiErrorHandler.normalize(error, stackTrace: stackTrace);
+    }
+  }
+
+  String _contentTypeForPath(String path) {
+    final lower = path.toLowerCase();
+    if (lower.endsWith('.png')) return 'image/png';
+    if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
+      return 'image/jpeg';
+    }
+    return 'application/octet-stream';
+  }
+
   Future<Map<String, dynamic>> _send(
     String method,
     String path, {
@@ -148,6 +260,9 @@ class ApiClient {
       'QUIZ_NOT_AVAILABLE' => AppErrorType.quizNotAvailable,
       'INCOMPLETE_ANSWERS' => AppErrorType.incompleteQuizAnswers,
       'QUIZ_ALREADY_SUBMITTED' => AppErrorType.quizAlreadySubmitted,
+      'PROFILE_NOT_FOUND' => AppErrorType.profileNotFound,
+      'CURRENT_PASSWORD_INCORRECT' => AppErrorType.currentPasswordIncorrect,
+      'PHOTO_UPLOAD_ERROR' => AppErrorType.photoUpload,
       _ when statusCode >= 500 => AppErrorType.server,
       _ => AppErrorType.generic,
     };
