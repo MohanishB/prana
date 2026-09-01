@@ -10,6 +10,7 @@ abstract final class ApiConstants {
   static const accountProfile = '/account/profile.php';
   static const updateProfile = '/account/update_profile.php';
   static const changePassword = '/account/change_password.php';
+  static const faqList = '/content/faq_list.php';
   static const requestTimeout = Duration(seconds: 30);
   static const staticDeviceToken = 'prana-static-device-token';
 }

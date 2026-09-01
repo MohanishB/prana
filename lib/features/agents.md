@@ -33,3 +33,4 @@ Recommended dependency direction:
 ## Duplication
 Before adding a widget/helper/model, check whether an equivalent already exists.
 Prefer composition and shared abstractions over copied screen code.
+- FAQ lives in `features/faq` and follows the standard data/BLoC/presentation split.

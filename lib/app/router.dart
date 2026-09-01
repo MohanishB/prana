@@ -14,6 +14,8 @@ import '../features/account/presentation/change_password_screen.dart';
 import '../features/account/presentation/edit_profile_screen.dart';
 import '../features/certificate/presentation/certificate_screen.dart';
 import '../features/consult/presentation/consult_screen.dart';
+import '../features/faq/bloc/faq_cubit.dart';
+import '../features/faq/presentation/faq_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/library/bloc/library_bloc.dart';
 import '../features/library/domain/library_video.dart';
@@ -21,12 +23,9 @@ import '../features/library/presentation/library_screen.dart';
 import '../features/library/presentation/video_detail_screen.dart';
 import '../features/masterclass/bloc/course_detail_cubit.dart';
 import '../features/masterclass/bloc/masterclass_cubit.dart';
-import '../features/masterclass/data/masterclass_models.dart'; 
-
-
+import '../features/masterclass/data/masterclass_models.dart';
 import '../features/masterclass/presentation/course_screen.dart';
 import '../features/masterclass/presentation/course_video_screen.dart';
-
 import '../features/shell/presentation/prana_shell.dart';
 import 'route_names.dart';
 
@@ -192,6 +191,19 @@ final GoRouter appRouter = GoRouter(
                     return BlocProvider(
                       create: (_) => ChangePasswordCubit(repository),
                       child: const ChangePasswordScreen(),
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: 'faqs',
+                  name: RouteNames.faqs,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    final repository =
+                        context.read<AppDependencies>().faqRepository;
+                    return BlocProvider(
+                      create: (_) => FaqCubit(repository)..load(),
+                      child: const FaqScreen(),
                     );
                   },
                 ),

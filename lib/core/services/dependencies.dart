@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../features/account/data/account_repository.dart';
 import '../../features/auth/data/auth_repository.dart';
+import '../../features/faq/data/faq_repository.dart';
 import '../../features/library/data/library_repository.dart';
 import '../../features/library/data/mock_library_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
@@ -19,6 +20,7 @@ class AppDependencies {
   const AppDependencies({
     required this.libraryRepository,
     required this.accountRepository,
+    required this.faqRepository,
     required this.paymentGateway,
     required this.authRepository,
     required this.masterclassRepository,
@@ -30,6 +32,7 @@ class AppDependencies {
 
   final LibraryRepository libraryRepository;
   final AccountRepository accountRepository;
+  final FaqRepository faqRepository;
   final PaymentGateway paymentGateway;
   final AuthRepository authRepository;
   final MasterclassRepository masterclassRepository;
@@ -49,6 +52,7 @@ class AppDependencies {
     return AppDependencies(
       libraryRepository: MockLibraryRepository(),
       accountRepository: ApiAccountRepository(api, sessionManager),
+      faqRepository: ApiFaqRepository(api),
       paymentGateway: MockPaymentGateway(),
       authRepository: ApiAuthRepository(api, sessionManager),
       masterclassRepository: ApiMasterclassRepository(api),
