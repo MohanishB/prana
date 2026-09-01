@@ -5,7 +5,13 @@ import 'package:prana/features/masterclass/presentation/masterclass_screen.dart'
 
 import '../core/localization/app_localizations_x.dart';
 import '../core/services/dependencies.dart';
+import '../features/account/bloc/account_profile_cubit.dart';
+import '../features/account/bloc/change_password_cubit.dart';
+import '../features/account/bloc/edit_profile_cubit.dart';
+import '../features/account/data/account_models.dart';
 import '../features/account/presentation/account_screen.dart';
+import '../features/account/presentation/change_password_screen.dart';
+import '../features/account/presentation/edit_profile_screen.dart';
 import '../features/certificate/presentation/certificate_screen.dart';
 import '../features/consult/presentation/consult_screen.dart';
 import '../features/home/presentation/home_screen.dart';
@@ -148,7 +154,48 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/account',
               name: RouteNames.account,
-              builder: (context, state) => const AccountScreen(),
+              builder: (context, state) {
+                final repository =
+                    context.read<AppDependencies>().accountRepository;
+                return BlocProvider(
+                  create: (_) => AccountProfileCubit(repository)..load(),
+                  child: const AccountScreen(),
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  name: RouteNames.editProfile,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    final profile = state.extra;
+                    if (profile is! AccountProfile) {
+                      return Scaffold(
+                        body: Center(child: Text(context.l10n.errorProfileNotFound)),
+                      );
+                    }
+                    final repository =
+                        context.read<AppDependencies>().accountRepository;
+                    return BlocProvider(
+                      create: (_) => EditProfileCubit(repository),
+                      child: EditProfileScreen(profile: profile),
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: 'change-password',
+                  name: RouteNames.changePassword,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    final repository =
+                        context.read<AppDependencies>().accountRepository;
+                    return BlocProvider(
+                      create: (_) => ChangePasswordCubit(repository),
+                      child: const ChangePasswordScreen(),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

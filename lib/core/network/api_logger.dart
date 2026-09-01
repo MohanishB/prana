@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 abstract final class ApiLogger {
   static const _sensitiveKeys = {
     'password',
+    'current_password',
+    'new_password',
+    'confirm_password',
     'access_token',
     'authorization',
     'device_token',

@@ -21,6 +21,10 @@ extension AppErrorLocalization on AppException {
         context.l10n.errorIncompleteQuizAnswers,
       AppErrorType.quizAlreadySubmitted =>
         context.l10n.errorQuizAlreadySubmitted,
+      AppErrorType.profileNotFound => context.l10n.errorProfileNotFound,
+      AppErrorType.currentPasswordIncorrect =>
+        context.l10n.errorCurrentPasswordIncorrect,
+      AppErrorType.photoUpload => context.l10n.errorPhotoUpload,
       AppErrorType.validation => context.l10n.errorValidation,
       AppErrorType.server => context.l10n.errorServer,
       AppErrorType.libraryLoad => context.l10n.errorLibraryLoad,

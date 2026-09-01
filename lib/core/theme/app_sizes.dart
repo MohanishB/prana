@@ -8,6 +8,7 @@ abstract final class AppSizes {
   static const iconLarge = 48.0;
 
   static const avatarSmall = 40.0;
+  static const avatarLarge = 88.0;
   static const progressRing = 62.0;
   static const progressStroke = 7.0;
 

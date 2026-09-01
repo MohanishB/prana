@@ -6,6 +6,7 @@ import '../localization/app_localizations_x.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
 import 'prana_logo.dart';
+import 'session_avatar.dart';
 
 class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PranaAppBar({
@@ -24,7 +25,9 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      leadingWidth: AppSizes.appBarHeight + AppSpacing.xl,
+      leadingWidth: showBack
+          ? AppSizes.appBarHeight
+          : AppSizes.appBarHeight + AppSpacing.xl,
       leading: showBack
           ? IconButton(
               onPressed: () => context.pop(),
@@ -38,14 +41,18 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: PranaLogo(),
               ),
             ),
-      title: Text(title ?? ''),
+      title: Text(
+        title ?? '',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       actions: [
-        IconButton.filled(
+        IconButton(
           onPressed: () => context.goNamed(RouteNames.account),
-          icon: const Icon(Icons.person_outline),
           tooltip: context.l10n.account,
+          icon: const SessionAvatar(),
         ),
-        const SizedBox(width: AppSpacing.md),
+        const SizedBox(width: AppSpacing.sm),
       ],
     );
   }

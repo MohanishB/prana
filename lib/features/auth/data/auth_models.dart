@@ -41,10 +41,17 @@ class LoginResponse {
         lastName: student['last_name']?.toString() ?? '',
         email: student['email']?.toString() ?? '',
         phone: student['phone']?.toString() ?? '',
+        photoUrl: _nullableString(student['photo_url']),
         expiresAt: DateTime.now().add(
           Duration(seconds: (data['expires_in'] as num?)?.toInt() ?? 0),
         ),
       ),
     );
+  }
+
+
+  static String? _nullableString(Object? value) {
+    final text = value?.toString().trim() ?? '';
+    return text.isEmpty ? null : text;
   }
 }

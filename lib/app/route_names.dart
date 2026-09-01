@@ -4,6 +4,8 @@ abstract final class RouteNames {
   static const consult = 'consult';
   static const library = 'library';
   static const account = 'account';
+  static const editProfile = 'editProfile';
+  static const changePassword = 'changePassword';
   static const course = 'course';
   static const courseVideo = 'courseVideo';
   static const certificate = 'certificate';

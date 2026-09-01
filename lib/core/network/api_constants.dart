@@ -7,6 +7,9 @@ abstract final class ApiConstants {
   static const generateCertificate =
       '/masterclasses/generate_certificate.php';
   static const submitQuiz = '/masterclasses/submit_quiz.php';
+  static const accountProfile = '/account/profile.php';
+  static const updateProfile = '/account/update_profile.php';
+  static const changePassword = '/account/change_password.php';
   static const requestTimeout = Duration(seconds: 30);
   static const staticDeviceToken = 'prana-static-device-token';
 }
