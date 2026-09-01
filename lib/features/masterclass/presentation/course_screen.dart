@@ -16,6 +16,7 @@ import '../../../core/widgets/downloadable_file_tile.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../bloc/course_detail_cubit.dart';
+import '../bloc/course_quiz_cubit.dart';
 import '../bloc/course_view_cubit.dart';
 import '../data/masterclass_models.dart';
 import 'widgets/course_navigation_buttons.dart';
@@ -28,24 +29,26 @@ class CourseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return BlocBuilder<CourseDetailCubit, CourseDetailState>(
-      builder: (context, state) => Scaffold(
-        appBar: PranaAppBar(
-          title: state is CourseDetailLoaded ? state.course.title : l10n.masterclass,
-          showBack: true,
+    return BlocProvider(
+      create: (_) => CourseViewCubit(),
+      child: BlocBuilder<CourseDetailCubit, CourseDetailState>(
+        builder: (context, state) => Scaffold(
+          appBar: PranaAppBar(
+            title:
+                state is CourseDetailLoaded ? state.course.title : l10n.masterclass,
+            showBack: true,
+          ),
+          body: switch (state) {
+            CourseDetailLoading() =>
+              const Center(child: CircularProgressIndicator()),
+            CourseDetailFailure(:final error) => AppErrorView(
+                message: error.userMessage(context),
+                retryLabel: l10n.retry,
+                onRetry: context.read<CourseDetailCubit>().load,
+              ),
+            CourseDetailLoaded(:final course) => _CourseContent(course: course),
+          },
         ),
-        body: switch (state) {
-          CourseDetailLoading() => const Center(child: CircularProgressIndicator()),
-          CourseDetailFailure(:final error) => AppErrorView(
-              message: error.userMessage(context),
-              retryLabel: l10n.retry,
-              onRetry: context.read<CourseDetailCubit>().load,
-            ),
-          CourseDetailLoaded(:final course) => BlocProvider(
-              create: (_) => CourseViewCubit(),
-              child: _CourseContent(course: course),
-            ),
-        },
       ),
     );
   }
@@ -267,7 +270,7 @@ class _ChapterTabContent extends StatelessWidget {
   Widget build(BuildContext context) => switch (tab) {
         CourseTab.intro => _IntroTab(chapter: chapter),
         CourseTab.videos => _VideosTab(videos: chapter.videos),
-        CourseTab.quiz => _QuizTab(quiz: chapter.quiz),
+        CourseTab.quiz => _QuizTab(chapter: chapter),
         CourseTab.notes => _NotesTab(notes: chapter.notes),
       };
 }
@@ -353,85 +356,252 @@ class _VideoCard extends StatelessWidget {
 }
 
 class _QuizTab extends StatelessWidget {
-  const _QuizTab({required this.quiz});
-  final CourseQuiz quiz;
+  const _QuizTab({required this.chapter});
+
+  final CourseChapter chapter;
 
   @override
   Widget build(BuildContext context) {
-    if (!quiz.available) return Text(context.l10n.quizUnavailable);
-    if (!quiz.completed) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            children: [
-              const CircleAvatar(child: Icon(Icons.quiz_outlined)),
-              const SizedBox(height: AppSpacing.sm),
-              Text(context.l10n.chapterQuiz,
-                  style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: AppSpacing.xs),
-              Text(context.l10n.quizQuestions(quiz.questionCount)),
-              const SizedBox(height: AppSpacing.md),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: null,
-                  child: Text(context.l10n.startQuiz),
+    if (!chapter.quiz.available) return Text(context.l10n.quizUnavailable);
+
+    final dependencies = context.read<AppDependencies>();
+    final courseId = context.read<CourseDetailCubit>().courseId;
+
+    return BlocProvider(
+      key: ValueKey('quiz_${courseId}_${chapter.id}_${chapter.quiz.completed}'),
+      create: (_) => CourseQuizCubit(
+        repository: dependencies.masterclassRepository,
+        courseId: courseId,
+        chapterId: chapter.id,
+        quiz: chapter.quiz,
+      ),
+      child: _QuizContent(chapterId: chapter.id),
+    );
+  }
+}
+
+class _QuizContent extends StatelessWidget {
+  const _QuizContent({required this.chapterId});
+
+  final int chapterId;
+
+  Future<void> _submit(BuildContext context, CourseQuizReady state) async {
+    if (!state.allAnswered) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.answerEveryQuestion)),
+      );
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(dialogContext.l10n.confirmQuizSubmission),
+        content: Text(dialogContext.l10n.quizSubmitWarning),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(dialogContext.l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(dialogContext.l10n.confirmSubmit),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final result = await context.read<CourseQuizCubit>().submit();
+    if (!context.mounted || result == null) return;
+
+    context.read<CourseDetailCubit>().updateChapterQuiz(
+          chapterId: chapterId,
+          quiz: result,
+        );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.quizSubmitted)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CourseQuizCubit, CourseQuizState>(
+      builder: (context, state) {
+        final ready = state as CourseQuizReady;
+        final quiz = ready.quiz;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (quiz.completed) ...[
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        child: Icon(Icons.emoji_events_outlined),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.l10n.quizResult,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              context.l10n.quizScore(
+                                quiz.correct,
+                                quiz.total,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ] else ...[
+              Text(
+                context.l10n.quizQuestions(quiz.questionCount),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                context.l10n.quizSubmissionComingSoon,
+                context.l10n.quizSubmitWarning,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
+              const SizedBox(height: AppSpacing.md),
             ],
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          context.l10n.quizScore(quiz.correct, quiz.total),
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        for (final question in quiz.questions) ...[
-          _QuizQuestionCard(question: question),
-          const SizedBox(height: AppSpacing.sm),
-        ],
-      ],
+            for (final question in quiz.questions) ...[
+              _QuizQuestionCard(
+                question: question,
+                selectedOptionNo: ready.answers[question.id],
+                readOnly: quiz.completed || ready.isSubmitting,
+                onSelected: (optionNo) =>
+                    context.read<CourseQuizCubit>().selectAnswer(
+                          quizId: question.id,
+                          optionNo: optionNo,
+                        ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+            if (!quiz.completed) ...[
+              if (ready.error != null) ...[
+                Text(
+                  ready.error!.userMessage(context),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed:
+                      ready.isSubmitting ? null : () => _submit(context, ready),
+                  child: ready.isSubmitting
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              width: AppSizes.loadingIndicatorSmall,
+                              height: AppSizes.loadingIndicatorSmall,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(context.l10n.submittingQuiz),
+                          ],
+                        )
+                      : Text(context.l10n.submitQuiz),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 }
 
 class _QuizQuestionCard extends StatelessWidget {
-  const _QuizQuestionCard({required this.question});
+  const _QuizQuestionCard({
+    required this.question,
+    required this.selectedOptionNo,
+    required this.readOnly,
+    required this.onSelected,
+  });
+
   final CourseQuizQuestion question;
+  final int? selectedOptionNo;
+  final bool readOnly;
+  final ValueChanged<int> onSelected;
 
   @override
   Widget build(BuildContext context) {
+    final result = question.isCorrect;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${context.l10n.questionShort}${question.position} ${question.question}',
-              style: Theme.of(context).textTheme.titleSmall,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    '${context.l10n.questionShort}${question.position} '
+                    '${question.question.trim()}',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+                if (result != null) ...[
+                  const SizedBox(width: AppSpacing.sm),
+                  Icon(
+                    result
+                        ? Icons.check_circle_outline
+                        : Icons.cancel_outlined,
+                    color: result ? AppColors.success : colorScheme.error,
+                  ),
+                ],
+              ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            for (final option in question.options)
+            for (final option
+                in question.options.where((item) => item.text.trim().isNotEmpty))
               RadioListTile<int>(
+                contentPadding: EdgeInsets.zero,
                 dense: true,
                 value: option.optionNo,
-                groupValue: question.studentAnswer?.optionNo,
-                onChanged: null,
-                title: Text(option.text),
+                groupValue: selectedOptionNo,
+                onChanged: readOnly
+                    ? null
+                    : (value) {
+                        if (value != null) onSelected(value);
+                      },
+                title: Text(option.text.trim()),
               ),
+            if (result != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                result ? context.l10n.quizCorrect : context.l10n.quizIncorrect,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: result ? AppColors.success : colorScheme.error,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ],
           ],
         ),
       ),

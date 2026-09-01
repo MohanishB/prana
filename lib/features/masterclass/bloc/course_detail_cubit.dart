@@ -98,4 +98,26 @@ class CourseDetailCubit extends Cubit<CourseDetailState> {
       );
     }
   }
+  void updateChapterQuiz({
+    required int chapterId,
+    required CourseQuiz quiz,
+  }) {
+    final current = state;
+    if (current is! CourseDetailLoaded) return;
+
+    final chapters = current.course.chapters
+        .map(
+          (chapter) =>
+              chapter.id == chapterId ? chapter.copyWith(quiz: quiz) : chapter,
+        )
+        .toList(growable: false);
+
+    emit(
+      current.copyWith(
+        course: current.course.copyWith(chapters: chapters),
+      ),
+    );
+  }
+
+
 }

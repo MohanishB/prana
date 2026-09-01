@@ -15,6 +15,12 @@ extension AppErrorLocalization on AppException {
       AppErrorType.forbidden => context.l10n.errorAccessDenied,
       AppErrorType.courseNotAssigned => context.l10n.errorCourseNotAssigned,
       AppErrorType.courseNotFound => context.l10n.errorCourseNotFound,
+      AppErrorType.chapterNotFound => context.l10n.errorChapterNotFound,
+      AppErrorType.quizNotAvailable => context.l10n.errorQuizNotAvailable,
+      AppErrorType.incompleteQuizAnswers =>
+        context.l10n.errorIncompleteQuizAnswers,
+      AppErrorType.quizAlreadySubmitted =>
+        context.l10n.errorQuizAlreadySubmitted,
       AppErrorType.validation => context.l10n.errorValidation,
       AppErrorType.server => context.l10n.errorServer,
       AppErrorType.libraryLoad => context.l10n.errorLibraryLoad,

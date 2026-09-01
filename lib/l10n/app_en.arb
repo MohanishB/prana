@@ -225,5 +225,20 @@
   "viewChapters": "View chapters",
   "getCertificate": "Get certificate",
   "generatingCertificate": "Generating certificate...",
-  "certificateNotGenerated": "Your certificate has not been generated yet."
+  "certificateNotGenerated": "Your certificate has not been generated yet.",
+  "submitQuiz": "Submit quiz",
+  "submittingQuiz": "Submitting...",
+  "quizSubmitWarning": "Quiz answers can only be submitted once. You will not be able to change them afterwards.",
+  "confirmQuizSubmission": "Submit quiz?",
+  "confirmSubmit": "Submit",
+  "cancel": "Cancel",
+  "answerEveryQuestion": "Please answer every question before submitting.",
+  "quizResult": "Quiz result",
+  "quizCorrect": "Correct",
+  "quizIncorrect": "Incorrect",
+  "quizSubmitted": "Quiz submitted successfully.",
+  "errorChapterNotFound": "This chapter could not be found.",
+  "errorQuizNotAvailable": "A quiz is not available for this chapter.",
+  "errorIncompleteQuizAnswers": "Please answer every quiz question before submitting.",
+  "errorQuizAlreadySubmitted": "This quiz has already been submitted."
 }

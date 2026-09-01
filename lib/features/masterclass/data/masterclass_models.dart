@@ -63,13 +63,14 @@ class CourseDetail {
   final CourseCertificate certificate;
 
   CourseDetail copyWith({
+    List<CourseChapter>? chapters,
     CourseCertificate? certificate,
   }) =>
       CourseDetail(
         courseId: courseId,
         title: title,
         intro: intro,
-        chapters: chapters,
+        chapters: chapters ?? this.chapters,
         certificate: certificate ?? this.certificate,
       );
 
@@ -146,6 +147,20 @@ class CourseChapter {
   final List<CourseVideo> videos;
   final CourseQuiz quiz;
   final List<CourseNote> notes;
+
+  CourseChapter copyWith({
+    CourseQuiz? quiz,
+  }) =>
+      CourseChapter(
+        id: id,
+        title: title,
+        introDescription: introDescription,
+        fullDescription: fullDescription,
+        position: position,
+        videos: videos,
+        quiz: quiz ?? this.quiz,
+        notes: notes,
+      );
 
   factory CourseChapter.fromJson(Map<String, dynamic> json) => CourseChapter(
         id: (json['chapter_id'] as num).toInt(),
@@ -237,6 +252,22 @@ class CourseQuiz {
           .whereType<Map>()
           .map((e) => CourseQuizQuestion.fromJson(e.cast<String, dynamic>()))
           .toList(growable: false),
+    );
+  }
+
+  factory CourseQuiz.fromSubmission(Map<String, dynamic> json) {
+    final score = (json['score'] as Map?)?.cast<String, dynamic>() ?? const {};
+    final questions = ((json['questions'] as List?) ?? const [])
+        .whereType<Map>()
+        .map((e) => CourseQuizQuestion.fromJson(e.cast<String, dynamic>()))
+        .toList(growable: false);
+    return CourseQuiz(
+      available: true,
+      completed: true,
+      questionCount: questions.length,
+      correct: (score['correct'] as num?)?.toInt() ?? 0,
+      total: (score['total'] as num?)?.toInt() ?? questions.length,
+      questions: questions,
     );
   }
 }
