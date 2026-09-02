@@ -34,9 +34,18 @@ class CourseScreen extends StatelessWidget {
       child: BlocBuilder<CourseDetailCubit, CourseDetailState>(
         builder: (context, state) => Scaffold(
           appBar: PranaAppBar(
-            title:
-                state is CourseDetailLoaded ? state.course.title : l10n.masterclass,
+            title: state is CourseDetailLoaded
+                ? state.course.title
+                : l10n.masterclass,
             showBack: true,
+            onBack: () {
+              final viewCubit = context.read<CourseViewCubit>();
+              if (viewCubit.state.chapterIndex >= 0) {
+                viewCubit.selectCourseIntro();
+              } else {
+                context.pop();
+              }
+            },
           ),
           body: switch (state) {
             CourseDetailLoading() =>
@@ -101,22 +110,24 @@ class _CourseContentState extends State<_CourseContent> {
 
   void _selectChapter(BuildContext context, int index) {
     context.read<CourseViewCubit>().selectChapter(index);
+  }
+
+  void _previousTab(BuildContext context, CourseChapter chapter) {
+    context.read<CourseViewCubit>().previousTab(chapter);
     _scrollToTopAfterChapterChange();
   }
 
-  void _previousChapter(BuildContext context) {
-    context.read<CourseViewCubit>().previous(course);
-    _scrollToTopAfterChapterChange();
-  }
-
-  void _nextChapter(BuildContext context) {
-    context.read<CourseViewCubit>().next(course);
+  void _nextTab(BuildContext context, CourseChapter chapter) {
+    context.read<CourseViewCubit>().nextTab(chapter);
     _scrollToTopAfterChapterChange();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CourseViewCubit, CourseViewState>(
+    return BlocConsumer<CourseViewCubit, CourseViewState>(
+      listenWhen: (previous, current) =>
+          previous.chapterIndex != current.chapterIndex,
+      listener: (_, __) => _scrollToTopAfterChapterChange(),
       builder: (context, view) {
         final chapter = view.chapterIndex >= 0 &&
                 view.chapterIndex < course.chapters.length
@@ -152,6 +163,7 @@ class _CourseContentState extends State<_CourseContent> {
                   const SizedBox(height: AppSpacing.sm),
                   CourseTabBar(
                     selected: view.tab,
+                    showVideos: chapter.videos.isNotEmpty,
                     showQuiz: chapter.quiz.available,
                     showNotes: chapter.notes.isNotEmpty,
                     onSelected: context.read<CourseViewCubit>().selectTab,
@@ -162,11 +174,15 @@ class _CourseContentState extends State<_CourseContent> {
                 ],
                 const SizedBox(height: AppSpacing.md),
                 CourseNavigationButtons(
-                  onPrevious: view.chapterIndex >= 0
-                      ? () => _previousChapter(context)
+                  onPrevious: chapter != null &&
+                          context
+                              .read<CourseViewCubit>()
+                              .canGoPreviousTab(chapter)
+                      ? () => _previousTab(context, chapter)
                       : null,
-                  onNext: view.chapterIndex < course.chapters.length - 1
-                      ? () => _nextChapter(context)
+                  onNext: chapter != null &&
+                          context.read<CourseViewCubit>().canGoNextTab(chapter)
+                      ? () => _nextTab(context, chapter)
                       : null,
                 ),
                 const SizedBox(height: AppSpacing.xl),

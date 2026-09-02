@@ -7,6 +7,7 @@ enum CourseTab { intro, videos, quiz, notes }
 class CourseTabBar extends StatelessWidget {
   const CourseTabBar({
     required this.selected,
+    required this.showVideos,
     required this.showQuiz,
     required this.showNotes,
     required this.onSelected,
@@ -14,6 +15,7 @@ class CourseTabBar extends StatelessWidget {
   });
 
   final CourseTab selected;
+  final bool showVideos;
   final bool showQuiz;
   final bool showNotes;
   final ValueChanged<CourseTab> onSelected;
@@ -23,7 +25,7 @@ class CourseTabBar extends StatelessWidget {
     final l10n = context.l10n;
     final tabs = <CourseTab>[
       CourseTab.intro,
-      CourseTab.videos,
+      if (showVideos) CourseTab.videos,
       if (showQuiz) CourseTab.quiz,
       if (showNotes) CourseTab.notes,
     ];

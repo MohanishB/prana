@@ -286,5 +286,7 @@
     }
   },
   "noFaqsAvailable": "No FAQs are available right now.",
-  "needMoreHelp": "Need more help?"
+  "needMoreHelp": "Need more help?",
+  "takePhoto": "Take photo",
+  "chooseFromGallery": "Choose from gallery"
 }
