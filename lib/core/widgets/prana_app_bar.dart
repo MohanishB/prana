@@ -13,10 +13,12 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title,
     this.showBack = false,
+    this.onBack,
   });
 
   final String? title;
   final bool showBack;
+  final VoidCallback? onBack;
 
   @override
   Size get preferredSize => const Size.fromHeight(AppSizes.appBarHeight);
@@ -30,7 +32,7 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
           : AppSizes.appBarHeight + AppSpacing.xl,
       leading: showBack
           ? IconButton(
-              onPressed: () => context.pop(),
+              onPressed: onBack ?? () => context.pop(),
               icon: const Icon(Icons.chevron_left),
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             )

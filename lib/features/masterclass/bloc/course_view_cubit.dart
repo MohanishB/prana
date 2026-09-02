@@ -33,21 +33,38 @@ class CourseViewCubit extends Cubit<CourseViewState> {
 
   void selectTab(CourseTab tab) => emit(state.copyWith(tab: tab));
 
-  void previous(CourseDetail course) {
-    if (state.chapterIndex < 0) return;
-    if (state.chapterIndex == 0) {
-      selectCourseIntro();
-    } else {
-      selectChapter(state.chapterIndex - 1);
+  List<CourseTab> availableTabs(CourseChapter chapter) => <CourseTab>[
+        CourseTab.intro,
+        if (chapter.videos.isNotEmpty) CourseTab.videos,
+        if (chapter.quiz.available) CourseTab.quiz,
+        if (chapter.notes.isNotEmpty) CourseTab.notes,
+      ];
+
+  bool canGoPreviousTab(CourseChapter chapter) {
+    final tabs = availableTabs(chapter);
+    final index = tabs.indexOf(state.tab);
+    return index > 0;
+  }
+
+  bool canGoNextTab(CourseChapter chapter) {
+    final tabs = availableTabs(chapter);
+    final index = tabs.indexOf(state.tab);
+    return index >= 0 && index < tabs.length - 1;
+  }
+
+  void previousTab(CourseChapter chapter) {
+    final tabs = availableTabs(chapter);
+    final index = tabs.indexOf(state.tab);
+    if (index > 0) {
+      selectTab(tabs[index - 1]);
     }
   }
 
-  void next(CourseDetail course) {
-    if (course.chapters.isEmpty) return;
-    if (state.chapterIndex < 0) {
-      selectChapter(0);
-    } else if (state.chapterIndex < course.chapters.length - 1) {
-      selectChapter(state.chapterIndex + 1);
+  void nextTab(CourseChapter chapter) {
+    final tabs = availableTabs(chapter);
+    final index = tabs.indexOf(state.tab);
+    if (index >= 0 && index < tabs.length - 1) {
+      selectTab(tabs[index + 1]);
     }
   }
 }

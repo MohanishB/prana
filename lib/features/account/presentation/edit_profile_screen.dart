@@ -98,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       builder: (context, state) => _ProfilePhotoEditor(
                         currentPhotoUrl: profile.photoUrl,
                         selectedPhotoPath: state.selectedPhotoPath,
-                        onChangePhoto: _pickPhoto,
+                        onChangePhoto: _showPhotoSourcePicker,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -267,11 +267,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Future<void> _pickPhoto() async {
+  Future<void> _showPhotoSourcePicker() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        final l10n = sheetContext.l10n;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: AppSpacing.md,
+              right: AppSpacing.md,
+              bottom: AppSpacing.md,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_camera_outlined),
+                  title: Text(l10n.takePhoto),
+                  onTap: () => Navigator.of(sheetContext).pop(
+                    ImageSource.camera,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: Text(l10n.chooseFromGallery),
+                  onTap: () => Navigator.of(sheetContext).pop(
+                    ImageSource.gallery,
+                  ),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.close),
+                  title: Text(l10n.cancel),
+                  onTap: () => Navigator.of(sheetContext).pop(),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source == null || !mounted) return;
+    await _pickPhoto(source);
+  }
+
+  Future<void> _pickPhoto(ImageSource source) async {
     final picked = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
+      source: source,
       imageQuality: 85,
       maxWidth: 1600,
+      preferredCameraDevice: CameraDevice.front,
     );
     if (picked == null || !mounted) return;
 
