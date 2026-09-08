@@ -14,4 +14,6 @@ abstract final class ApiConstants {
   static const faqList = '/content/faq_list.php';
   static const requestTimeout = Duration(seconds: 30);
   static const staticDeviceToken = 'prana-static-device-token';
+  static const youtubeApiKey = String.fromEnvironment('YOUTUBE_API_KEY');
+  static const youtubeChannelHandle = '@dimplejangda_official';
 }

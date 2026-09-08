@@ -18,6 +18,7 @@ import '../features/faq/bloc/faq_cubit.dart';
 import '../features/faq/presentation/faq_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/library/bloc/library_bloc.dart';
+import '../features/library/bloc/library_feed_cubit.dart';
 import '../features/library/domain/library_video.dart';
 import '../features/library/presentation/library_screen.dart';
 import '../features/library/presentation/video_detail_screen.dart';
@@ -135,13 +136,27 @@ final GoRouter appRouter = GoRouter(
                   name: RouteNames.libraryVideo,
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
-                    final video = state.extra;
-                    if (video is! LibraryVideo) {
+                    final extra = state.extra;
+                    final args = switch (extra) {
+                      final LibraryPlaybackArgs args => args,
+                      final LibraryVideo video => LibraryPlaybackArgs(
+                          videos: [video],
+                          initialIndex: 0,
+                          query: '',
+                        ),
+                      _ => null,
+                    };
+                    if (args == null) {
                       return Scaffold(
                         body: Center(child: Text(context.l10n.videoNotFound)),
                       );
                     }
-                    return VideoDetailScreen(video: video);
+                    final repository =
+                        context.read<AppDependencies>().libraryRepository;
+                    return BlocProvider(
+                      create: (_) => LibraryFeedCubit(repository, args),
+                      child: const VideoDetailScreen(),
+                    );
                   },
                 ),
               ],

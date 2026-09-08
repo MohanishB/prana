@@ -4,7 +4,7 @@ import '../../features/account/data/account_repository.dart';
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/faq/data/faq_repository.dart';
 import '../../features/library/data/library_repository.dart';
-import '../../features/library/data/mock_library_repository.dart';
+import '../../features/library/data/youtube_library_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
 import '../files/file_download_service.dart';
 import '../network/api_client.dart';
@@ -50,7 +50,7 @@ class AppDependencies {
       sessionManager: sessionManager,
     );
     return AppDependencies(
-      libraryRepository: MockLibraryRepository(),
+      libraryRepository: YouTubeLibraryRepository(),
       accountRepository: ApiAccountRepository(api, sessionManager),
       faqRepository: ApiFaqRepository(api),
       paymentGateway: MockPaymentGateway(),

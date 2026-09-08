@@ -102,9 +102,9 @@
   "darkModeDescription": "Toggle light and dark appearance",
   "signOut": "Sign out",
   "copyright": "© 2026 Prana By Dimple · v1.0",
-  "librarySearchHint": "Search symptoms or transcript",
-  "librarySearchDescription": "Search matches titles, tags and transcript text. Production data can come from the PRANA YouTube catalogue.",
-  "libraryNoResults": "No matching videos found.",
+  "librarySearchHint": "Search PRANA YouTube",
+  "librarySearchDescription": "Search this PRANA YouTube channel across video titles and descriptions, including Shorts and podcast videos.",
+  "libraryNoResults": "No matching PRANA YouTube videos found.",
   "videoNotFound": "Video not found.",
   "errorNoInternet": "You're offline. Check your internet connection and try again.",
   "errorTimeout": "This is taking longer than expected. Please try again.",
@@ -288,5 +288,9 @@
   "noFaqsAvailable": "No FAQs are available right now.",
   "needMoreHelp": "Need more help?",
   "takePhoto": "Take photo",
-  "chooseFromGallery": "Choose from gallery"
+  "chooseFromGallery": "Choose from gallery",
+  "errorLibraryConfiguration": "The video library is temporarily unavailable. Please try again later.",
+  "librarySwipeForMore": "Swipe up or down for more videos",
+  "libraryPlaybackUnavailable": "This video can’t be played inside the app.",
+  "libraryWatchOnYoutube": "Watch on YouTube"
 }
