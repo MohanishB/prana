@@ -63,6 +63,19 @@ class ApiClient {
         acceptedErrorCodes: acceptedErrorCodes,
       );
 
+  /// For legacy PHP endpoints that read request fields through `$_POST`.
+  Future<Map<String, dynamic>> postForm(
+    String path, {
+    Map<String, Object?> body = const {},
+    bool authenticated = true,
+  }) => _send(
+        'POST',
+        path,
+        body: body,
+        authenticated: authenticated,
+        formEncoded: true,
+      );
+
   Future<UserSession> refreshSession([UserSession? session]) async {
     final current = session ?? _sessionManager.current;
     if (current == null) {
@@ -297,6 +310,7 @@ class ApiClient {
     bool allowRefreshRetry = true,
     bool clearSessionOnTokenError = true,
     bool validateEnvelope = true,
+    bool formEncoded = false,
   }) async {
     if (!await _networkInfo.isConnected) {
       throw const AppException(AppErrorType.noInternet);
@@ -339,7 +353,9 @@ class ApiClient {
       final request = method == 'GET'
           ? await _httpClient.getUrl(uri)
           : await _httpClient.postUrl(uri);
-      request.headers.contentType = ContentType.json;
+      request.headers.contentType = formEncoded
+          ? ContentType('application', 'x-www-form-urlencoded', charset: 'utf-8')
+          : ContentType.json;
       request.headers.set(HttpHeaders.acceptHeader, ContentType.json.mimeType);
       if (authenticated) {
         request.headers.set(
@@ -348,7 +364,13 @@ class ApiClient {
         );
       }
       if (method != 'GET') {
-        request.write(jsonEncode(effectiveBody));
+        if (formEncoded) {
+          request.write(Uri(queryParameters: effectiveBody.map(
+            (key, value) => MapEntry(key, '$value'),
+          )).query);
+        } else {
+          request.write(jsonEncode(effectiveBody));
+        }
       }
 
       final response =
@@ -390,6 +412,7 @@ class ApiClient {
             acceptedErrorCodes: acceptedErrorCodes,
             allowRefreshRetry: false,
             validateEnvelope: validateEnvelope,
+            formEncoded: formEncoded,
           );
         }
 

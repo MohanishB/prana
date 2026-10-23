@@ -1,6 +1,13 @@
 abstract final class ApiConstants {
+  // Temporary backend URL for the current integration environment.
+  // Restore the production URL only when the backend team confirms the switch.
+  // https://www.pranabydimpleacademy.com/lms/asdqw/student_app_webservices
   static const baseUrl =
-      'https://www.pranabydimpleacademy.com/lms/asdqw/student_app_webservices';
+      'https://www.retailsite.co.za/prana/student_app_webservices';
+  static const workshopPrograms = '/gut_reset/my_programs.php';
+  static const workshopDetail = '/gut_reset/program_detail.php';
+  static const workshopDayVideo = '/gut_reset/day_video.php';
+  static const workshopMarkDayDone = '/gut_reset/mark_day_done.php';
   static const login = '/auth/login.php';
   static const refreshToken = '/auth/refresh_token.php';
   static const myCourses = '/masterclasses/my_courses.php';

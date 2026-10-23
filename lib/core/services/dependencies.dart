@@ -6,6 +6,7 @@ import '../../features/faq/data/faq_repository.dart';
 import '../../features/library/data/library_data_source.dart';
 import '../../features/library/data/library_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
+import '../../features/workshops/data/workshop_repository.dart';
 import '../files/file_download_service.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
@@ -24,6 +25,7 @@ class AppDependencies {
     required this.paymentGateway,
     required this.authRepository,
     required this.masterclassRepository,
+    required this.workshopRepository,
     required this.sessionManager,
     required this.fileDownloadService,
     required this.videoPlayerFactory,
@@ -36,6 +38,7 @@ class AppDependencies {
   final PaymentGateway paymentGateway;
   final AuthRepository authRepository;
   final MasterclassRepository masterclassRepository;
+  final WorkshopRepository workshopRepository;
   final SessionManager sessionManager;
   final FileDownloadService fileDownloadService;
   final VideoPlayerFactory videoPlayerFactory;
@@ -56,6 +59,7 @@ class AppDependencies {
       paymentGateway: MockPaymentGateway(),
       authRepository: ApiAuthRepository(api, sessionManager),
       masterclassRepository: ApiMasterclassRepository(api),
+      workshopRepository: ApiWorkshopRepository(api),
       sessionManager: sessionManager,
       fileDownloadService: LocalFileDownloadService(networkInfo: networkInfo),
       videoPlayerFactory: const DefaultVideoPlayerFactory(),
