@@ -30,6 +30,8 @@ extension AppErrorLocalization on AppException {
       AppErrorType.server => context.l10n.errorServer,
       AppErrorType.libraryLoad => context.l10n.errorLibraryLoad,
       AppErrorType.librarySearch => context.l10n.errorLibrarySearch,
+      AppErrorType.libraryConfiguration =>
+        context.l10n.errorLibraryConfiguration,
       AppErrorType.downloadFailed => context.l10n.errorDownloadFailed,
       AppErrorType.fileOpenFailed => context.l10n.errorFileOpenFailed,
       AppErrorType.fileNotDownloaded => context.l10n.errorFileNotDownloaded,

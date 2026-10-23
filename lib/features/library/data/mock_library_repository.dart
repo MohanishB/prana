@@ -2,53 +2,55 @@ import '../domain/library_video.dart';
 import 'library_repository.dart';
 
 class MockLibraryRepository implements LibraryRepository {
-  static const _videos = <LibraryVideo>[
+  static final _videos = <LibraryVideo>[
     LibraryVideo(
       id: 'agni',
       title: 'Understanding Agni & Digestion',
       youtubeVideoId: 'dQw4w9WgXcQ',
-      durationLabel: '12 min',
-      transcript:
-          'Agni is the digestive fire. Symptoms discussed include heaviness, bloating, appetite changes, sluggish digestion and meal timing.',
-      tags: ['digestion', 'agni', 'bloating', 'appetite'],
+      durationLabel: '12:00',
+      description:
+          'Agni, digestion, bloating, appetite changes and meal timing.',
+      thumbnailUrl: '',
+      publishedAt: null,
+      tags: const ['digestion', 'agni', 'bloating', 'appetite'],
     ),
     LibraryVideo(
       id: 'sleep',
       title: 'Ayurvedic Evening Routine for Better Sleep',
       youtubeVideoId: 'M7lc1UVf-VE',
-      durationLabel: '18 min',
-      transcript:
-          'A calming evening routine for sleep, restlessness, racing thoughts and nervous system support. Includes warm oil and regular bedtime.',
-      tags: ['sleep', 'restlessness', 'routine'],
-    ),
-    LibraryVideo(
-      id: 'herbs',
-      title: 'Everyday Herbs for Seasonal Wellness',
-      youtubeVideoId: 'ysz5S6PUM-U',
-      durationLabel: '15 min',
-      transcript:
-          'Common culinary herbs and spices are discussed for seasonal wellness, warmth, congestion and digestive comfort.',
-      tags: ['herbs', 'spices', 'congestion', 'wellness'],
+      durationLabel: '18:00',
+      description:
+          'A calming evening routine for sleep and nervous system support.',
+      thumbnailUrl: '',
+      publishedAt: null,
+      tags: const ['sleep', 'restlessness', 'routine'],
     ),
   ];
 
   @override
-  Future<List<LibraryVideo>> getVideos() async => _videos;
+  Future<LibraryPage> getVideos({String? pageToken}) async {
+    return LibraryPage(videos: _videos);
+  }
 
   @override
-  Future<List<LibraryVideo>> search(String query) async {
+  Future<LibraryPage> search(
+    String query, {
+    String? pageToken,
+  }) async {
     final normalized = query.trim().toLowerCase();
-    if (normalized.isEmpty) return _videos;
+    if (normalized.isEmpty) return getVideos();
 
-    return _videos.where((video) {
+    final videos = _videos.where((video) {
       final haystack = [
         video.title,
-        video.transcript,
+        video.description,
         ...video.tags,
       ].join(' ').toLowerCase();
       return normalized
           .split(RegExp(r'\s+'))
           .every((token) => haystack.contains(token));
     }).toList(growable: false);
+
+    return LibraryPage(videos: videos);
   }
 }

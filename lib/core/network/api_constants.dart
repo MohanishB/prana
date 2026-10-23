@@ -12,6 +12,14 @@ abstract final class ApiConstants {
   static const updateProfile = '/account/update_profile.php';
   static const changePassword = '/account/change_password.php';
   static const faqList = '/content/faq_list.php';
+  static const youtubeChannelSearch =
+      '/youtube_search/youtube_channel_search.php';
   static const requestTimeout = Duration(seconds: 30);
   static const staticDeviceToken = 'prana-static-device-token';
+  static const youtubeApiKey = String.fromEnvironment('YOUTUBE_API_KEY');
+  static const youtubeChannelHandle = '@dimplejangda_official';
+  static const libraryDataSource = String.fromEnvironment(
+    'LIBRARY_DATA_SOURCE',
+    defaultValue: 'backend',
+  );
 }
