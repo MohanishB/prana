@@ -292,5 +292,17 @@
   "errorLibraryConfiguration": "The video library is temporarily unavailable. Please try again later.",
   "librarySwipeForMore": "Swipe up or down for more videos",
   "libraryPlaybackUnavailable": "This video can’t be played inside the app.",
-  "libraryWatchOnYoutube": "Watch on YouTube"
+  "libraryWatchOnYoutube": "Watch on YouTube",
+  "librarySearching": "Searching…",
+  "libraryLoadingMore": "Loading more videos…",
+  "libraryExpandDescription": "Tap description to read more",
+  "libraryCollapseDescription": "Tap again to collapse",
+  "librarySearchComplete": "Search complete · {count, plural, =0{No results} =1{1 result loaded} other{{count} results loaded}}",
+  "@librarySearchComplete": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

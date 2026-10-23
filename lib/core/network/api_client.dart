@@ -36,6 +36,19 @@ class ApiClient {
         authenticated: authenticated,
       );
 
+  Future<Map<String, dynamic>> getRaw(
+    String path, {
+    Map<String, Object?> query = const {},
+    bool authenticated = true,
+  }) =>
+      _send(
+        'GET',
+        path,
+        query: query,
+        authenticated: authenticated,
+        validateEnvelope: false,
+      );
+
   Future<Map<String, dynamic>> post(
     String path, {
     Map<String, Object?> body = const {},
@@ -283,6 +296,7 @@ class ApiClient {
     Set<String> acceptedErrorCodes = const {},
     bool allowRefreshRetry = true,
     bool clearSessionOnTokenError = true,
+    bool validateEnvelope = true,
   }) async {
     if (!await _networkInfo.isConnected) {
       throw const AppException(AppErrorType.noInternet);
@@ -352,6 +366,13 @@ class ApiClient {
         throw const AppException(AppErrorType.invalidResponse);
       }
 
+      if (!validateEnvelope) {
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          return decoded;
+        }
+        throw AppException(_mapError(null, response.statusCode));
+      }
+
       final status = decoded['status'];
       if (status != true) {
         final code = decoded['error_code']?.toString();
@@ -368,6 +389,7 @@ class ApiClient {
             authenticated: authenticated,
             acceptedErrorCodes: acceptedErrorCodes,
             allowRefreshRetry: false,
+            validateEnvelope: validateEnvelope,
           );
         }
 

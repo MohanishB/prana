@@ -11,6 +11,7 @@ class LibraryFeedState extends Equatable {
     required this.query,
     this.nextPageToken,
     this.isLoadingMore = false,
+    this.expandedDescriptionVideoId,
   });
 
   final List<LibraryVideo> videos;
@@ -18,6 +19,7 @@ class LibraryFeedState extends Equatable {
   final String query;
   final String? nextPageToken;
   final bool isLoadingMore;
+  final String? expandedDescriptionVideoId;
 
   LibraryFeedState copyWith({
     List<LibraryVideo>? videos,
@@ -25,6 +27,8 @@ class LibraryFeedState extends Equatable {
     String? nextPageToken,
     bool clearNextPageToken = false,
     bool? isLoadingMore,
+    String? expandedDescriptionVideoId,
+    bool clearExpandedDescription = false,
   }) {
     return LibraryFeedState(
       videos: videos ?? this.videos,
@@ -33,6 +37,9 @@ class LibraryFeedState extends Equatable {
       nextPageToken:
           clearNextPageToken ? null : (nextPageToken ?? this.nextPageToken),
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      expandedDescriptionVideoId: clearExpandedDescription
+          ? null
+          : (expandedDescriptionVideoId ?? this.expandedDescriptionVideoId),
     );
   }
 
@@ -43,6 +50,7 @@ class LibraryFeedState extends Equatable {
         query,
         nextPageToken,
         isLoadingMore,
+        expandedDescriptionVideoId,
       ];
 }
 
@@ -63,11 +71,25 @@ class LibraryFeedCubit extends Cubit<LibraryFeedState> {
 
   void pageChanged(int index) {
     if (index < 0 || index >= state.videos.length) return;
-    emit(state.copyWith(currentIndex: index));
+    emit(
+      state.copyWith(
+        currentIndex: index,
+        clearExpandedDescription: true,
+      ),
+    );
 
     if (index >= state.videos.length - 3) {
       loadMore();
     }
+  }
+
+  void toggleDescription(String videoId) {
+    if (state.expandedDescriptionVideoId == videoId) {
+      emit(state.copyWith(clearExpandedDescription: true));
+      return;
+    }
+
+    emit(state.copyWith(expandedDescriptionVideoId: videoId));
   }
 
   Future<void> loadMore() async {

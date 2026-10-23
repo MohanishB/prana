@@ -10,6 +10,7 @@ class LibraryVideo extends Equatable {
     required this.thumbnailUrl,
     required this.publishedAt,
     this.tags = const [],
+    this.isShortOverride,
   });
 
   final String id;
@@ -20,9 +21,15 @@ class LibraryVideo extends Equatable {
   final String thumbnailUrl;
   final DateTime? publishedAt;
   final List<String> tags;
-
+  final bool? isShortOverride;
 
   bool get isShortForm {
+    // A backend `true` is authoritative, but `false` must not disable our
+    // presentation heuristic. Some regular YouTube uploads are still portrait
+    // videos and should keep the same Reels-style layout used by the direct
+    // YouTube implementation.
+    if (isShortOverride == true) return true;
+
     final normalizedTags = tags.map((tag) => tag.toLowerCase());
     if (normalizedTags.any(
       (tag) => tag == 'shorts' || tag == 'short' || tag.contains('#shorts'),
@@ -50,6 +57,7 @@ class LibraryVideo extends Equatable {
         thumbnailUrl,
         publishedAt,
         tags,
+        isShortOverride,
       ];
 }
 

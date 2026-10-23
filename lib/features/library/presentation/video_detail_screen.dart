@@ -53,6 +53,11 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       key: ValueKey(video.id),
                       video: video,
                       isActive: index == state.currentIndex,
+                      isDescriptionExpanded:
+                          state.expandedDescriptionVideoId == video.id,
+                      onToggleDescription: () => context
+                          .read<LibraryFeedCubit>()
+                          .toggleDescription(video.id),
                     );
                   },
                 ),
@@ -67,12 +72,24 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                   ),
                 ),
                 if (state.isLoadingMore)
-                  const Positioned(
+                  Positioned(
                     right: AppSpacing.md,
-                    bottom: AppSpacing.md,
-                    child: SizedBox.square(
-                      dimension: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                    top: AppSpacing.md,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.62),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(AppSpacing.sm),
+                        child: SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
               ],
@@ -88,11 +105,15 @@ class _LibraryFeedPage extends StatefulWidget {
   const _LibraryFeedPage({
     required this.video,
     required this.isActive,
+    required this.isDescriptionExpanded,
+    required this.onToggleDescription,
     super.key,
   });
 
   final LibraryVideo video;
   final bool isActive;
+  final bool isDescriptionExpanded;
+  final VoidCallback onToggleDescription;
 
   @override
   State<_LibraryFeedPage> createState() => _LibraryFeedPageState();
@@ -129,6 +150,7 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
         loop: true,
         enableCaption: true,
         controlsVisibleAtStart: false,
+        hideControls: false,
         useHybridComposition: true,
       ),
     );
@@ -145,6 +167,67 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
     final video = widget.video;
     final controller = _controller;
 
+    if (controller == null) {
+      return _buildFeedLayout(
+        context,
+        player: _VideoPoster(video: video),
+        controller: null,
+      );
+    }
+
+    final player = YoutubePlayer(
+      controller: controller,
+      aspectRatio: video.isShortForm ? 9 / 16 : 16 / 9,
+      showVideoProgressIndicator: false,
+      topActions: const [],
+      bottomActions: [
+        CurrentPosition(controller: controller),
+        ProgressBar(
+          controller: controller,
+          isExpanded: true,
+        ),
+        RemainingDuration(controller: controller),
+        FullScreenButton(controller: controller),
+      ],
+    );
+
+    if (video.isShortForm) {
+      return _buildFeedLayout(
+        context,
+        player: _PlayerWithErrorFallback(
+          controller: controller,
+          video: video,
+          player: player,
+        ),
+        controller: controller,
+      );
+    }
+
+    // youtube_player_flutter 9.x automatically enters fullscreen when a
+    // regular video is rotated to landscape when wrapped by the builder.
+    return YoutubePlayerBuilder(
+      player: player,
+      builder: (context, builtPlayer) {
+        return _buildFeedLayout(
+          context,
+          player: _PlayerWithErrorFallback(
+            controller: controller,
+            video: video,
+            player: builtPlayer,
+          ),
+          controller: controller,
+        );
+      },
+    );
+  }
+
+  Widget _buildFeedLayout(
+    BuildContext context, {
+    required Widget player,
+    required YoutubePlayerController? controller,
+  }) {
+    final video = widget.video;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final shortForm = video.isShortForm;
@@ -159,6 +242,41 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
             )
             .toDouble();
 
+        final isLandscape =
+            constraints.maxWidth > constraints.maxHeight && !shortForm;
+
+        if (isLandscape) {
+          // Natural device rotation should be reversible without entering the
+          // YouTube fullscreen mode, which can lock the platform orientation.
+          // In landscape we therefore make regular videos occupy the feed
+          // viewport directly and keep PRANA seek/fullscreen controls on top.
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              const ColoredBox(color: Colors.black),
+              Center(
+                child: AspectRatio(
+                  aspectRatio: playerAspectRatio,
+                  child: ColoredBox(
+                    color: Colors.black,
+                    child: player,
+                  ),
+                ),
+              ),
+              if (controller != null)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: _PlayerSeekControls(
+                    controller: controller,
+                    allowFullscreen: true,
+                  ),
+                ),
+            ],
+          );
+        }
+
         return Stack(
           fit: StackFit.expand,
           children: [
@@ -171,30 +289,7 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
                   aspectRatio: playerAspectRatio,
                   child: ColoredBox(
                     color: Colors.black,
-                    child: controller == null
-                        ? _VideoPoster(video: video)
-                        : ValueListenableBuilder<YoutubePlayerValue>(
-                            valueListenable: controller,
-                            builder: (context, value, _) {
-                              if (value.hasError) {
-                                return _PlaybackFallback(video: video);
-                              }
-
-                              return YoutubePlayer(
-                                controller: controller,
-                                aspectRatio: playerAspectRatio,
-                                showVideoProgressIndicator: true,
-                                progressIndicatorColor:
-                                    Theme.of(context).colorScheme.primary,
-                                bottomActions: const [
-                                  CurrentPosition(),
-                                  ProgressBar(isExpanded: true),
-                                  RemainingDuration(),
-                                  FullScreenButton(),
-                                ],
-                              );
-                            },
-                          ),
+                    child: player,
                   ),
                 ),
               ),
@@ -203,88 +298,281 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: _VideoMetadataOverlay(video: video),
+              child: _FeedBottomChrome(
+                video: video,
+                controller: controller,
+                isDescriptionExpanded: widget.isDescriptionExpanded,
+                onToggleDescription: widget.onToggleDescription,
+              ),
             ),
           ],
         );
       },
     );
   }
-
 }
 
-class _VideoMetadataOverlay extends StatelessWidget {
-  const _VideoMetadataOverlay({required this.video});
+class _PlayerWithErrorFallback extends StatelessWidget {
+  const _PlayerWithErrorFallback({
+    required this.controller,
+    required this.video,
+    required this.player,
+  });
 
+  final YoutubePlayerController controller;
   final LibraryVideo video;
+  final Widget player;
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              Colors.black.withValues(alpha: 0.72),
-              Colors.black,
-            ],
-          ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        player,
+        ValueListenableBuilder<YoutubePlayerValue>(
+          valueListenable: controller,
+          builder: (context, value, _) {
+            if (!value.hasError) return const SizedBox.shrink();
+            return _PlaybackFallback(video: video);
+          },
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.xl,
-            AppSpacing.md,
-            AppSpacing.lg,
+      ],
+    );
+  }
+}
+
+class _FeedBottomChrome extends StatelessWidget {
+  const _FeedBottomChrome({
+    required this.video,
+    required this.controller,
+    required this.isDescriptionExpanded,
+    required this.onToggleDescription,
+  });
+
+  final LibraryVideo video;
+  final YoutubePlayerController? controller;
+  final bool isDescriptionExpanded;
+  final VoidCallback onToggleDescription;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (controller != null)
+          _PlayerSeekControls(
+            controller: controller!,
+            allowFullscreen: !video.isShortForm,
           ),
+        _VideoMetadataOverlay(
+          video: video,
+          isExpanded: isDescriptionExpanded,
+          onToggleDescription: onToggleDescription,
+        ),
+      ],
+    );
+  }
+}
+
+class _PlayerSeekControls extends StatelessWidget {
+  const _PlayerSeekControls({
+    required this.controller,
+    required this.allowFullscreen,
+  });
+
+  final YoutubePlayerController controller;
+  final bool allowFullscreen;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.black.withValues(alpha: 0.72),
+      child: ValueListenableBuilder<YoutubePlayerValue>(
+        valueListenable: controller,
+        builder: (context, value, _) {
+          final duration = value.metaData.duration;
+          final durationMs = duration.inMilliseconds;
+          final positionMs = value.position.inMilliseconds
+              .clamp(0, durationMs > 0 ? durationMs : 0);
+          final maxMs = durationMs > 0 ? durationMs.toDouble() : 1.0;
+
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.sm,
+              AppSpacing.xs,
+              AppSpacing.sm,
+              AppSpacing.xs,
+            ),
+            child: Row(
+              children: [
+                PlayPauseButton(controller: controller),
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Slider(
+                    min: 0,
+                    max: maxMs,
+                    value: positionMs.toDouble().clamp(0, maxMs),
+                    onChanged: durationMs <= 0
+                        ? null
+                        : (newValue) {
+                            controller.seekTo(
+                              Duration(milliseconds: newValue.round()),
+                            );
+                          },
+                  ),
+                ),
+                if (allowFullscreen) ...[
+                  const SizedBox(width: AppSpacing.xs),
+                  FullScreenButton(
+                    controller: controller,
+                    color: Colors.white,
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _VideoMetadataOverlay extends StatelessWidget {
+  const _VideoMetadataOverlay({
+    required this.video,
+    required this.isExpanded,
+    required this.onToggleDescription,
+  });
+
+  final LibraryVideo video;
+  final bool isExpanded;
+  final VoidCallback onToggleDescription;
+
+  @override
+  Widget build(BuildContext context) {
+    final description = video.description;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.78),
+            Colors.black,
+          ],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+        ),
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 video.title,
-                maxLines: 2,
+                maxLines: isExpanded ? 4 : 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
               ),
-              if (video.description.isNotEmpty) ...[
+              if (description.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.xs),
-                Text(
-                  video.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.white70),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onToggleDescription,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isExpanded)
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight:
+                                MediaQuery.sizeOf(context).height * 0.38,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              description,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    height: 1.45,
+                                  ),
+                            ),
+                          ),
+                        )
+                      else
+                        Text(
+                          description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.white70),
+                        ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isExpanded
+                                ? Icons.keyboard_arrow_down
+                                : Icons.keyboard_arrow_up,
+                            size: 16,
+                            color: Colors.white54,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            isExpanded
+                                ? context.l10n.libraryCollapseDescription
+                                : context.l10n.libraryExpandDescription,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(color: Colors.white54),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.keyboard_double_arrow_up,
-                    size: 16,
-                    color: Colors.white54,
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      context.l10n.librarySwipeForMore,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelSmall
-                          ?.copyWith(color: Colors.white54),
+              if (!isExpanded) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.keyboard_double_arrow_up,
+                      size: 16,
+                      color: Colors.white54,
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        context.l10n.librarySwipeForMore,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall
+                            ?.copyWith(color: Colors.white54),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
@@ -390,4 +678,3 @@ class _PlaybackFallback extends StatelessWidget {
     );
   }
 }
-
