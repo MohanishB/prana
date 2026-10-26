@@ -5,14 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../../app/route_names.dart';
 import '../../../core/errors/app_error_localization.dart';
 import '../../../core/localization/app_localizations_x.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_gradients.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
-import '../../../core/widgets/status_pill.dart';
+import '../../workshops/presentation/workshop_list.dart';
 import '../bloc/masterclass_cubit.dart';
 import '../data/masterclass_models.dart';
 
@@ -49,7 +47,7 @@ class MasterclassScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   if (section == MasterclassSection.workshops)
-                    const _Workshops()
+                    const WorkshopList()
                   else
                     _Masterclasses(state: state),
                 ],
@@ -61,108 +59,6 @@ class MasterclassScreen extends StatelessWidget {
     );
   }
 }
-
-class _Workshops extends StatelessWidget {
-  const _Workshops();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return Column(
-      children: [
-        _WorkshopCard(
-          title: l10n.sevenDayGutReset,
-          subtitle: l10n.gutResetProgress,
-          status: l10n.day3Open,
-          progress: .29,
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _WorkshopCard(
-          title: l10n.threeDayImmunityBooster,
-          subtitle: l10n.immunityUnlock,
-          status: l10n.startsTomorrow,
-          progress: 0,
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _DoneCard(),
-      ],
-    );
-  }
-}
-
-class _WorkshopCard extends StatelessWidget {
-  const _WorkshopCard({
-    required this.title,
-    required this.subtitle,
-    required this.status,
-    required this.progress,
-  });
-
-  final String title;
-  final String subtitle;
-  final String status;
-  final double progress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            height: AppSizes.workshopHeroHeight,
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            alignment: Alignment.topLeft,
-            decoration: const BoxDecoration(gradient: AppGradients.hero),
-            child: StatusPill(
-              label: status,
-              background: AppColors.white,
-              foreground: AppColors.brick,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-                const SizedBox(height: AppSpacing.sm),
-                LinearProgressIndicator(value: progress),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DoneCard extends StatelessWidget {
-  const _DoneCard();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return Card(
-      child: ListTile(
-        title: Text(l10n.fiveDaySleepRitual),
-        subtitle: Text(l10n.sleepRitualCompleted),
-        trailing: StatusPill(
-          label: l10n.done,
-          background: AppColors.successContainer,
-          foreground: AppColors.success,
-          icon: Icons.check,
-        ),
-      ),
-    );
-  }
-}
-
 
 class _Masterclasses extends StatelessWidget {
   const _Masterclasses({required this.state});

@@ -7,6 +7,8 @@ abstract final class RouteNames {
   static const editProfile = 'editProfile';
   static const changePassword = 'changePassword';
   static const faqs = 'faqs';
+  static const workshopDetail = 'workshopDetail';
+  static const workshopDayVideo = 'workshopDayVideo';
   static const course = 'course';
   static const courseVideo = 'courseVideo';
   static const certificate = 'certificate';

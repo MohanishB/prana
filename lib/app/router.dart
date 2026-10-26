@@ -24,10 +24,12 @@ import '../features/library/presentation/library_screen.dart';
 import '../features/library/presentation/video_detail_screen.dart';
 import '../features/masterclass/bloc/course_detail_cubit.dart';
 import '../features/masterclass/bloc/masterclass_cubit.dart';
-import '../features/masterclass/data/masterclass_models.dart'; 
+import '../features/masterclass/data/masterclass_models.dart';
 import '../features/masterclass/presentation/course_screen.dart';
 import '../features/masterclass/presentation/course_video_screen.dart';
 import '../features/shell/presentation/prana_shell.dart';
+import '../features/workshops/presentation/workshop_day_video.dart';
+import '../features/workshops/presentation/workshop_detail.dart';
 import 'route_names.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -62,6 +64,28 @@ final GoRouter appRouter = GoRouter(
                 child: const MasterclassScreen(),
               ),
               routes: [
+                GoRoute(
+                  path: 'workshop/:bookingId',
+                  name: RouteNames.workshopDetail,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    final bookingId=int.tryParse(state.pathParameters['bookingId']??'');
+                    if(bookingId==null)return const Scaffold(body:Center(child:Text('Workshop not found')));
+                    return WorkshopDetailScreen(bookingId:bookingId);
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'day/:itemId',
+                      name: RouteNames.workshopDayVideo,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: (context, state) {
+                        final itemId=int.tryParse(state.pathParameters['itemId']??'');
+                        if(itemId==null)return const Scaffold(body:Center(child:Text('Day not found')));
+                        return WorkshopDayVideoScreen(itemId:itemId);
+                      },
+                    ),
+                  ],
+                ),
                 GoRoute(
                   path: 'course/:courseId',
                   name: RouteNames.course,
