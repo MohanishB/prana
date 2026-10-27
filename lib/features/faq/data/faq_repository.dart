@@ -13,7 +13,11 @@ final class ApiFaqRepository implements FaqRepository {
 
   @override
   Future<FaqCollection> getFaqs() async {
-    final json = await _api.get(ApiConstants.faqList);
+    // Static content: the public endpoint serves guests and students alike.
+    final json = await _api.get(
+      ApiConstants.catalogFaqList,
+      authenticated: false,
+    );
     final data = json['data'];
     if (data is! Map<String, dynamic>) {
       throw const FormatException('Missing FAQ data');

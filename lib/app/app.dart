@@ -16,13 +16,20 @@ class PranaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
+    return BlocListener<AuthBloc, AuthState>(
+      // Entering the app (login or "Skip login") always starts on Home.
+      // A token refresh re-emits AuthAuthenticated; that must not reset navigation.
+      listenWhen: (previous, current) =>
+          (current is AuthAuthenticated && previous is! AuthAuthenticated) ||
+          (current is AuthGuest && previous is! AuthGuest),
+      listener: (context, state) => appRouter.go('/home'),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, mode) {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
             final router = switch (authState) {
               AuthInitial() => loadingRouter,
-              AuthAuthenticated() => appRouter,
+              AuthAuthenticated() || AuthGuest() => appRouter,
               _ => loginRouter,
             };
             return MaterialApp.router(
@@ -43,7 +50,7 @@ class PranaApp extends StatelessWidget {
           },
         );
       },
-    );
+    ));
   }
 }
 

@@ -18,6 +18,10 @@ final class AuthLoginSubmitted extends AuthEvent {
   final String password;
 }
 final class AuthLogoutRequested extends AuthEvent { const AuthLogoutRequested(); }
+/// "Skip login": browse and buy without an account.
+final class AuthGuestContinued extends AuthEvent { const AuthGuestContinued(); }
+/// A guest asked to sign in (shows the login screen again).
+final class AuthLoginRequested extends AuthEvent { const AuthLoginRequested(); }
 final class _AuthSessionChanged extends AuthEvent {
   const _AuthSessionChanged(this.session);
   final UserSession? session;
@@ -30,6 +34,8 @@ final class AuthUnauthenticated extends AuthState {
   final AppException? error;
 }
 final class AuthLoading extends AuthState { const AuthLoading(); }
+/// Not signed in, browsing as a guest.
+final class AuthGuest extends AuthState { const AuthGuest(); }
 final class AuthAuthenticated extends AuthState {
   const AuthAuthenticated(this.session);
   final UserSession session;
@@ -40,6 +46,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStarted>(_onStarted);
     on<AuthLoginSubmitted>(_onLogin);
     on<AuthLogoutRequested>(_onLogout);
+    on<AuthGuestContinued>(_onGuestContinued);
+    on<AuthLoginRequested>(_onLoginRequested);
     on<_AuthSessionChanged>(_onSessionChanged);
     _subscription = _sessionManager.changes.listen(
       (session) => add(_AuthSessionChanged(session)),
@@ -78,10 +86,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _repository.logout();
   }
 
+  void _onGuestContinued(AuthGuestContinued event, Emitter<AuthState> emit) {
+    emit(const AuthGuest());
+  }
+
+  void _onLoginRequested(AuthLoginRequested event, Emitter<AuthState> emit) {
+    emit(const AuthUnauthenticated());
+  }
+
   void _onSessionChanged(
     _AuthSessionChanged event,
     Emitter<AuthState> emit,
   ) {
+    if (event.session == null && state is AuthGuest) return;
     emit(event.session == null
         ? const AuthUnauthenticated()
         : AuthAuthenticated(event.session!));

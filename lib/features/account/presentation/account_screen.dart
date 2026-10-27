@@ -21,17 +21,23 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // A guest has no profile, purchases or certificates: show a sign-in card instead.
+    final guest = context.watch<AuthBloc>().state is AuthGuest;
 
     return Scaffold(
       appBar: PranaAppBar(title: l10n.myAccount),
       body: RefreshIndicator(
-        onRefresh: context.read<AccountProfileCubit>().load,
+        onRefresh:
+            guest ? () async {} : context.read<AccountProfileCubit>().load,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: ResponsiveContent(
             child: Column(
               children: [
-                BlocBuilder<AccountProfileCubit, AccountProfileState>(
+                if (guest)
+                  const _GuestCard()
+                else
+                  BlocBuilder<AccountProfileCubit, AccountProfileState>(
                   builder: (context, state) {
                     return switch (state) {
                       AccountProfileLoading() => const Card(
@@ -59,40 +65,43 @@ class AccountScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _AccountGroup(
-                  children: [
-                    _AccountTile(
-                      icon: Icons.lock_outline,
-                      title: l10n.changePassword,
-                      onTap: () => context.pushNamed(RouteNames.changePassword),
-                    ),
-                    _AccountTile(
-                      icon: Icons.calendar_month_outlined,
-                      title: l10n.bookedConsultations,
-                      onTap: () => context.goNamed(RouteNames.consult),
-                    ),
-                    _AccountTile(
-                      icon: Icons.monitor_heart_outlined,
-                      title: l10n.liveQaSessions,
-                    ),
-                    _AccountTile(
-                      icon: Icons.workspace_premium_outlined,
-                      title: l10n.myCertificates,
-                      onTap: () => context.pushNamed(
-                        RouteNames.certificate,
-                        pathParameters: const {'certificateId': 'ah-4821'},
+                if (!guest) ...[
+                  _AccountGroup(
+                    children: [
+                      _AccountTile(
+                        icon: Icons.lock_outline,
+                        title: l10n.changePassword,
+                        onTap: () => context.pushNamed(RouteNames.changePassword),
                       ),
-                    ),
-                    _AccountTile(
-                      icon: Icons.notifications_none,
-                      title: l10n.reminders,
-                      subtitle: l10n.dailyAtSix,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
+                      _AccountTile(
+                        icon: Icons.calendar_month_outlined,
+                        title: l10n.bookedConsultations,
+                        onTap: () => context.goNamed(RouteNames.consult),
+                      ),
+                      _AccountTile(
+                        icon: Icons.monitor_heart_outlined,
+                        title: l10n.liveQaSessions,
+                      ),
+                      _AccountTile(
+                        icon: Icons.workspace_premium_outlined,
+                        title: l10n.myCertificates,
+                        onTap: () => context.pushNamed(
+                          RouteNames.certificate,
+                          pathParameters: const {'certificateId': 'ah-4821'},
+                        ),
+                      ),
+                      _AccountTile(
+                        icon: Icons.notifications_none,
+                        title: l10n.reminders,
+                        subtitle: l10n.dailyAtSix,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
                 _AccountGroup(
                   children: [
+                    // FAQs are public: guests can read them too.
                     _AccountTile(
                       icon: Icons.help_outline,
                       title: l10n.faqs,
@@ -118,16 +127,18 @@ class AccountScreen extends StatelessWidget {
                         context.read<ThemeCubit>().toggle(context),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.md),
-                TextButton(
-                  onPressed: () => context.read<AuthBloc>().add(
-                    const AuthLogoutRequested(),
+                if (!guest) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  TextButton(
+                    onPressed: () => context.read<AuthBloc>().add(
+                      const AuthLogoutRequested(),
+                    ),
+                    child: Text(
+                      l10n.signOut,
+                      style: const TextStyle(color: AppColors.brick),
+                    ),
                   ),
-                  child: Text(
-                    l10n.signOut,
-                    style: const TextStyle(color: AppColors.brick),
-                  ),
-                ),
+                ],
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   l10n.copyright,
@@ -136,6 +147,43 @@ class AccountScreen extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shown instead of the profile when browsing as a guest.
+class _GuestCard extends StatelessWidget {
+  const _GuestCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const CircleAvatar(
+                radius: AppSizes.avatarSmall / 2,
+                backgroundColor: AppColors.forest,
+                foregroundColor: AppColors.white,
+                child: Icon(Icons.person_outline),
+              ),
+              title: Text(l10n.guestAccountTitle),
+              subtitle: Text(l10n.guestAccountSubtitle),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            FilledButton(
+              onPressed: () =>
+                  context.read<AuthBloc>().add(const AuthLoginRequested()),
+              child: Text(l10n.signIn),
+            ),
+          ],
         ),
       ),
     );

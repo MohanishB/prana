@@ -14,11 +14,15 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.title,
     this.showBack = false,
     this.onBack,
+    this.actions = const [],
   });
 
   final String? title;
   final bool showBack;
   final VoidCallback? onBack;
+
+  /// Buttons shown before the profile avatar (for example the cart).
+  final List<Widget> actions;
 
   @override
   Size get preferredSize => const Size.fromHeight(AppSizes.appBarHeight);
@@ -40,7 +44,7 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.only(left: AppSpacing.lg),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: PranaLogo(),
+                child: PranaLogo(compact: true),
               ),
             ),
       title: Text(
@@ -49,6 +53,7 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
         overflow: TextOverflow.ellipsis,
       ),
       actions: [
+        ...actions,
         IconButton(
           onPressed: () => context.goNamed(RouteNames.account),
           tooltip: context.l10n.account,

@@ -304,5 +304,116 @@
         "type": "int"
       }
     }
-  }
+  },
+  "skipLogin": "Skip login",
+  "skipLoginHint": "You can look around and book without an account.",
+  "guestAccountTitle": "You're browsing as a guest",
+  "guestAccountSubtitle": "Sign in to see what you have booked.",
+  "friendFallback": "there",
+  "gutResetPrograms": "Gut Reset programs",
+  "programsYouCanBook": "Programs you can book",
+  "bookAnotherProgram": "Book a program",
+  "masterclassesYouCanBook": "Masterclasses you can book",
+  "availableToBook": "Available to book",
+  "nothingToBook": "Nothing is available to book right now.",
+  "consultListSubtitle": "Book a private session with the PRANA team.",
+  "dayOpenNow": "Day {day} of {total} · open now",
+  "@dayOpenNow": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "programDays": "{count}-day program",
+  "@programDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "buyNow": "Buy now",
+  "bookThisProgram": "Book this program",
+  "openMasterclass": "Open masterclass",
+  "alreadyBooked": "You have already booked this consultation.",
+  "programAlreadyBooked": "You already have this program running or booked.",
+  "notAvailableToBuy": "This masterclass is not available to buy right now.",
+  "bookingComingSoon": "Booking opens in the next update.",
+  "fullName": "Full name",
+  "fullNameRequired": "Enter your full name",
+  "countryRequired": "Select your country",
+  "mobileNumber": "Mobile number",
+  "mobileNumberIndia": "Enter a 10 digit mobile number",
+  "mobileNumberInvalid": "Enter a valid mobile number",
+  "addToCart": "Add to cart",
+  "goToCart": "Go to cart",
+  "cart": "Cart",
+  "cartEmpty": "Your cart is empty.",
+  "cartEmptyHint": "Add masterclasses to buy them together.",
+  "removeFromCart": "Remove",
+  "cartPriceNote": "The final price, with Level 1 and any discount, is shown at checkout.",
+  "cartItemsCount": "{count, plural, =1{1 masterclass} other{{count} masterclasses}}",
+  "@cartItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "proceedToCheckout": "Checkout",
+  "checkout": "Checkout",
+  "yourDetails": "Your details",
+  "couponCode": "Discount code",
+  "applyCoupon": "Apply",
+  "removeCoupon": "Remove",
+  "orderSummary": "Order summary",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "totalPayable": "Total payable",
+  "includedFree": "Included free",
+  "alreadyEnrolledNote": "Already enrolled",
+  "buyNowAmount": "Buy now · {amount}",
+  "@buyNowAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmFreeOrder": "Confirm order",
+  "checkingPrice": "Checking price…",
+  "testModeNotice": "Test mode: no payment is taken. Your order is recorded as paid so the flow can be checked.",
+  "orderSuccessTitle": "Order confirmed",
+  "orderSuccessBody": "Thank you! Your masterclass is ready.",
+  "newAccountTitle": "Your student account is ready",
+  "newAccountBody": "Sign in with {email} and the password {password}. Please change it after you sign in.",
+  "@newAccountBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      },
+      "password": {
+        "type": "String"
+      }
+    }
+  },
+  "existingAccountBody": "Sign in with your existing password to start learning.",
+  "checkEmailNote": "We have also emailed the details to {email}.",
+  "@checkEmailNote": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "emailNotSentNote": "We could not send the email, but your account is ready.",
+  "coursesAdded": "Added to your account",
+  "amountPaid": "Amount paid",
+  "testOrderBadge": "Test order",
+  "signInToStart": "Sign in to start",
+  "openMyMasterclasses": "Open my masterclasses"
 }

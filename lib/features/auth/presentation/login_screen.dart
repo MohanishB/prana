@@ -123,6 +123,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )
                               : Text(l10n.signIn),
                         ),
+                        const SizedBox(height: AppSpacing.sm),
+                        OutlinedButton(
+                          onPressed: loading
+                              ? null
+                              : () => context
+                                  .read<AuthBloc>()
+                                  .add(const AuthGuestContinued()),
+                          child: Text(l10n.skipLogin),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          l10n.skipLoginHint,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ],
                     ),
                   );

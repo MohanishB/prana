@@ -26,6 +26,9 @@ enum AppErrorType {
   fileNotDownloaded,
   videoPlayback,
   videoProviderUnsupported,
+  /// A purchase / booking rule the server explains in its own words
+  /// (already enrolled, invalid coupon, ...): shown as [AppException.serverMessage].
+  checkout,
   generic,
 }
 
@@ -35,10 +38,14 @@ class AppException implements Exception {
     this.cause,
     this.stackTrace,
     this.errorCode,
+    this.serverMessage,
   });
 
   final AppErrorType type;
   final Object? cause;
   final StackTrace? stackTrace;
   final String? errorCode;
+
+  /// The `message` the server sent (used by [AppErrorType.checkout]).
+  final String? serverMessage;
 }

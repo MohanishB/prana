@@ -35,12 +35,17 @@ class MasterclassState {
 }
 
 class MasterclassCubit extends Cubit<MasterclassState> {
-  MasterclassCubit(this._repository) : super(const MasterclassState());
+  /// [loadsCourses] is false for a guest: there are no purchased courses to load.
+  MasterclassCubit(this._repository, {bool loadsCourses = true})
+      : _loadsCourses = loadsCourses,
+        super(const MasterclassState());
   final MasterclassRepository _repository;
+  final bool _loadsCourses;
 
   void select(MasterclassSection section) {
     emit(state.copyWith(section: section, clearError: true));
-    if (section == MasterclassSection.masterclasses &&
+    if (_loadsCourses &&
+        section == MasterclassSection.masterclasses &&
         state.courses.isEmpty &&
         !state.loading) {
       loadCourses();

@@ -13,4 +13,10 @@ abstract final class RouteNames {
   static const courseVideo = 'courseVideo';
   static const certificate = 'certificate';
   static const libraryVideo = 'libraryVideo';
+  static const masterclassOffer = 'masterclassOffer';
+  static const consultationOffer = 'consultationOffer';
+  static const programOffer = 'programOffer';
+  static const masterclassCart = 'masterclassCart';
+  static const masterclassCheckout = 'masterclassCheckout';
+  static const masterclassOrderSuccess = 'masterclassOrderSuccess';
 }

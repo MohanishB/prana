@@ -38,6 +38,9 @@ extension AppErrorLocalization on AppException {
       AppErrorType.videoPlayback => context.l10n.errorVideoPlayback,
       AppErrorType.videoProviderUnsupported =>
         context.l10n.errorVideoProviderUnsupported,
+      AppErrorType.checkout => (serverMessage?.trim().isNotEmpty ?? false)
+          ? serverMessage!.trim()
+          : context.l10n.errorGeneric,
       AppErrorType.generic => context.l10n.errorGeneric,
     };
   }

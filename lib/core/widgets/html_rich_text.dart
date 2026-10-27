@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../text/html_plain_text.dart';
+
 class HtmlRichText extends StatelessWidget {
   const HtmlRichText(
     this.html, {
@@ -16,7 +18,7 @@ class HtmlRichText extends StatelessWidget {
     return Text.rich(
       TextSpan(
         style: baseStyle,
-        children: _parseHtml(html, baseStyle),
+        children: _parseHtml(decodeEscapedHtml(html), baseStyle),
       ),
     );
   }
@@ -48,6 +50,11 @@ List<InlineSpan> _parseHtml(String html, TextStyle? baseStyle) {
       if (normalized.startsWith('</')) {
         spans.add(TextSpan(text: '\n\n', style: styles.last));
       }
+    } else if (RegExp(r'^<h[1-6](\s[^>]*)?>$').hasMatch(normalized)) {
+      styles.add(styles.last?.copyWith(fontWeight: FontWeight.w700));
+    } else if (RegExp(r'^</h[1-6]>$').hasMatch(normalized)) {
+      if (styles.length > 1) styles.removeLast();
+      spans.add(TextSpan(text: '\n\n', style: styles.last));
     } else if (RegExp(r'^<li(\s[^>]*)?>$').hasMatch(normalized)) {
       spans.add(TextSpan(text: '• ', style: styles.last));
     } else if (normalized == '</li>') {
@@ -82,30 +89,4 @@ List<InlineSpan> _trimTrailingBreaks(List<InlineSpan> spans) {
   return spans;
 }
 
-String _decodeEntities(String value) {
-  const entities = <String, String>{
-    '&nbsp;': ' ',
-    '&amp;': '&',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&apos;': "'",
-    '&lt;': '<',
-    '&gt;': '>',
-    '&ndash;': '–',
-    '&mdash;': '—',
-    '&hellip;': '…',
-  };
-
-  var result = value;
-  for (final entry in entities.entries) {
-    result = result.replaceAll(entry.key, entry.value);
-  }
-
-  return result.replaceAllMapped(
-    RegExp(r'&#(\d+);'),
-    (match) {
-      final codePoint = int.tryParse(match.group(1) ?? '');
-      return codePoint == null ? match.group(0)! : String.fromCharCode(codePoint);
-    },
-  );
-}
+String _decodeEntities(String value) => decodeHtmlEntities(value);

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app/app.dart';
+import 'core/bloc/catalog_refresh_cubit.dart';
 import 'core/services/dependencies.dart';
 import 'core/theme/theme_cubit.dart';
 import 'features/auth/bloc/auth_bloc.dart';
+import 'features/masterclass/bloc/masterclass_cart_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,8 @@ Future<void> main() async {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(create: (_) => MasterclassCartCubit()),
+          BlocProvider(create: (_) => CatalogRefreshCubit()),
           BlocProvider(
             create: (_) => AuthBloc(
               dependencies.authRepository,

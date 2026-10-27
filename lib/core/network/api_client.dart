@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' show PlatformDispatcher;
 
 import '../errors/api_error_handler.dart';
 import '../errors/app_exception.dart';
@@ -258,6 +259,7 @@ class ApiClient {
         final exception = AppException(
           _mapError(code, response.statusCode),
           errorCode: code,
+          serverMessage: decoded['message']?.toString(),
         );
         if (authenticated && _isTokenError(code, response.statusCode)) {
           await _sessionManager.clear();
@@ -357,6 +359,12 @@ class ApiClient {
           ? ContentType('application', 'x-www-form-urlencoded', charset: 'utf-8')
           : ContentType.json;
       request.headers.set(HttpHeaders.acceptHeader, ContentType.json.mimeType);
+      // Region of the phone (e.g. IN): the server uses it only when the IP
+      // lookup that picks INR / USD pricing fails.
+      final region = PlatformDispatcher.instance.locale.countryCode;
+      if (region != null && region.isNotEmpty) {
+        request.headers.set('X-Device-Country', region);
+      }
       if (authenticated) {
         request.headers.set(
           HttpHeaders.authorizationHeader,
@@ -423,6 +431,7 @@ class ApiClient {
         final exception = AppException(
           _mapError(code, response.statusCode),
           errorCode: code,
+          serverMessage: decoded['message']?.toString(),
         );
         if (clearSessionOnTokenError &&
             authenticated &&
@@ -468,6 +477,7 @@ class ApiClient {
       'PROFILE_NOT_FOUND' => AppErrorType.profileNotFound,
       'CURRENT_PASSWORD_INCORRECT' => AppErrorType.currentPasswordIncorrect,
       'PHOTO_UPLOAD_ERROR' => AppErrorType.photoUpload,
+      _ when (code ?? '').startsWith('CHECKOUT_') => AppErrorType.checkout,
       _ when statusCode >= 500 => AppErrorType.server,
       _ => AppErrorType.generic,
     };

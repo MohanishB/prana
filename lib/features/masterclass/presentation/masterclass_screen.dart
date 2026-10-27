@@ -8,11 +8,16 @@ import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_error_view.dart';
+import '../../../core/widgets/offer_card.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../gut_reset/bloc/gut_reset_offers_cubit.dart';
 import '../../workshops/presentation/workshop_list.dart';
 import '../bloc/masterclass_cubit.dart';
+import '../bloc/masterclass_offers_cubit.dart';
 import '../data/masterclass_models.dart';
+import 'widgets/cart_action_button.dart';
 
 class MasterclassScreen extends StatelessWidget {
   const MasterclassScreen({super.key});
@@ -20,9 +25,14 @@ class MasterclassScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // A guest has no purchases: only the programs / masterclasses to book are shown.
+    final guest = context.watch<AuthBloc>().state is AuthGuest;
 
     return Scaffold(
-      appBar: PranaAppBar(title: l10n.masterclass),
+      appBar: PranaAppBar(
+        title: l10n.masterclass,
+        actions: const [CartActionButton()],
+      ),
       body: BlocBuilder<MasterclassCubit, MasterclassState>(
         builder: (context, state) {
           final section = state.section;
@@ -47,15 +57,163 @@ class MasterclassScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   if (section == MasterclassSection.workshops)
-                    const WorkshopList()
+                    _WorkshopsSection(guest: guest)
                   else
-                    _Masterclasses(state: state),
+                    _MasterclassesSection(guest: guest, state: state),
                 ],
               ),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+/// Workshops tab: the student's programs (logged in), then programs to book.
+class _WorkshopsSection extends StatelessWidget {
+  const _WorkshopsSection({required this.guest});
+  final bool guest;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!guest) const WorkshopList(),
+        BlocBuilder<GutResetOffersCubit, GutResetOffersState>(
+          builder: (context, state) {
+            final offers = state.bookable;
+            if (offers.isEmpty) {
+              if (state.loading) {
+                return const Padding(
+                  padding: EdgeInsets.all(AppSpacing.lg),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (state.error != null) {
+                return AppErrorView(
+                  message: state.error!.userMessage(context),
+                  retryLabel: l10n.retry,
+                  onRetry: context.read<GutResetOffersCubit>().load,
+                );
+              }
+              return guest
+                  ? Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Text(l10n.nothingToBook),
+                    )
+                  : const SizedBox.shrink();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SectionHeader(
+                  title: guest
+                      ? l10n.programsYouCanBook
+                      : l10n.bookAnotherProgram,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                CardColumn(
+                  children: [
+                    for (final offer in offers)
+                      OfferCard(
+                        icon: Icons.calendar_month_outlined,
+                        title: offer.title,
+                        subtitle: offer.scheduleText,
+                        price: offer.price.formatted,
+                        onTap: () => context.pushNamed(
+                          RouteNames.programOffer,
+                          pathParameters: {'type': offer.type},
+                          extra: offer,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+/// Masterclasses tab: the student's masterclasses (logged in), then ones to buy.
+class _MasterclassesSection extends StatelessWidget {
+  const _MasterclassesSection({required this.guest, required this.state});
+  final bool guest;
+  final MasterclassState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!guest) _Masterclasses(state: state),
+        BlocBuilder<MasterclassOffersCubit, MasterclassOffersState>(
+          builder: (context, offersState) {
+            final offers = offersState.offers;
+            if (offers.isEmpty) {
+              if (offersState.error != null) {
+                return AppErrorView(
+                  message: offersState.error!.userMessage(context),
+                  retryLabel: l10n.retry,
+                  onRetry: context.read<MasterclassOffersCubit>().load,
+                );
+              }
+              if (!offersState.loaded) {
+                return const Padding(
+                  padding: EdgeInsets.all(AppSpacing.lg),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              return guest
+                  ? Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Text(l10n.nothingToBook),
+                    )
+                  : const SizedBox.shrink();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: AppSpacing.lg),
+                SectionHeader(
+                  title: guest
+                      ? l10n.masterclassesYouCanBook
+                      : l10n.availableToBook,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                CardColumn(
+                  children: [
+                    for (final offer in offers)
+                      OfferCard(
+                        icon: Icons.school_outlined,
+                        title: offer.title,
+                        subtitle: offer.shortDescription,
+                        price: offer.price.formatted,
+                        onTap: () => context.pushNamed(
+                          RouteNames.masterclassOffer,
+                          pathParameters: {'courseId': '${offer.courseId}'},
+                        ),
+                      ),
+                  ],
+                ),
+                if (guest) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    l10n.masterclassesLifetime,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }

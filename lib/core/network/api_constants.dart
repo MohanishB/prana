@@ -9,6 +9,20 @@ abstract final class ApiConstants {
   static const workshopDayVideo = '/gut_reset/day_video.php';
   static const workshopMarkDayDone = '/gut_reset/mark_day_done.php';
   static const login = '/auth/login.php';
+  // Home data for a logged-in student, and the public (guest) catalogue.
+  static const home = '/home/home.php';
+  static const catalogHome = '/catalog/home.php';
+  // Public lists / details; a token is sent when the visitor is logged in.
+  static const catalogMasterclasses = '/catalog/masterclasses.php';
+  static const catalogMasterclassDetail = '/catalog/masterclass_detail.php';
+  static const catalogConsultations = '/catalog/consultations.php';
+  static const catalogConsultationDetail = '/catalog/consultation_detail.php';
+  static const catalogGutReset = '/catalog/gut_reset.php';
+  static const catalogCountries = '/catalog/countries.php';
+  static const catalogFaqList = '/catalog/faq_list.php';
+  // Masterclass checkout (guest or student).
+  static const masterclassQuote = '/checkout/masterclass_quote.php';
+  static const masterclassCreateOrder = '/checkout/masterclass_create_order.php';
   static const refreshToken = '/auth/refresh_token.php';
   static const myCourses = '/masterclasses/my_courses.php';
   static const courseDetail = '/masterclasses/course_detail.php';
@@ -18,7 +32,6 @@ abstract final class ApiConstants {
   static const accountProfile = '/account/profile.php';
   static const updateProfile = '/account/update_profile.php';
   static const changePassword = '/account/change_password.php';
-  static const faqList = '/content/faq_list.php';
   static const youtubeChannelSearch =
       '/youtube_search/youtube_channel_search.php';
   static const requestTimeout = Duration(seconds: 30);

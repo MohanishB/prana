@@ -1,3 +1,5 @@
+import '../../../core/text/html_plain_text.dart';
+
 
 Map<String,dynamic> workshopMap(Object? value) =>
     value is Map ? Map<String,dynamic>.from(value) : <String,dynamic>{};
@@ -15,8 +17,8 @@ class WorkshopDay {
   bool get countsForProgress => displayedState == 'over' || displayedState == 'watched';
   factory WorkshopDay.fromJson(Map<String,dynamic> j) => WorkshopDay(
     number:workshopInt(j['day_number']),itemId:workshopInt(j['gut_reset_workshop_booking_item_id']),
-    videoId:workshopInt(j['gut_reset_video_id']),title:workshopString(j['title']),
-    heading:workshopString(j['heading']),state:workshopString(j['state']),
+    videoId:workshopInt(j['gut_reset_video_id']),title:htmlToSingleLine(workshopString(j['title'])),
+    heading:htmlToSingleLine(workshopString(j['heading'])),state:workshopString(j['state']),
     canPlay:j['can_play']==true,startsAt:workshopString(j['start_date_time']),
     endsAt:workshopString(j['end_date_time']));
 }
@@ -29,7 +31,7 @@ class WorkshopProgram {
  final WorkshopDay? currentDay,nextUnlock;
  factory WorkshopProgram.fromJson(Map<String,dynamic> j) => WorkshopProgram(
  bookingId:workshopInt(j['gut_reset_workshop_booking_id']),
- title:workshopString(j['title']),subtitle:workshopString(j['sub_title']),
+ title:htmlToSingleLine(workshopString(j['title'])),subtitle:htmlToSingleLine(workshopString(j['sub_title'])),
  imageUrl:workshopString(j['image_url']),type:workshopString(j['gut_reset_type']),
  totalDays:workshopInt(j['total_days']),status:workshopString(j['status']),
  currentDay:j['current_day'] is Map ? WorkshopDay.fromJson(workshopMap(j['current_day'])) : null,
@@ -75,8 +77,8 @@ class WorkshopVideo {
  itemId:workshopInt(j['gut_reset_workshop_booking_item_id']),
  bookingId:workshopInt(j['gut_reset_workshop_booking_id']),
  day:workshopInt(j['day_number']),totalDays:workshopInt(j['total_days']),
- title:workshopString(j['title']),heading:workshopString(j['heading']),
- summary:workshopString(j['sub_description']),practiceHtml:workshopString(j['description_html']),
+ title:htmlToSingleLine(workshopString(j['title'])),heading:htmlToSingleLine(workshopString(j['heading'])),
+ summary:htmlToPlainText(workshopString(j['sub_description'])),practiceHtml:workshopString(j['description_html']),
  mainUrl:workshopString(j['main_video_url']).isNotEmpty?workshopString(j['main_video_url']):
  (workshopString(j['vimeo_video_url']).isNotEmpty?workshopString(j['vimeo_video_url']):workshopString(j['video_url'])),
  notes:j['notes'] is Map?WorkshopNote.fromJson(workshopMap(j['notes'])):null,

@@ -13,6 +13,7 @@ import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/downloadable_file_tile.dart';
+import '../../../core/widgets/html_rich_text.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../bloc/course_detail_cubit.dart';
@@ -858,20 +859,7 @@ class _HtmlLikeText extends StatelessWidget {
   final String html;
 
   @override
-  Widget build(BuildContext context) {
-    final plain = html
-        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'</p>', caseSensitive: false), '\n\n')
-        .replaceAll(RegExp(r'<li>', caseSensitive: false), '• ')
-        .replaceAll(RegExp(r'</li>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'<[^>]*>'), '')
-        .replaceAll('&nbsp;', ' ')
-        .replaceAll('&amp;', '&')
-        .replaceAll('&lt;', '<')
-        .replaceAll('&gt;', '>')
-        .trim();
-    return Text(plain, style: Theme.of(context).textTheme.bodyMedium);
-  }
+  Widget build(BuildContext context) => HtmlRichText(html);
 }
 
 class _MediaFallback extends StatelessWidget {

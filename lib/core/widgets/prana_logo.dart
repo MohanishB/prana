@@ -1,35 +1,28 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-import '../theme/app_sizes.dart';
-import '../theme/app_typography.dart';
-
+/// The Prana by Dimple Jangda logo. The artwork has a white wordmark for the
+/// dark theme and a forest green wordmark for the light theme.
 class PranaLogo extends StatelessWidget {
-  const PranaLogo({super.key, this.compact = false});
+  const PranaLogo({super.key, this.compact = false, this.height});
 
+  /// Smaller logo (app bar). Ignored when [height] is given.
   final bool compact;
+  final double? height;
+
+  static const _darkAsset = 'assets/images/prana_logo.png';
+  static const _lightAsset = 'assets/images/prana_logo_light.png';
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Semantics(
-      label: 'PRANA',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.eco_outlined,
-            color: AppColors.gold,
-            size: AppSizes.iconMedium,
-          ),
-          if (!compact)
-            Text(
-              'PRĀNA',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    letterSpacing: AppTypography.brandLetterSpacing,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-        ],
+      label: 'PRANA by Dimple Jangda',
+      image: true,
+      child: Image.asset(
+        dark ? _darkAsset : _lightAsset,
+        height: height ?? (compact ? 44 : 96),
+        fit: BoxFit.contain,
+        excludeFromSemantics: true,
       ),
     );
   }

@@ -1,3 +1,5 @@
+import '../../../core/text/html_plain_text.dart';
+
 class MasterclassCourse {
   const MasterclassCourse({
     required this.id,
@@ -28,8 +30,9 @@ class MasterclassCourse {
     final certificate = json['certificate'];
     return MasterclassCourse(
       id: (json['course_id'] as num).toInt(),
-      title: json['title']?.toString() ?? '',
-      shortDescription: json['short_description']?.toString() ?? '',
+      title: htmlToSingleLine(json['title']?.toString() ?? ''),
+      shortDescription:
+          htmlToSingleLine(json['short_description']?.toString() ?? ''),
       thumbnailUrl: json['thumbnail_url']?.toString() ?? '',
       bannerUrl: json['banner_url']?.toString() ?? '',
       totalChapters: (json['total_chapters'] as num?)?.toInt() ?? 0,
@@ -76,7 +79,7 @@ class CourseDetail {
 
   factory CourseDetail.fromJson(Map<String, dynamic> json) => CourseDetail(
         courseId: (json['course_id'] as num).toInt(),
-        title: json['course_title']?.toString() ?? '',
+        title: htmlToSingleLine(json['course_title']?.toString() ?? ''),
         intro: CourseIntro.fromJson(
           (json['course_intro'] as Map?)?.cast<String, dynamic>() ?? const {},
         ),
@@ -164,7 +167,7 @@ class CourseChapter {
 
   factory CourseChapter.fromJson(Map<String, dynamic> json) => CourseChapter(
         id: (json['chapter_id'] as num).toInt(),
-        title: json['title']?.toString() ?? '',
+        title: htmlToSingleLine(json['title']?.toString() ?? ''),
         introDescription: json['intro_desc']?.toString() ?? '',
         fullDescription: json['full_desc']?.toString() ?? '',
         position: (json['position'] as num?)?.toInt() ?? 0,
