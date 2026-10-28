@@ -30,6 +30,9 @@ import '../features/faq/bloc/faq_cubit.dart';
 import '../features/faq/presentation/faq_screen.dart';
 import '../features/gut_reset/bloc/gut_reset_offers_cubit.dart';
 import '../features/gut_reset/data/gut_reset_models.dart';
+import '../features/gut_reset/data/gut_reset_order_models.dart';
+import '../features/gut_reset/presentation/gut_reset_booked_screen.dart';
+import '../features/gut_reset/presentation/gut_reset_checkout_screen.dart';
 import '../features/gut_reset/presentation/program_offer_screen.dart';
 import '../features/home/bloc/home_cubit.dart';
 import '../features/home/presentation/home_screen.dart';
@@ -360,6 +363,32 @@ final GoRouter appRouter = GoRouter(
           );
         }
         return ProgramOfferScreen(offer: offer);
+      },
+    ),
+    GoRoute(
+      path: '/gut-reset-checkout/:type',
+      name: RouteNames.gutResetCheckout,
+      builder: (context, state) {
+        final offer = state.extra;
+        if (offer is! GutResetOffer) {
+          return Scaffold(
+            body: Center(child: Text(context.l10n.errorGeneric)),
+          );
+        }
+        return GutResetCheckoutScreen(offer: offer);
+      },
+    ),
+    GoRoute(
+      path: '/gut-reset-booked',
+      name: RouteNames.gutResetBooked,
+      builder: (context, state) {
+        final result = state.extra;
+        if (result is! GutResetOrderResult) {
+          return Scaffold(
+            body: Center(child: Text(context.l10n.errorGeneric)),
+          );
+        }
+        return GutResetBookedScreen(result: result);
       },
     ),
     GoRoute(

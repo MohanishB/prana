@@ -8,6 +8,8 @@ abstract interface class WorkshopRepository {
  Future<WorkshopDetail> getDetail(int bookingId);
  Future<WorkshopVideo> getDayVideo(int itemId);
  Future<void> markDayDone(int itemId);
+ /// 7-day program: opens Day 1 now (the other days open every 24 hours after).
+ Future<void> startDayOne(int bookingId);
 }
 final class ApiWorkshopRepository implements WorkshopRepository {
  ApiWorkshopRepository(this._api);
@@ -28,6 +30,10 @@ final class ApiWorkshopRepository implements WorkshopRepository {
  Future<WorkshopVideo> getDayVideo(int itemId) async {
    final response=await _api.get(ApiConstants.workshopDayVideo,query:{'gut_reset_workshop_booking_item_id':itemId});
    return WorkshopVideo.fromJson(workshopMap(response['data']));
+ }
+ @override
+ Future<void> startDayOne(int bookingId) async {
+   await _api.post(ApiConstants.workshopStartDayOne,body:{'gut_reset_workshop_booking_id':bookingId});
  }
  @override
  Future<void> markDayDone(int itemId) async {

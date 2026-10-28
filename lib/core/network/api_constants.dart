@@ -8,6 +8,7 @@ abstract final class ApiConstants {
   static const workshopDetail = '/gut_reset/program_detail.php';
   static const workshopDayVideo = '/gut_reset/day_video.php';
   static const workshopMarkDayDone = '/gut_reset/mark_day_done.php';
+  static const workshopStartDayOne = '/gut_reset/start_day_one.php';
   static const login = '/auth/login.php';
   // Home data for a logged-in student, and the public (guest) catalogue.
   static const home = '/home/home.php';
@@ -27,6 +28,7 @@ abstract final class ApiConstants {
   static const consultationCreateOrder = '/checkout/consultation_create_order.php';
   static const doshaQuestions = '/dosha/questions.php';
   static const doshaSubmit = '/dosha/submit.php';
+  static const gutResetCreateOrder = '/checkout/gut_reset_create_order.php';
   static const myConsultations = '/consultation/my_bookings.php';
   static const refreshToken = '/auth/refresh_token.php';
   static const myCourses = '/masterclasses/my_courses.php';

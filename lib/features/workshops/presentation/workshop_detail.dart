@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_names.dart';
+import '../../../core/bloc/catalog_refresh_cubit.dart';
 import '../../../core/files/downloadable_file.dart';
+import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/services/dependencies.dart';
 import '../../../core/utils/workshop_date_formatter.dart';
 import '../../../core/widgets/downloadable_file_tile.dart';
@@ -24,7 +26,9 @@ class WorkshopDetailScreen extends StatelessWidget {
 class _DetailBody extends StatelessWidget {
  const _DetailBody();
  @override
- Widget build(BuildContext context)=>BlocBuilder<WorkshopDetailCubit,WorkshopDetailState>(
+ Widget build(BuildContext context)=>BlocConsumer<WorkshopDetailCubit,WorkshopDetailState>(
+ listenWhen:(a,b)=>a.error!=b.error&&b.error!=null&&b.detail!=null,
+ listener:(context,state)=>ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(context.l10n.errorGeneric))),
  builder:(context,state)=>Scaffold(
   appBar:PranaAppBar(title:state.detail?.program.title??'Workshop',showBack:true),
   body:state.detail==null
@@ -46,7 +50,7 @@ class _DetailContent extends StatelessWidget {
  return DefaultTabController(length:2,child:ListView(padding:const EdgeInsets.symmetric(horizontal:12,vertical:20),children:[
   Row(children:[
     Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-      Text('DAY ${detail.currentDayNumber} OF ${detail.totalDays}',style:theme.textTheme.labelSmall?.copyWith(color:theme.colorScheme.primary)),
+      Text(detail.program.notStarted?context.l10n.programNotStarted.toUpperCase():'DAY ${detail.currentDayNumber} OF ${detail.totalDays}',style:theme.textTheme.labelSmall?.copyWith(color:theme.colorScheme.primary)),
       const SizedBox(height:8),
       Text('Your workshop journey',style:theme.textTheme.titleLarge),
     ])),
@@ -57,6 +61,10 @@ class _DetailContent extends StatelessWidget {
     ])),
   ]),
   const SizedBox(height:16),
+  if(detail.program.notStarted)...[
+   _StartDayOneCard(),
+   const SizedBox(height:16),
+  ],
   TabBar(tabs:const [Tab(text:'Daily videos'),Tab(text:'Notes & PDFs')],labelColor:theme.colorScheme.primary),
   SizedBox(height:MediaQuery.sizeOf(context).height*.66,child:TabBarView(children:[
    ListView(padding:const EdgeInsets.symmetric(vertical:12),children:[
@@ -78,6 +86,65 @@ class _DetailContent extends StatelessWidget {
  ]));
  }
 }
+/// 7-day program waiting to start: the student opens Day 1 when ready.
+class _StartDayOneCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.programNotStartedHint, style: theme.textTheme.bodyMedium),
+            const SizedBox(height: 12),
+            BlocBuilder<WorkshopDetailCubit, WorkshopDetailState>(
+              builder: (context, state) => FilledButton.icon(
+                onPressed: state.starting ? null : () => _start(context),
+                icon: state.starting
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.play_arrow_rounded),
+                label: Text(l10n.startDayOne),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _start(BuildContext context) async {
+    final l10n = context.l10n;
+    final cubit = context.read<WorkshopDetailCubit>();
+    final refresh = context.read<CatalogRefreshCubit>();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: Text(l10n.startDayOneConfirmTitle),
+        content: Text(l10n.startDayOneConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialog).pop(true),
+            child: Text(l10n.startDayOne),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await cubit.startDayOne();
+    refresh.refresh();
+  }
+}
+
 class _DayTile extends StatelessWidget {
   const _DayTile({required this.day});
 
@@ -99,6 +166,7 @@ class _DayTile extends StatelessWidget {
     final statusLabel = switch (status) {
       'open' => 'Open',
       'locked' => 'Locked',
+      'not_started' => context.l10n.programNotStarted,
       'watched' => 'Watched',
       'over' => 'Over',
       _ => status,

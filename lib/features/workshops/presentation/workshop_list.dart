@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/route_names.dart';
+import '../../../core/bloc/catalog_refresh_cubit.dart';
+import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/services/dependencies.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/workshop_date_formatter.dart';
@@ -17,7 +19,11 @@ class WorkshopList extends StatelessWidget {
         create: (context) =>
             WorkshopListCubit(context.read<AppDependencies>().workshopRepository)
               ..load(),
-        child: const _WorkshopListBody(),
+        // Reload after a booking or a "Start Day 1" elsewhere in the app.
+        child: BlocListener<CatalogRefreshCubit, int>(
+          listener: (context, _) => context.read<WorkshopListCubit>().load(),
+          child: const _WorkshopListBody(),
+        ),
       );
 }
 
@@ -82,9 +88,11 @@ class _ProgramCard extends StatelessWidget {
     final status = day?.displayedState ?? program.status.toLowerCase();
     final active = status == 'open';
     final statusColor = active ? scheme.primary : scheme.onSurfaceVariant;
-    final label = day == null
-        ? program.status
-        : 'Day ${day.number} · ${_statusText(status)}';
+    final label = program.notStarted
+        ? context.l10n.programNotStarted
+        : day == null
+            ? program.status
+            : 'Day ${day.number} · ${_statusText(status)}';
 
     return Card(
       elevation: 0,
@@ -159,7 +167,9 @@ class _ProgramCard extends StatelessWidget {
                           ?.copyWith(fontWeight: FontWeight.w700)),
                   const SizedBox(height: 6),
                   Text(
-                    '${program.totalDays}-day workshop · ${program.status}',
+                    program.notStarted
+                        ? '${program.totalDays}-day workshop · ${context.l10n.programNotStartedHint}'
+                        : '${program.totalDays}-day workshop · ${program.status}',
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: scheme.onSurfaceVariant),
                   ),

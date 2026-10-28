@@ -285,9 +285,11 @@ class _ProgramCard extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final next = program.nextUnlock;
-    final subtitle = next != null && program.status == 'upcoming'
-        ? WorkshopDateFormatter.nextDay(next.number, next.startsAt)
-        : l10n.programDays(program.totalDays);
+    final subtitle = program.notStarted
+        ? '${l10n.programNotStarted} · ${l10n.programNotStartedHint}'
+        : next != null && program.status == 'upcoming'
+            ? WorkshopDateFormatter.nextDay(next.number, next.startsAt)
+            : l10n.programDays(program.totalDays);
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),

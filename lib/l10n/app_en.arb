@@ -493,5 +493,22 @@
       }
     }
   },
-  "doshaRetake": "Take the quiz again"
+  "doshaRetake": "Take the quiz again",
+  "gutResetConfirmTitle": "Book now (test mode)?",
+  "gutResetConfirmBody": "No payment is taken. Your booking is recorded as paid so the flow can be checked.",
+  "gutResetBookedStarts": "Your program starts on {date}. Its days open on Friday, Saturday and Sunday.",
+  "@gutResetBookedStarts": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "gutResetBookedStartWhenReady": "Open Day 1 whenever you are ready. Each next day opens 24 hours after the one before.",
+  "openMyPrograms": "Open my programs",
+  "startDayOne": "Start Day 1",
+  "startDayOneConfirmTitle": "Start Day 1 now?",
+  "startDayOneConfirmBody": "Day 1 opens right away. Each next day opens 24 hours after the one before.",
+  "programNotStarted": "Not started",
+  "programNotStartedHint": "Tap Start Day 1 when you are ready."
 }

@@ -33,8 +33,8 @@ class WorkshopListCubit extends Cubit<WorkshopListState> {
  }
 }
 class WorkshopDetailState {
- const WorkshopDetailState({this.loading=false,this.detail,this.error});
- final bool loading;
+ const WorkshopDetailState({this.loading=false,this.starting=false,this.detail,this.error});
+ final bool loading,starting;
  final WorkshopDetail? detail;
  final String? error;
 }
@@ -46,6 +46,15 @@ class WorkshopDetailCubit extends Cubit<WorkshopDetailState> {
   emit(WorkshopDetailState(loading:true,detail:state.detail));
   try{emit(WorkshopDetailState(detail:await repository.getDetail(bookingId)));}
   catch(e){emit(WorkshopDetailState(detail:state.detail,error:e.toString()));}
+ }
+ /// "Start Day 1" of a 7-day booking, then reloads the program.
+ Future<void> startDayOne() async {
+  if(state.starting||state.detail==null)return;
+  emit(WorkshopDetailState(starting:true,detail:state.detail));
+  try{
+   await repository.startDayOne(bookingId);
+   emit(WorkshopDetailState(detail:await repository.getDetail(bookingId)));
+  }catch(e){emit(WorkshopDetailState(detail:state.detail,error:e.toString()));}
  }
 }
 class WorkshopVideoState {

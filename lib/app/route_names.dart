@@ -20,6 +20,8 @@ abstract final class RouteNames {
   static const consultationBooked = 'consultationBooked';
   static const consultationSchedule = 'consultationSchedule';
   static const myConsultations = 'myConsultations';
+  static const gutResetCheckout = 'gutResetCheckout';
+  static const gutResetBooked = 'gutResetBooked';
   static const doshaQuiz = 'doshaQuiz';
   static const doshaQuizResult = 'doshaQuizResult';
   static const masterclassCart = 'masterclassCart';

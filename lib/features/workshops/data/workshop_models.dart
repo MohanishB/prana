@@ -14,6 +14,7 @@ class WorkshopDay {
   final String title,heading,state,startsAt,endsAt;
   final bool canPlay;
   String get displayedState => state.toLowerCase() == 'missed' ? 'over' : state.toLowerCase();
+ bool get notStarted => displayedState == 'not_started';
   bool get countsForProgress => displayedState == 'over' || displayedState == 'watched';
   factory WorkshopDay.fromJson(Map<String,dynamic> j) => WorkshopDay(
     number:workshopInt(j['day_number']),itemId:workshopInt(j['gut_reset_workshop_booking_item_id']),
@@ -48,6 +49,10 @@ class WorkshopNote {
  itemId:j['gut_reset_workshop_booking_item_id']==null?null:workshopInt(j['gut_reset_workshop_booking_item_id']),
  title:workshopString(j['title']),available:j['available']==true,
  fileUrl:workshopString(j['file_url']),downloadUrl:workshopString(j['download_url']));
+}
+extension WorkshopProgramStatus on WorkshopProgram {
+ /// 7-day booking waiting for the student to tap "Start Day 1".
+ bool get notStarted => status.toLowerCase() == 'not_started';
 }
 class WorkshopDetail {
  const WorkshopDetail({required this.program,required this.days,required this.notes,required this.totalDays,required this.currentDayNumber});
