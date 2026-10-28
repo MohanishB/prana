@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/route_names.dart';
 import '../../../core/bloc/catalog_refresh_cubit.dart';
+import '../../../core/checkout/checkout_models.dart';
 import '../../../core/data/countries_cubit.dart';
 import '../../../core/errors/app_error_localization.dart';
 import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/services/dependencies.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/validation/app_validators.dart';
+import '../../../core/widgets/checkout_amount_row.dart';
+import '../../../core/widgets/checkout_coupon_section.dart';
 import '../../../core/widgets/checkout_details_form.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
@@ -244,8 +247,6 @@ class _CouponField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
     return BlocBuilder<MasterclassCheckoutCubit, MasterclassCheckoutState>(
       builder: (context, state) {
         final quote = state.quote;
@@ -255,109 +256,17 @@ class _CouponField extends StatelessWidget {
             quote.email.blocked) {
           return const SizedBox.shrink();
         }
-        final coupon = quote.coupon;
-        final applied = coupon != null && coupon.valid;
         return Padding(
           padding: const EdgeInsets.only(top: AppSpacing.lg),
-          child: applied
-              ? _AppliedCoupon(coupon: coupon, onRemove: onRemove)
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: controller,
-                            textCapitalization: TextCapitalization.characters,
-                            textInputAction: TextInputAction.done,
-                            onSubmitted: (_) => onApply(),
-                            decoration: InputDecoration(
-                              labelText: l10n.couponCode,
-                              prefixIcon: const Icon(Icons.sell_outlined),
-                              // A wrong code can be cleared again.
-                              suffixIcon: coupon == null
-                                  ? null
-                                  : IconButton(
-                                      tooltip: l10n.removeCoupon,
-                                      onPressed: onRemove,
-                                      icon: const Icon(Icons.delete_outline),
-                                    ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        // The theme makes buttons full width; inside a Row they
-                        // need a fixed width.
-                        Padding(
-                          padding: const EdgeInsets.only(top: AppSpacing.xxs),
-                          child: FilledButton.tonal(
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size(88, 48),
-                            ),
-                            onPressed: state.quoting ? null : onApply,
-                            child: Text(l10n.applyCoupon),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (coupon != null && coupon.message.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        coupon.message,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.error,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+          child: CheckoutCouponSection(
+            controller: controller,
+            coupon: quote.coupon,
+            busy: state.quoting,
+            onApply: onApply,
+            onRemove: onRemove,
+          ),
         );
       },
-    );
-  }
-}
-
-/// The applied coupon: its name and a bin to remove it (like the website).
-class _AppliedCoupon extends StatelessWidget {
-  const _AppliedCoupon({required this.coupon, required this.onRemove});
-
-  final CheckoutCoupon coupon;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final text = coupon.description.isEmpty
-        ? coupon.code
-        : '${coupon.code} · ${coupon.description}';
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.sell_outlined, color: theme.colorScheme.primary),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                '${l10n.couponCode}: $text',
-                style: theme.textTheme.bodyMedium,
-              ),
-            ),
-            IconButton(
-              tooltip: l10n.removeCoupon,
-              onPressed: onRemove,
-              icon: const Icon(Icons.delete_outline),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -415,14 +324,14 @@ class _SummarySection extends StatelessWidget {
                 const SizedBox(height: AppSpacing.sm),
                 for (final item in quote.items) _ItemRow(item: item),
                 const Divider(height: AppSpacing.lg),
-                _AmountRow(label: l10n.subtotal, value: quote.subtotal.formatted),
+                CheckoutAmountRow(label: l10n.subtotal, value: quote.subtotal.formatted),
                 if (quote.hasDiscount)
-                  _AmountRow(
+                  CheckoutAmountRow(
                     label: l10n.discount,
                     value: '-${quote.discount.formatted}',
                   ),
                 const SizedBox(height: AppSpacing.xxs),
-                _AmountRow(
+                CheckoutAmountRow(
                   label: l10n.totalPayable,
                   value: quote.payable.formatted,
                   strong: true,
@@ -487,32 +396,6 @@ class _ItemRow extends StatelessWidget {
                 : theme.textTheme.bodySmall,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AmountRow extends StatelessWidget {
-  const _AmountRow({
-    required this.label,
-    required this.value,
-    this.strong = false,
-  });
-
-  final String label;
-  final String value;
-  final bool strong;
-
-  @override
-  Widget build(BuildContext context) {
-    final style = strong
-        ? Theme.of(context).textTheme.titleMedium
-        : Theme.of(context).textTheme.bodyMedium;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(label, style: style), Text(value, style: style)],
       ),
     );
   }

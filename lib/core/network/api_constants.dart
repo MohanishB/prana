@@ -23,6 +23,11 @@ abstract final class ApiConstants {
   // Masterclass checkout (guest or student).
   static const masterclassQuote = '/checkout/masterclass_quote.php';
   static const masterclassCreateOrder = '/checkout/masterclass_create_order.php';
+  static const consultationQuote = '/checkout/consultation_quote.php';
+  static const consultationCreateOrder = '/checkout/consultation_create_order.php';
+  static const doshaQuestions = '/dosha/questions.php';
+  static const doshaSubmit = '/dosha/submit.php';
+  static const myConsultations = '/consultation/my_bookings.php';
   static const refreshToken = '/auth/refresh_token.php';
   static const myCourses = '/masterclasses/my_courses.php';
   static const courseDetail = '/masterclasses/course_detail.php';

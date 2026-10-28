@@ -2,7 +2,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../features/account/data/account_repository.dart';
 import '../../features/auth/data/auth_repository.dart';
+import '../../features/consult/data/consult_checkout_repository.dart';
 import '../../features/consult/data/consult_repository.dart';
+import '../../features/dosha_quiz/data/dosha_repository.dart';
 import '../../features/faq/data/faq_repository.dart';
 import '../../features/gut_reset/data/gut_reset_repository.dart';
 import '../../features/home/data/home_repository.dart';
@@ -33,6 +35,8 @@ class AppDependencies {
     required this.masterclassCheckoutRepository,
     required this.homeRepository,
     required this.consultRepository,
+    required this.consultCheckoutRepository,
+    required this.doshaRepository,
     required this.gutResetRepository,
     required this.countryRepository,
     required this.workshopRepository,
@@ -51,6 +55,8 @@ class AppDependencies {
   final MasterclassCheckoutRepository masterclassCheckoutRepository;
   final HomeRepository homeRepository;
   final ConsultRepository consultRepository;
+  final ConsultationCheckoutRepository consultCheckoutRepository;
+  final DoshaRepository doshaRepository;
   final GutResetRepository gutResetRepository;
   final CountryRepository countryRepository;
   final WorkshopRepository workshopRepository;
@@ -79,6 +85,9 @@ class AppDependencies {
           ApiMasterclassCheckoutRepository(api, sessionManager),
       homeRepository: ApiHomeRepository(api, sessionManager),
       consultRepository: ApiConsultRepository(api, sessionManager),
+      consultCheckoutRepository:
+          ApiConsultationCheckoutRepository(api, sessionManager),
+      doshaRepository: ApiDoshaRepository(api, sessionManager),
       gutResetRepository: ApiGutResetRepository(api, sessionManager),
       countryRepository: ApiCountryRepository(api),
       workshopRepository: ApiWorkshopRepository(api),

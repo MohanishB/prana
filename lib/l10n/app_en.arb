@@ -415,5 +415,83 @@
   "amountPaid": "Amount paid",
   "testOrderBadge": "Test order",
   "signInToStart": "Sign in to start",
-  "openMyMasterclasses": "Open my masterclasses"
+  "openMyMasterclasses": "Open my masterclasses",
+  "bookNow": "Book now",
+  "bookNowAmount": "Book now · {amount}",
+  "@bookNowAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmFreeBooking": "Confirm booking",
+  "consultationLabel": "Consultation",
+  "bookingConfirmedTitle": "Booking confirmed",
+  "bookingConfirmedBody": "Your consultation is booked. Next, choose your date and time.",
+  "scheduleNow": "Choose date and time",
+  "scheduleEmailSent": "We have emailed the link to schedule to {email}.",
+  "@scheduleEmailSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleEmailNotSent": "We could not send the email. Open My consultations any time to choose your date and time.",
+  "scheduleTitle": "Schedule your consultation",
+  "backToConsultations": "Back to consultations",
+  "myConsultations": "My consultations",
+  "noBookedConsultations": "You have not booked a consultation yet.",
+  "bookedOnDate": "Booked on {date}",
+  "@bookedOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduledFor": "Scheduled: {when}",
+  "@scheduledFor": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleNotReady": "The scheduling page is not ready yet. We will email you.",
+  "doshaQuiz": "Dosha Quiz",
+  "doshaQuizSubtitle": "Find your Prakriti: Vata, Pitta or Kapha",
+  "doshaQuestionOf": "Question {current} of {total}",
+  "@doshaQuestionOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "doshaBack": "Back",
+  "doshaDetailsTitle": "Almost done",
+  "doshaDetailsBody": "Enter your details to see your Prakriti result.",
+  "doshaGetResult": "Get your Prakriti result",
+  "doshaHi": "Hi {name},",
+  "@doshaHi": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "doshaYourDosha": "YOUR DOSHA : {dosha}",
+  "@doshaYourDosha": {
+    "placeholders": {
+      "dosha": {
+        "type": "String"
+      }
+    }
+  },
+  "doshaRetake": "Take the quiz again"
 }

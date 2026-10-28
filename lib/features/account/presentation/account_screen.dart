@@ -76,7 +76,7 @@ class AccountScreen extends StatelessWidget {
                       _AccountTile(
                         icon: Icons.calendar_month_outlined,
                         title: l10n.bookedConsultations,
-                        onTap: () => context.goNamed(RouteNames.consult),
+                        onTap: () => context.pushNamed(RouteNames.myConsultations),
                       ),
                       _AccountTile(
                         icon: Icons.monitor_heart_outlined,
@@ -101,7 +101,13 @@ class AccountScreen extends StatelessWidget {
                 ],
                 _AccountGroup(
                   children: [
-                    // FAQs are public: guests can read them too.
+                    // The Dosha quiz and FAQs are public: guests can open them too.
+                    _AccountTile(
+                      icon: Icons.spa_outlined,
+                      title: l10n.doshaQuiz,
+                      subtitle: l10n.doshaQuizSubtitle,
+                      onTap: () => context.pushNamed(RouteNames.doshaQuiz),
+                    ),
                     _AccountTile(
                       icon: Icons.help_outline,
                       title: l10n.faqs,

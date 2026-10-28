@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/route_names.dart';
 import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/services/dependencies.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/offer_page.dart';
 import '../bloc/consultation_detail_cubit.dart';
+import '../data/consult_models.dart';
 
 /// Consultation page (guest or student).
 class ConsultationOfferScreen extends StatelessWidget {
@@ -40,6 +43,7 @@ class _ConsultationOfferBody extends StatelessWidget {
           error: state.error,
           hasData: detail != null,
           onRetry: context.read<ConsultationDetailCubit>().load,
+          bottomBar: _BottomBar(detail: detail),
           content: (context) {
             final data = detail!;
             final offer = data.offer;
@@ -65,26 +69,55 @@ class _ConsultationOfferBody extends StatelessWidget {
                 OfferHtmlSection(title: '', html: data.descriptionHtml),
                 OfferHtmlSection(title: data.aboutTitle, html: data.aboutHtml),
                 OfferHtmlSection(title: data.termsTitle, html: data.termsHtml),
-                const SizedBox(height: AppSpacing.xl),
-                if (data.alreadyBooked)
-                  Text(
-                    l10n.alreadyBooked,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium,
-                  )
-                else
-                  FilledButton(
-                    onPressed: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(
-                      SnackBar(content: Text(l10n.bookingComingSoon)),
-                    ),
-                    child: Text(l10n.bookConsultation),
-                  ),
+                const SizedBox(height: AppSpacing.md),
               ],
             );
           },
         );
       },
+    );
+  }
+}
+
+/// "Book now", always visible at the bottom of the page.
+class _BottomBar extends StatelessWidget {
+  const _BottomBar({required this.detail});
+
+  /// Null while the page is loading: the button is shown but disabled.
+  final ConsultationOfferDetail? detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final data = detail;
+    if (data != null && data.alreadyBooked) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.alreadyBooked,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          FilledButton(
+            onPressed: () => context.pushNamed(RouteNames.myConsultations),
+            child: Text(l10n.myConsultations),
+          ),
+        ],
+      );
+    }
+    return FilledButton(
+      onPressed: data == null || !data.canBook
+          ? null
+          : () => context.pushNamed(
+                RouteNames.consultationCheckout,
+                pathParameters: {
+                  'consultationId': '${data.offer.consultationId}',
+                },
+              ),
+      child: Text(l10n.bookNow),
     );
   }
 }

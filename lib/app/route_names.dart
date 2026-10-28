@@ -16,6 +16,12 @@ abstract final class RouteNames {
   static const masterclassOffer = 'masterclassOffer';
   static const consultationOffer = 'consultationOffer';
   static const programOffer = 'programOffer';
+  static const consultationCheckout = 'consultationCheckout';
+  static const consultationBooked = 'consultationBooked';
+  static const consultationSchedule = 'consultationSchedule';
+  static const myConsultations = 'myConsultations';
+  static const doshaQuiz = 'doshaQuiz';
+  static const doshaQuizResult = 'doshaQuizResult';
   static const masterclassCart = 'masterclassCart';
   static const masterclassCheckout = 'masterclassCheckout';
   static const masterclassOrderSuccess = 'masterclassOrderSuccess';

@@ -15,8 +15,17 @@ import '../features/account/presentation/edit_profile_screen.dart';
 import '../features/auth/bloc/auth_bloc.dart';
 import '../features/certificate/presentation/certificate_screen.dart';
 import '../features/consult/bloc/consult_cubit.dart';
+import '../features/consult/bloc/my_consultations_cubit.dart';
+import '../features/consult/data/consult_checkout_models.dart';
 import '../features/consult/presentation/consult_screen.dart';
+import '../features/consult/presentation/consultation_booked_screen.dart';
+import '../features/consult/presentation/consultation_checkout_screen.dart';
 import '../features/consult/presentation/consultation_offer_screen.dart';
+import '../features/consult/presentation/consultation_schedule_screen.dart';
+import '../features/consult/presentation/my_consultations_screen.dart';
+import '../features/dosha_quiz/data/dosha_models.dart';
+import '../features/dosha_quiz/presentation/dosha_quiz_result_screen.dart';
+import '../features/dosha_quiz/presentation/dosha_quiz_screen.dart';
 import '../features/faq/bloc/faq_cubit.dart';
 import '../features/faq/presentation/faq_screen.dart';
 import '../features/gut_reset/bloc/gut_reset_offers_cubit.dart';
@@ -352,6 +361,76 @@ final GoRouter appRouter = GoRouter(
         }
         return ProgramOfferScreen(offer: offer);
       },
+    ),
+    GoRoute(
+      path: '/consultation-checkout/:consultationId',
+      name: RouteNames.consultationCheckout,
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters['consultationId'] ?? '');
+        if (id == null) {
+          return Scaffold(
+            body: Center(child: Text(context.l10n.errorGeneric)),
+          );
+        }
+        return ConsultationCheckoutScreen(consultationId: id);
+      },
+    ),
+    GoRoute(
+      path: '/consultation-booked',
+      name: RouteNames.consultationBooked,
+      builder: (context, state) {
+        final result = state.extra;
+        if (result is! ConsultationOrderResult) {
+          return Scaffold(
+            body: Center(child: Text(context.l10n.errorGeneric)),
+          );
+        }
+        return ConsultationBookedScreen(result: result);
+      },
+    ),
+    GoRoute(
+      path: '/consultation-schedule',
+      name: RouteNames.consultationSchedule,
+      builder: (context, state) {
+        final url = state.uri.queryParameters['url'];
+        if (url == null || url.isEmpty) {
+          return Scaffold(
+            body: Center(child: Text(context.l10n.errorGeneric)),
+          );
+        }
+        return ConsultationScheduleScreen(
+          url: url,
+          title: state.uri.queryParameters['title'],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/dosha-quiz',
+      name: RouteNames.doshaQuiz,
+      builder: (context, state) => const DoshaQuizScreen(),
+    ),
+    GoRoute(
+      path: '/dosha-quiz-result',
+      name: RouteNames.doshaQuizResult,
+      builder: (context, state) {
+        final result = state.extra;
+        if (result is! DoshaResult) {
+          return Scaffold(
+            body: Center(child: Text(context.l10n.errorGeneric)),
+          );
+        }
+        return DoshaQuizResultScreen(result: result);
+      },
+    ),
+    GoRoute(
+      path: '/my-consultations',
+      name: RouteNames.myConsultations,
+      builder: (context, state) => BlocProvider(
+        create: (_) => MyConsultationsCubit(
+          context.read<AppDependencies>().consultCheckoutRepository,
+        )..load(),
+        child: const MyConsultationsScreen(),
+      ),
     ),
     GoRoute(
       path: '/masterclass-cart',

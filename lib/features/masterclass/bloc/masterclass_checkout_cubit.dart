@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/checkout/checkout_models.dart';
 import '../../../core/errors/api_error_handler.dart';
 import '../../../core/errors/app_exception.dart';
 import '../data/masterclass_checkout_models.dart';

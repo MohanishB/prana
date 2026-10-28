@@ -1,3 +1,4 @@
+import '../../../core/checkout/checkout_models.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/api_data.dart';
