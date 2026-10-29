@@ -22,3 +22,9 @@
 - Workshop video fullscreen copies Masterclass's fullscreen scaffold, immersive landscape orientation and restoration in dispose; player adapter selection still comes from `main_video_url` and the shared factory.
 - Mark as Done persists through the API; completion state remains backend-authoritative, while circular progress is calculated from `over` and `watched` day counts.
 - No `setState`; only a StatefulWidget for platform UI cleanup, as in Masterclass.
+
+## Done in Steps 4–7
+- Programme list/detail with start-day, open/close times, payment-driven creation from the Gut Reset booking.
+
+## Next
+- Reminders for day opened / ending soon / missed (needs the scheduled job and server-side watched tracking).

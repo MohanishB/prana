@@ -8,3 +8,6 @@
 - No `setState`; asynchronous file state is owned by the shared file-download Cubit.
 
 - Certificate generation belongs to the masterclass course-detail flow. This feature continues to own/open/download already-generated certificate files and must not duplicate the generation API call.
+
+## Note (Steps 1–7)
+- Unchanged. A pushed message never links to a certificate yet (`openInboxRouteOn` has no certificate route).

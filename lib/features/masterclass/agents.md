@@ -59,3 +59,9 @@
 - Keep the existing certificate download/open service unchanged after generation; generation only refreshes the in-memory certificate metadata.
 - Course intro must expose a visible localized “View chapters” action that scrolls to the existing chapter section.
 - Selecting a chapter, or moving Previous/Next between chapters, must reset the course detail scroll position to the top.
+
+## Added in Steps 1–7
+- Offer page, cart (`MasterclassCartCubit`, in memory), checkout, success screen (new-account password). Repositories: `MasterclassOfferRepository`, `MasterclassCheckoutRepository`.
+- Coupon rule (from the website): shown only after the email is checked and only for a new email; changing the email clears it.
+- A guest's order also sends the phone's push token (when notifications are allowed); the server links it only to an account created by that order.
+- Payment is simulated by the server (`CHECKOUT_SIMULATE_PAYMENT`). Do not add Razorpay here until told.

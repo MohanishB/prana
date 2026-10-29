@@ -19,3 +19,6 @@
 - Player control UI is provider-neutral: Vimeo declares native controls, while network/MP4 declares custom controls, preventing duplicate overlays.
 
 - Added app-managed fullscreen with landscape/immersive system UI and back-to-exit-fullscreen behavior while preserving the same player/resume state.
+
+## Next
+- Decide Vimeo vs own server (the `gut_reset_vimeo_video_url` column exists), then add server progress.

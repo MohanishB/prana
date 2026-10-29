@@ -53,6 +53,9 @@ import '../features/masterclass/presentation/masterclass_checkout_screen.dart';
 import '../features/masterclass/presentation/masterclass_offer_screen.dart';
 import '../features/masterclass/presentation/masterclass_order_success_screen.dart';
 import '../features/masterclass/presentation/masterclass_screen.dart';
+import '../features/notifications/bloc/notification_badge_cubit.dart';
+import '../features/notifications/bloc/notifications_cubit.dart';
+import '../features/notifications/presentation/notifications_screen.dart';
 import '../features/shell/presentation/prana_shell.dart';
 import '../features/workshops/presentation/workshop_day_video.dart';
 import '../features/workshops/presentation/workshop_detail.dart';
@@ -459,6 +462,17 @@ final GoRouter appRouter = GoRouter(
           context.read<AppDependencies>().consultCheckoutRepository,
         )..load(),
         child: const MyConsultationsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/notifications',
+      name: RouteNames.notifications,
+      builder: (context, state) => BlocProvider(
+        create: (_) => NotificationsCubit(
+          context.read<AppDependencies>().notificationRepository,
+          context.read<NotificationBadgeCubit>(),
+        )..load(),
+        child: const NotificationsScreen(),
       ),
     ),
     GoRoute(

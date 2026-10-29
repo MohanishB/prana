@@ -510,5 +510,33 @@
   "startDayOneConfirmTitle": "Start Day 1 now?",
   "startDayOneConfirmBody": "Day 1 opens right away. Each next day opens 24 hours after the one before.",
   "programNotStarted": "Not started",
-  "programNotStartedHint": "Tap Start Day 1 when you are ready."
+  "programNotStartedHint": "Tap Start Day 1 when you are ready.",
+  "notifications": "Notifications",
+  "noNotifications": "No notifications yet.",
+  "markAllRead": "Mark all as read",
+  "notificationsLoadMore": "Load more",
+  "timeJustNow": "Just now",
+  "timeMinutesAgo": "{count} min ago",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pushPromptTitle": "Stay in the loop",
+  "pushPromptBody": "Get class reminders, booking updates and messages from Prana right on your phone.",
+  "pushPromptTurnOn": "Turn on",
+  "pushPromptNotNow": "Not now",
+  "pushOffTitle": "Notifications are off",
+  "pushOffNote": "To get reminders and updates, turn on notifications for Prana in your phone's settings.",
+  "pushBannerOpen": "Open",
+  "timeHoursAgo": "{count} h ago",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -22,3 +22,6 @@
 - [x] Keep login/session BLoC state synchronized through `SessionManager.changes`.
 - [x] Fall back to login when refresh is rejected terminally.
 - [x] Preserve working session behavior during transient connectivity/server failures.
+
+## Done in Steps 1–7
+- Guest mode, real push token at login, server logout, token delete.

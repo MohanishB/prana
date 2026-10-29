@@ -13,11 +13,17 @@ import '../../features/library/data/library_repository.dart';
 import '../../features/masterclass/data/masterclass_checkout_repository.dart';
 import '../../features/masterclass/data/masterclass_offer_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
+import '../../features/notifications/data/device_token_repository.dart';
+import '../../features/notifications/data/notification_repository.dart';
 import '../../features/workshops/data/workshop_repository.dart';
 import '../data/country_repository.dart';
 import '../files/file_download_service.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
+import '../push/firebase_push_client.dart';
+import '../push/push_client.dart';
+import '../push/push_preferences.dart';
+import '../push/push_token_service.dart';
 import '../session/session_manager.dart';
 import '../session/session_store.dart';
 import '../video/default_video_player_factory.dart';
@@ -40,6 +46,11 @@ class AppDependencies {
     required this.gutResetRepository,
     required this.countryRepository,
     required this.workshopRepository,
+    required this.notificationRepository,
+    required this.deviceTokenRepository,
+    required this.pushClient,
+    required this.pushPreferences,
+    required this.pushTokenService,
     required this.sessionManager,
     required this.fileDownloadService,
     required this.videoPlayerFactory,
@@ -60,6 +71,11 @@ class AppDependencies {
   final GutResetRepository gutResetRepository;
   final CountryRepository countryRepository;
   final WorkshopRepository workshopRepository;
+  final NotificationRepository notificationRepository;
+  final DeviceTokenRepository deviceTokenRepository;
+  final PushClient pushClient;
+  final PushPreferences pushPreferences;
+  final PushTokenService pushTokenService;
   final SessionManager sessionManager;
   final FileDownloadService fileDownloadService;
   final VideoPlayerFactory videoPlayerFactory;
@@ -69,6 +85,9 @@ class AppDependencies {
     final secureStorage = FlutterSecureStorage();
     final sessionManager = SessionManager(SecureSessionStore(secureStorage));
     final networkInfo = DefaultNetworkInfo();
+    final pushClient = FirebasePushClient();
+    final pushPreferences = SecurePushPreferences(secureStorage);
+    final pushTokenService = PushTokenService(pushClient, pushPreferences);
     final api = ApiClient(
       networkInfo: networkInfo,
       sessionManager: sessionManager,
@@ -77,20 +96,29 @@ class AppDependencies {
       libraryRepository: createLibraryRepository(api),
       accountRepository: ApiAccountRepository(api, sessionManager),
       faqRepository: ApiFaqRepository(api),
-      authRepository: ApiAuthRepository(api, sessionManager),
+      authRepository: ApiAuthRepository(api, sessionManager, pushTokenService),
       masterclassRepository: ApiMasterclassRepository(api),
       masterclassOfferRepository:
           ApiMasterclassOfferRepository(api, sessionManager),
-      masterclassCheckoutRepository:
-          ApiMasterclassCheckoutRepository(api, sessionManager),
+      masterclassCheckoutRepository: ApiMasterclassCheckoutRepository(
+        api,
+        sessionManager,
+        pushTokenService,
+      ),
       homeRepository: ApiHomeRepository(api, sessionManager),
       consultRepository: ApiConsultRepository(api, sessionManager),
       consultCheckoutRepository:
           ApiConsultationCheckoutRepository(api, sessionManager),
       doshaRepository: ApiDoshaRepository(api, sessionManager),
-      gutResetRepository: ApiGutResetRepository(api, sessionManager),
+      gutResetRepository:
+          ApiGutResetRepository(api, sessionManager, pushTokenService),
       countryRepository: ApiCountryRepository(api),
       workshopRepository: ApiWorkshopRepository(api),
+      notificationRepository: ApiNotificationRepository(api),
+      deviceTokenRepository: ApiDeviceTokenRepository(api),
+      pushClient: pushClient,
+      pushPreferences: pushPreferences,
+      pushTokenService: pushTokenService,
       sessionManager: sessionManager,
       fileDownloadService: LocalFileDownloadService(networkInfo: networkInfo),
       videoPlayerFactory: const DefaultVideoPlayerFactory(),

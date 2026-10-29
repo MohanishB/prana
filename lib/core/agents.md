@@ -82,3 +82,10 @@ External SDKs should be hidden behind interfaces where practical.
 - A `TOKEN_INVALID`/`TOKEN_MISSING` response may trigger one refresh-and-retry only; never create retry loops.
 - Clear the local session only for terminal refresh failures such as invalid token, inactive account, or expired refresh window.
 - Never log raw refresh tokens.
+
+## Added in Steps 1–7
+- `core/checkout` + `core/widgets/checkout_*`: shared checkout models, details form, coupon section and amount row used by masterclass, consultation and Gut Reset. Reuse them; do not copy.
+- `core/data/country_repository`: country list for checkout forms.
+- `core/push`: everything Firebase. Only `firebase_push_client.dart` may import `firebase_*`; the rest of the app uses the `PushClient` interface. See `core/push/agents.md`.
+- `core/widgets/notification_bell.dart` + `prana_app_bar.dart`: the bell shows on main screens for signed-in students only.
+- `core/network/api_constants.dart`: every endpoint path lives here. `staticDeviceToken` was removed in Step 7 (login sends the real push token or a `local-…` stand-in).

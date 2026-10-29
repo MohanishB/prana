@@ -54,3 +54,9 @@
 - Integrated certificate generation into course detail using the documented authenticated POST endpoint. On success, the existing course certificate metadata is replaced in memory so the established download/open flow becomes available immediately.
 - Added a localized “View chapters” action near the course intro that smoothly scrolls to the chapter list.
 - Chapter selection and Previous/Next chapter navigation now return the course detail scroll position to the top.
+
+## Done in Steps 1–7
+- Offer/detail pages, cart, checkout with coupon, simulated payment, list refresh after purchase (`CatalogRefreshCubit`), inbox + push on payment.
+
+## Next
+- Native Razorpay when the owner says so.

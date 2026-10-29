@@ -22,3 +22,8 @@
 - Workshop video fullscreen copies Masterclass's fullscreen scaffold, immersive landscape orientation and restoration in dispose; player adapter selection still comes from `main_video_url` and the shared factory.
 - Mark as Done persists through the API; completion state remains backend-authoritative, while circular progress is calculated from `over` and `watched` day counts.
 - No `setState`; only a StatefulWidget for platform UI cleanup, as in Masterclass.
+
+## Added in Steps 4–7
+- Workshops are the Gut Reset programmes of the student (`gut_reset/my_programs.php`, `program_detail.php`). Statuses: not_started (7-day until "Start Day 1"), upcoming, running, completed.
+- "Start Day 1" calls `gut_reset/start_day_one.php` after a confirm dialog; lists reload through `CatalogRefreshCubit`.
+- A push/inbox message with route `program:<booking id>` opens `RouteNames.workshopDetail`.

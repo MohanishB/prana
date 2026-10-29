@@ -57,3 +57,9 @@
 - [x] Persist refreshed token/expiry while retaining student profile/session metadata.
 - [x] Clear the session on terminal refresh failures.
 - [x] Redact refresh token values in API logs.
+
+## Done in Steps 1–7
+- Shared checkout widgets/models, country data, notification bell, push client/token service/preferences.
+
+## Next
+- Server-side video progress (replace the local-only `video_progress_store`) once the video host is chosen.

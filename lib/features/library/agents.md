@@ -42,3 +42,6 @@
 - Do not override `YoutubePlayerBuilder.onExitFullScreen` orientation in the feed; package fullscreen orientation callbacks can fire during rebuilds and cause an immediate return to portrait on some devices.
 - Keep a PRANA-owned seek slider bound directly to `YoutubePlayerController` values so its thumb follows playback time continuously and seeking remains independent of the description overlay.
 - Regular videos use reversible orientation-aware landscape presentation on natural device rotation; do not force YouTube fullscreen on sensor rotation because its fullscreen mode may lock orientation. The explicit fullscreen button remains available.
+
+## Note (Steps 1–7)
+- Unchanged by the steps above.

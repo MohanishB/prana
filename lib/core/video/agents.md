@@ -19,3 +19,6 @@
 - Vimeo uses native Vimeo controls only. Network/MP4 uses the app's custom Flutter controls.
 
 - Fullscreen is app-managed for reliability; do not re-enable Vimeo HTML fullscreen. Preserve playback/resume state across fullscreen transitions.
+
+## Note (Step 7 planning)
+- Resume position is still local to the phone. A server-side `watched`/position API is planned (save every 10–15 s, watched at ~90–95 %); it also unlocks "day opened but not watched" reminders. Not built.

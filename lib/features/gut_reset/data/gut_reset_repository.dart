@@ -1,8 +1,10 @@
 import '../../../core/checkout/checkout_models.dart';
+import '../../../core/device/device_info.dart';
 import '../../../core/models/json_readers.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/api_data.dart';
+import '../../../core/push/push_token_service.dart';
 import '../../../core/session/session_manager.dart';
 import 'gut_reset_models.dart';
 import 'gut_reset_order_models.dart';
@@ -19,10 +21,11 @@ abstract interface class GutResetRepository {
 }
 
 final class ApiGutResetRepository implements GutResetRepository {
-  ApiGutResetRepository(this._api, this._sessionManager);
+  ApiGutResetRepository(this._api, this._sessionManager, this._pushTokens);
 
   final ApiClient _api;
   final SessionManager _sessionManager;
+  final PushTokenService _pushTokens;
 
   @override
   Future<List<GutResetOffer>> getOffers() async {
@@ -41,10 +44,14 @@ final class ApiGutResetRepository implements GutResetRepository {
     required String type,
     CheckoutDetails? details,
   }) async {
+    final loggedIn = _sessionManager.current != null;
+    // A guest's phone token lets the server send the payment-confirmation push to the
+    // new account. A signed-in student's phone is already known.
+    final deviceToken = loggedIn ? null : await _pushTokens.tokenIfAllowed();
     final data = await postData(
       _api,
       ApiConstants.gutResetCreateOrder,
-      authenticated: _sessionManager.current != null,
+      authenticated: loggedIn,
       body: {
         'type': type,
         if (details != null) ...{
@@ -52,6 +59,10 @@ final class ApiGutResetRepository implements GutResetRepository {
           'email': details.email,
           'country_id': details.countryId,
           'phone': details.phone,
+        },
+        if (deviceToken != null) ...{
+          'device_token': deviceToken,
+          'device_type': AppDeviceInfo.type,
         },
       },
     );

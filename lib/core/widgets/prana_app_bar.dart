@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/route_names.dart';
 import '../localization/app_localizations_x.dart';
+import '../services/dependencies.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
+import 'notification_bell.dart';
 import 'prana_logo.dart';
 import 'session_avatar.dart';
 
@@ -29,6 +32,9 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The inbox bell is for signed-in students on the main screens (not guests, not detail screens).
+    final showBell = !showBack &&
+        context.read<AppDependencies>().sessionManager.current != null;
     return AppBar(
       automaticallyImplyLeading: false,
       leadingWidth: showBack
@@ -54,6 +60,7 @@ class PranaAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         ...actions,
+        if (showBell) const NotificationBell(),
         IconButton(
           onPressed: () => context.goNamed(RouteNames.account),
           tooltip: context.l10n.account,

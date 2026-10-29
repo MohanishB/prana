@@ -2,6 +2,7 @@ import '../../../core/device/device_info.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
+import '../../../core/push/push_token_service.dart';
 import '../../../core/session/session_manager.dart';
 import '../../../core/session/user_session.dart';
 import 'auth_models.dart';
@@ -13,10 +14,11 @@ abstract interface class AuthRepository {
 }
 
 final class ApiAuthRepository implements AuthRepository {
-  ApiAuthRepository(this._api, this._sessionManager);
+  ApiAuthRepository(this._api, this._sessionManager, this._pushTokens);
 
   final ApiClient _api;
   final SessionManager _sessionManager;
+  final PushTokenService _pushTokens;
 
   @override
   Future<UserSession?> restoreSession() async {
@@ -41,7 +43,7 @@ final class ApiAuthRepository implements AuthRepository {
     final request = LoginRequest(
       email: email.trim(),
       password: password,
-      deviceToken: ApiConstants.staticDeviceToken,
+      deviceToken: await _pushTokens.tokenForLogin(),
       deviceType: AppDeviceInfo.type,
     );
     final json = await _api.post(
@@ -53,8 +55,31 @@ final class ApiAuthRepository implements AuthRepository {
     await _sessionManager.setSession(response.session);
   }
 
+  /// Signs out: tells the server to stop sending pushes to this phone, forgets the push
+  /// token, then clears the session. Nothing here can stop the sign-out.
   @override
-  Future<void> logout() => _sessionManager.clear();
+  Future<void> logout() async {
+    final session = _sessionManager.current;
+    if (session != null) {
+      try {
+        final token = await _pushTokens.currentToken();
+        await _api
+            .post(
+              ApiConstants.logout,
+              body: {
+                'student_id': session.studentId,
+                if (token != null) 'device_token': token,
+              },
+            )
+            .timeout(const Duration(seconds: 6));
+      } on Object {
+        // Signing out must work offline too.
+      }
+    }
+    // Session first: when the token is replaced below, nothing may register the new one.
+    await _sessionManager.clear();
+    await _pushTokens.forget();
+  }
 
   bool _isTransientRefreshError(AppException error) =>
       error.type == AppErrorType.noInternet ||

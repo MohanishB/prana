@@ -1,7 +1,9 @@
 import '../../../core/checkout/checkout_models.dart';
+import '../../../core/device/device_info.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/api_data.dart';
+import '../../../core/push/push_token_service.dart';
 import '../../../core/session/session_manager.dart';
 import 'masterclass_checkout_models.dart';
 
@@ -25,10 +27,15 @@ abstract interface class MasterclassCheckoutRepository {
 
 final class ApiMasterclassCheckoutRepository
     implements MasterclassCheckoutRepository {
-  ApiMasterclassCheckoutRepository(this._api, this._sessionManager);
+  ApiMasterclassCheckoutRepository(
+    this._api,
+    this._sessionManager,
+    this._pushTokens,
+  );
 
   final ApiClient _api;
   final SessionManager _sessionManager;
+  final PushTokenService _pushTokens;
 
   bool get _loggedIn => _sessionManager.current != null;
 
@@ -60,6 +67,9 @@ final class ApiMasterclassCheckoutRepository
     required CheckoutDetails details,
     required String couponCode,
   }) async {
+    // A guest's phone token lets the server send the payment-confirmation push to the
+    // new account. A signed-in student's phone is already known.
+    final deviceToken = _loggedIn ? null : await _pushTokens.tokenIfAllowed();
     final data = await postData(
       _api,
       ApiConstants.masterclassCreateOrder,
@@ -72,6 +82,10 @@ final class ApiMasterclassCheckoutRepository
         'course_ids': courseIds,
         'mode': mode.apiValue,
         'coupon_code': couponCode,
+        if (deviceToken != null) ...{
+          'device_token': deviceToken,
+          'device_type': AppDeviceInfo.type,
+        },
       },
     );
     return parseData(() => MasterclassOrderResult.fromJson(data));

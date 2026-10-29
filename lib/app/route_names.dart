@@ -27,4 +27,5 @@ abstract final class RouteNames {
   static const masterclassCart = 'masterclassCart';
   static const masterclassCheckout = 'masterclassCheckout';
   static const masterclassOrderSuccess = 'masterclassOrderSuccess';
+  static const notifications = 'notifications';
 }

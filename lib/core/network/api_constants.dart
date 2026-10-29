@@ -10,6 +10,8 @@ abstract final class ApiConstants {
   static const workshopMarkDayDone = '/gut_reset/mark_day_done.php';
   static const workshopStartDayOne = '/gut_reset/start_day_one.php';
   static const login = '/auth/login.php';
+  static const logout = '/auth/logout.php';
+  static const devicesRegister = '/devices/register.php';
   // Home data for a logged-in student, and the public (guest) catalogue.
   static const home = '/home/home.php';
   static const catalogHome = '/catalog/home.php';
@@ -30,6 +32,9 @@ abstract final class ApiConstants {
   static const doshaSubmit = '/dosha/submit.php';
   static const gutResetCreateOrder = '/checkout/gut_reset_create_order.php';
   static const myConsultations = '/consultation/my_bookings.php';
+  static const notificationsList = '/notifications/list.php';
+  static const notificationsUnreadCount = '/notifications/unread_count.php';
+  static const notificationsMarkRead = '/notifications/mark_read.php';
   static const refreshToken = '/auth/refresh_token.php';
   static const myCourses = '/masterclasses/my_courses.php';
   static const courseDetail = '/masterclasses/course_detail.php';
@@ -42,7 +47,6 @@ abstract final class ApiConstants {
   static const youtubeChannelSearch =
       '/youtube_search/youtube_channel_search.php';
   static const requestTimeout = Duration(seconds: 30);
-  static const staticDeviceToken = 'prana-static-device-token';
   static const youtubeApiKey = String.fromEnvironment('YOUTUBE_API_KEY');
   static const youtubeChannelHandle = '@dimplejangda_official';
   static const libraryDataSource = String.fromEnvironment(

@@ -15,3 +15,8 @@
 - Startup restoration refreshes the token before emitting the authenticated state when network access is available.
 - Transient refresh failures may keep the locally stored session so the app can recover when connectivity returns.
 - Terminal refresh failures must resolve to the unauthenticated/login state.
+
+## Added in Steps 1–7
+- `AuthGuest` ("Skip login") exists beside `AuthAuthenticated`; the bell, inbox and My programs need a student.
+- Login sends a real FCM token (`PushTokenService.tokenForLogin`) or a `local-<install id>` stand-in. The server never pushes to `local-…`.
+- Logout (`ApiAuthRepository.logout`): calls `/auth/logout.php` (switches this phone off), clears the session, then deletes the FCM token. Order matters: session first, so a refreshed token cannot be registered to the old student. Sign-out must work offline.

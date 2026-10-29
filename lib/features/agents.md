@@ -34,3 +34,6 @@ Recommended dependency direction:
 Before adding a widget/helper/model, check whether an equivalent already exists.
 Prefer composition and shared abstractions over copied screen code.
 - FAQ lives in `features/faq` and follows the standard data/BLoC/presentation split.
+
+## Feature map (Steps 1–7)
+`account`, `auth`, `certificate`, `consult`, `dosha_quiz`, `faq`, `gut_reset`, `home`, `library`, `masterclass`, `notifications`, `shell`, `workshops`. Each has its own `agents.md` / `plan.md`. Guests can use home, masterclass/consult/gut_reset offers and checkout, dosha_quiz and faq; everything else needs a signed-in student.

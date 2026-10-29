@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "657817159577",
+    "project_id": "prana-academy",
+    "storage_bucket": "prana-academy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657817159577:android:c3b833a52f321692b2b508",
+        "android_client_info": {
+          "package_name": "com.pranabydimpleacademy.prana"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDloaBQV-gOn5RVe2N6eekAJWfnQ5Vqc9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
