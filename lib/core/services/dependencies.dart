@@ -29,6 +29,7 @@ import '../session/session_store.dart';
 import '../video/default_video_player_factory.dart';
 import '../video/video_player_factory.dart';
 import '../video/video_progress_store.dart';
+import '../video/video_watch_repository.dart';
 
 class AppDependencies {
   const AppDependencies({
@@ -55,6 +56,7 @@ class AppDependencies {
     required this.fileDownloadService,
     required this.videoPlayerFactory,
     required this.videoProgressStore,
+    required this.videoWatchRepository,
   });
 
   final LibraryRepository libraryRepository;
@@ -80,6 +82,7 @@ class AppDependencies {
   final FileDownloadService fileDownloadService;
   final VideoPlayerFactory videoPlayerFactory;
   final VideoProgressStore videoProgressStore;
+  final VideoWatchRepository videoWatchRepository;
 
   factory AppDependencies.bootstrap() {
     final secureStorage = FlutterSecureStorage();
@@ -123,6 +126,7 @@ class AppDependencies {
       fileDownloadService: LocalFileDownloadService(networkInfo: networkInfo),
       videoPlayerFactory: const DefaultVideoPlayerFactory(),
       videoProgressStore: LocalVideoProgressStore(),
+      videoWatchRepository: ApiVideoWatchRepository(api),
     );
   }
 }

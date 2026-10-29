@@ -28,3 +28,6 @@
 
 ## Next
 - Reminders for day opened / ending soon / missed (needs the scheduled job and server-side watched tracking).
+
+- Step 12: Gut Reset day videos resume where the student stopped (phone storage, 95% rule). Server-side tracking later.
+- Step 13: reports watch time to the server.

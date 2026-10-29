@@ -60,3 +60,4 @@
 
 ## Next
 - Native Razorpay when the owner says so.
+- Step 13: reports watch time to the server.

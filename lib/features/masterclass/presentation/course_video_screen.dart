@@ -9,6 +9,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/video/video_player_adapter.dart';
+import '../../../core/video/video_watch_repository.dart';
+import '../../../core/video/video_watch_tracker.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
@@ -32,6 +34,11 @@ class CourseVideoScreen extends StatelessWidget {
         video: video,
         playerFactory: dependencies.videoPlayerFactory,
         progressStore: dependencies.videoProgressStore,
+        watchTracker: VideoWatchTracker(
+          repository: dependencies.videoWatchRepository,
+          videoType: VideoWatchType.chapter,
+          videoRefId: video.id,
+        ),
       )..initialize(),
       child: _CourseVideoSystemUiGuard(
         child: _CourseVideoView(video: video),

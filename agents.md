@@ -27,6 +27,7 @@ Student-facing mobile app (Flutter, iOS + Android) for "Prana by Dimple" academy
 9. Dependencies are not upgraded unless asked. Flutter 3.27.2 / Dart 3.6.1, Android Gradle Plugin 8.1.1, Kotlin 1.8.22, firebase_core 3.15.2, firebase_messaging 15.2.10.
 10. Never claim something works unless it was run. Tests here are PHP lint + sqlite harness tests and a Dart syntax/import/l10n check; the app has not been compiled by the agent and MySQL has not been run by the agent.
 11. Launcher icon: heart only (no text), background `#12301F` (same colour as `ic_launcher_background.xml`). iOS icons must stay square and without transparency; Android adaptive foreground keeps the heart inside the centre 66 dp circle of the 108 dp canvas.
+12. Vimeo videos are never played from a raw Vimeo link in the app: the backend gives a signed link to `student_app_webservices/player/player.php` and the Vimeo embed domain is that server's domain.
 
 ## PHP/MySQL lessons (cost real bugs)
 - MySQL runs in strict mode: no zero dates (`1970-01-01`), no empty enum values, set every NOT NULL column.

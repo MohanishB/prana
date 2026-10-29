@@ -9,6 +9,7 @@ import '../../../core/video/video_player_adapter.dart';
 import '../../../core/video/video_player_factory.dart';
 import '../../../core/video/video_progress_store.dart';
 import '../../../core/video/video_source.dart';
+import '../../../core/video/video_watch_tracker.dart';
 import '../data/masterclass_models.dart';
 
 sealed class CourseVideoState {
@@ -41,8 +42,10 @@ final class CourseVideoCubit extends Cubit<CourseVideoState> {
     required CourseVideo video,
     required VideoPlayerFactory playerFactory,
     required VideoProgressStore progressStore,
+    VideoWatchTracker? watchTracker,
   })  : _video = video,
         _progressStore = progressStore,
+        _watchTracker = watchTracker,
         _adapter = playerFactory.create(
           AppVideoSource.fromUrl(
             id: 'course_video_${video.id}',
@@ -57,6 +60,7 @@ final class CourseVideoCubit extends Cubit<CourseVideoState> {
   final CourseVideo _video;
   final VideoProgressStore _progressStore;
   final VideoPlayerAdapter _adapter;
+  final VideoWatchTracker? _watchTracker;
 
   StreamSubscription<VideoPlaybackSnapshot>? _subscription;
   Duration _lastSaved = Duration.zero;
@@ -164,6 +168,7 @@ final class CourseVideoCubit extends Cubit<CourseVideoState> {
       return;
     }
 
+    _watchTracker?.onSnapshot(snapshot);
     _resolveResumeIfPossible(snapshot);
 
     final duration = snapshot.duration;
@@ -244,10 +249,19 @@ final class CourseVideoCubit extends Cubit<CourseVideoState> {
 
   String get _progressKey => 'course_video_${_video.id}';
 
+  Future<void> _flushWatchTracker() async {
+    try {
+      await _watchTracker?.flush().timeout(const Duration(seconds: 3));
+    } on Object {
+      // Watch tracking must never get in the way of leaving the video.
+    }
+  }
+
   @override
   Future<void> close() async {
     _disposed = true;
     await persistNow();
+    await _flushWatchTracker();
     await _subscription?.cancel();
     await _adapter.dispose();
     return super.close();

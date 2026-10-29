@@ -32,6 +32,7 @@ abstract final class ApiConstants {
   static const doshaSubmit = '/dosha/submit.php';
   static const gutResetCreateOrder = '/checkout/gut_reset_create_order.php';
   static const myConsultations = '/consultation/my_bookings.php';
+  static const videoProgress = '/video/progress.php';
   static const notificationsList = '/notifications/list.php';
   static const notificationsUnreadCount = '/notifications/unread_count.php';
   static const notificationsMarkRead = '/notifications/mark_read.php';

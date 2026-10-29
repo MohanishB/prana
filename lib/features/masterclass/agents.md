@@ -65,3 +65,6 @@
 - Coupon rule (from the website): shown only after the email is checked and only for a new email; changing the email clears it.
 - A guest's order also sends the phone's push token (when notifications are allowed); the server links it only to an account created by that order.
 - Payment is simulated by the server (`CHECKOUT_SIMULATE_PAYMENT`). Do not add Razorpay here until told.
+
+## Watch report (Step 13)
+- `CourseVideoCubit` also takes an optional `VideoWatchTracker` (type `chapter`, ref = chapter video id) and flushes it on `close()`; local resume (`VideoProgressStore`) is unchanged.

@@ -20,5 +20,7 @@
 
 - Added app-managed fullscreen with landscape/immersive system UI and back-to-exit-fullscreen behavior while preserving the same player/resume state.
 
-## Next
-- Decide Vimeo vs own server (the `gut_reset_vimeo_video_url` column exists), then add server progress.
+- Step 11: Vimeo plays through the server's signed player page (`player.php`) so domain-restricted videos work; plain Vimeo links keep the old path. Not yet tested on a device by the agent.
+- Next: server-side watch tracking (owner: later); website player.
+- Step 13: watch tracking for the admin Video Watch Report.
+- Next: use the server position for resume on a new phone (not built).

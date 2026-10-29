@@ -6,6 +6,8 @@ import '../../../core/services/dependencies.dart';
 import '../../../core/utils/workshop_date_formatter.dart';
 import '../../../core/video/video_playback_snapshot.dart';
 import '../../../core/video/video_player_adapter.dart';
+import '../../../core/video/video_watch_repository.dart';
+import '../../../core/video/video_watch_tracker.dart';
 import '../../../core/widgets/html_rich_text.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
@@ -85,6 +87,12 @@ class _VideoContent extends StatelessWidget {
               context.read<AppDependencies>().videoPlayerFactory,
               video.mainUrl,
               video.itemId,
+              context.read<AppDependencies>().videoProgressStore,
+              watchTracker: VideoWatchTracker(
+                repository: context.read<AppDependencies>().videoWatchRepository,
+                videoType: VideoWatchType.gutReset,
+                videoRefId: video.itemId,
+              ),
             )..initialize(),
             child: _WorkshopPlayerSystemUiGuard(
               child: _VideoLoaded(video: video, state: state),

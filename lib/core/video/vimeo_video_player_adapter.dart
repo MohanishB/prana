@@ -49,8 +49,25 @@ final class VimeoVideoPlayerAdapter implements VideoPlayerAdapter {
       },
     );
 
+    final pageUri = source.isPlayerPage ? Uri.tryParse(source.url) : null;
+
     await _controller.setNavigationDelegate(
       NavigationDelegate(
+        // The server's player page must stay the only page in the view: a tap
+        // on a Vimeo link inside the player must not open another site here.
+        onNavigationRequest: pageUri == null
+            ? null
+            : (request) {
+                if (!request.isMainFrame) return NavigationDecision.navigate;
+                final target = Uri.tryParse(request.url);
+                final sameSite = target != null &&
+                    target.scheme == pageUri.scheme &&
+                    target.host == pageUri.host &&
+                    target.port == pageUri.port;
+                return sameSite
+                    ? NavigationDecision.navigate
+                    : NavigationDecision.prevent;
+              },
         onWebResourceError: (error) {
           if (error.isForMainFrame != true) return;
           _publish(
@@ -68,7 +85,14 @@ final class VimeoVideoPlayerAdapter implements VideoPlayerAdapter {
       ),
     );
 
-    await _controller.loadHtmlString(_buildHtml());
+    if (pageUri != null) {
+      // Vimeo video: play the server's player page (signed, short-lived link).
+      // The page talks to the app through the same `PranaBridge` channel.
+      await _controller.loadRequest(pageUri);
+    } else {
+      // A plain Vimeo link (links switched off on the server): build the page here.
+      await _controller.loadHtmlString(_buildHtml());
+    }
   }
 
   @override

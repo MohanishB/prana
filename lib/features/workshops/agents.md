@@ -27,3 +27,11 @@
 - Workshops are the Gut Reset programmes of the student (`gut_reset/my_programs.php`, `program_detail.php`). Statuses: not_started (7-day until "Start Day 1"), upcoming, running, completed.
 - "Start Day 1" calls `gut_reset/start_day_one.php` after a confirm dialog; lists reload through `CatalogRefreshCubit`.
 - A push/inbox message with route `program:<booking id>` opens `RouteNames.workshopDetail`.
+
+## Resume (Step 12, 2026-10-29)
+- `WorkshopPlaybackCubit` now takes the shared `VideoProgressStore` (key `workshop_<itemId>`), same rules as the Masterclass player: save about every 5 s and on pause/seek/leaving, jump to the saved spot once the player reports its length, forget it at 95%.
+- Saves are skipped until the saved spot has been applied, so opening a video and leaving at once cannot overwrite the saved position with 0:00.
+- Resume is stored on the phone only (not synced across devices); server-side tracking is a later step.
+
+## Watch report (Step 13)
+- `WorkshopPlaybackCubit` also takes a `VideoWatchTracker` (type `gut_reset`, ref = booking item id) so the admin Video Watch Report sees Gut Reset watching. Flushed when the cubit closes.

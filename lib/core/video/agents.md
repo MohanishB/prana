@@ -20,5 +20,8 @@
 
 - Fullscreen is app-managed for reliability; do not re-enable Vimeo HTML fullscreen. Preserve playback/resume state across fullscreen transitions.
 
-## Note (Step 7 planning)
-- Resume position is still local to the phone. A server-side `watched`/position API is planned (save every 10–15 s, watched at ~90–95 %); it also unlocks "day opened but not watched" reminders. Not built.
+- Vimeo videos reach the app as a signed link to the server's player page (`/player/player.php?t=...`, built by the backend `PlayerLink`). `AppVideoSource.isPlayerPage` is true for it and `VimeoVideoPlayerAdapter` loads it with `loadRequest`; only that page's site may stay in the view (`onNavigationRequest`). The page talks through the same `PranaBridge` channel and `window.pranaPlay/pranaPause/pranaSeek/pranaSnapshot/pranaDispose` functions – keep both sides in step (`student_app_webservices/player/agents.md`).
+- A plain Vimeo link (backend links switched off) still works through the old in-app page, but domain-restricted videos need the player page.
+- Do not add a website address to the in-app page: Vimeo did not accept it (Step 10 test failed with PrivacyError), that is why the player page exists.
+
+- Watch tracking (Step 13): `VideoWatchTracker` counts real played seconds from player snapshots (a jump of more than 3 s is a seek and adds nothing) and reports through `VideoWatchRepository` -> `POST /video/progress.php` about every 30 s of playing, on pause and when the video is closed. It never throws; a failed report is kept and sent with the next one (30 s back-off). Both players (`CourseVideoCubit`, `WorkshopPlaybackCubit`) take an optional tracker. Types: `VideoWatchType.chapter` (ref = chapter video id), `VideoWatchType.gutReset` (ref = booking item id).
