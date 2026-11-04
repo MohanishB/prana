@@ -20,6 +20,7 @@ import '../data/country_repository.dart';
 import '../files/file_download_service.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
+import '../payment/payment_gateway.dart';
 import '../push/firebase_push_client.dart';
 import '../push/push_client.dart';
 import '../push/push_preferences.dart';
@@ -57,6 +58,7 @@ class AppDependencies {
     required this.videoPlayerFactory,
     required this.videoProgressStore,
     required this.videoWatchRepository,
+    required this.paymentGateway,
   });
 
   final LibraryRepository libraryRepository;
@@ -83,6 +85,7 @@ class AppDependencies {
   final VideoPlayerFactory videoPlayerFactory;
   final VideoProgressStore videoProgressStore;
   final VideoWatchRepository videoWatchRepository;
+  final PaymentGateway paymentGateway;
 
   factory AppDependencies.bootstrap() {
     final secureStorage = FlutterSecureStorage();
@@ -127,6 +130,7 @@ class AppDependencies {
       videoPlayerFactory: const DefaultVideoPlayerFactory(),
       videoProgressStore: LocalVideoProgressStore(),
       videoWatchRepository: ApiVideoWatchRepository(api),
+      paymentGateway: const RazorpayPaymentGateway(),
     );
   }
 }

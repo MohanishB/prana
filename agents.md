@@ -22,12 +22,14 @@ Student-facing mobile app (Flutter, iOS + Android) for "Prana by Dimple" academy
 4. All user-facing text comes from `lib/l10n/app_en.arb` (`context.l10n`). Server content (course titles, messages) is data, not ARB.
 5. Screens never call `ApiClient` directly: Screen → Cubit → Repository → `fetchData/postData`.
 6. Logged-in calls must pass `authenticated: true` (the default is false). Forgetting it shows "session expired".
-7. Payment stays simulated (`CHECKOUT_SIMULATE_PAYMENT=true`) until the owner says otherwise. Never copy the website's live Razorpay keys into the app backend.
+7. Masterclass and Consultation pay through Razorpay when `CHECKOUT_SIMULATE_PAYMENT=false` (test keys first); Gut Reset stays simulated through its own switch `GUT_RESET_SIMULATE_PAYMENT` (true) until its payment step. Never copy the website's live Razorpay keys into the app backend, and never ship `config/payment.php` once the owner has pasted keys in it.
 8. Secrets are never shipped in a zip: the Mandrill key (`config/mail.php`) and the Firebase service-account JSON (path in `config/fcm.php`) are placed by the owner.
 9. Dependencies are not upgraded unless asked. Flutter 3.27.2 / Dart 3.6.1, Android Gradle Plugin 8.1.1, Kotlin 1.8.22, firebase_core 3.15.2, firebase_messaging 15.2.10.
 10. Never claim something works unless it was run. Tests here are PHP lint + sqlite harness tests and a Dart syntax/import/l10n check; the app has not been compiled by the agent and MySQL has not been run by the agent.
 11. Launcher icon: heart only (no text), background `#12301F` (same colour as `ic_launcher_background.xml`). iOS icons must stay square and without transparency; Android adaptive foreground keeps the heart inside the centre 66 dp circle of the 108 dp canvas.
 12. Vimeo videos are never played from a raw Vimeo link in the app: the backend gives a signed link to `student_app_webservices/player/player.php` and the Vimeo embed domain is that server's domain.
+
+13. Razorpay: the server creates the order and verifies the signature; the app only opens the checkout (`core/payment`). A booking becomes paid only on the server (confirm endpoint or webhook), never because the app says so. A retry of "Buy now" is a new booking (like the website). Webhook and cron only touch `order_source = APP` rows.
 
 ## PHP/MySQL lessons (cost real bugs)
 - MySQL runs in strict mode: no zero dates (`1970-01-01`), no empty enum values, set every NOT NULL column.

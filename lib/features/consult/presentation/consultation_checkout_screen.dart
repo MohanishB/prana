@@ -34,6 +34,7 @@ class ConsultationCheckoutScreen extends StatelessWidget {
         BlocProvider(
           create: (_) => ConsultationCheckoutCubit(
             deps.consultCheckoutRepository,
+            deps.paymentGateway,
             consultationId,
           )..refresh(email: session?.email ?? ''),
         ),
@@ -355,7 +356,10 @@ class _BookButton extends StatelessWidget {
     return BlocBuilder<ConsultationCheckoutCubit, ConsultationCheckoutState>(
       builder: (context, state) {
         final quote = state.quote;
-        final label = quote == null || state.quoting
+        final awaiting = state.pendingPayment != null;
+        final label = awaiting
+            ? l10n.checkPaymentStatus
+            : quote == null || state.quoting
             ? l10n.checkingPrice
             : quote.isFree
                 ? l10n.confirmFreeBooking

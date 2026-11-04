@@ -20,6 +20,7 @@ Dates are IST. "Verified" = PHP lint + sqlite tests and Dart syntax/import/l10n 
 | 11 | 10-29 | Vimeo plays through our own `player/player.php` with short-lived signed links; Vimeo embed domain-lock = our server domain |
 | 12 | 10-29 | Gut Reset day video resumes where the student stopped (phone storage, 95% rule) |
 | 13 | 10-29 | Admin Video Watch Report: the app reports watch time (`POST video/progress.php`), table `student_video_watch` (`alter_step13_video_watch.sql`), admin page per student and video: minutes watched, furthest point, last watched, completed (95%), filters, CSV |
+| 14 | 10-29 | Razorpay for Masterclass + Consultation (INR and USD): server creates the order, app opens Razorpay (`razorpay_flutter`), server verifies the signature (`*_confirm_payment.php`), webhook `razorpay_webhook.php` completes the booking if the app never reports back; Gut Reset stays simulated (`GUT_RESET_SIMULATE_PAYMENT`) |
 
 ## Waiting on the owner / later (only when told)
 - iOS push: Apple Developer account, `GoogleService-Info.plist`, APNs key (.p8 + Key ID + Team ID) in Firebase, then set `FirebasePushClient.iosEnabled = true`, enable Push Notifications + Background Modes in Xcode.
@@ -29,7 +30,7 @@ Dates are IST. "Verified" = PHP lint + sqlite tests and Dart syntax/import/l10n 
 - Website student player page (includes `player.php` behind login) – next after the app test.
 - Vimeo setup per video: hidden/private, embed allowed only on `retailsite.co.za` (test) and `pranabydimpleacademy.com` + `www.` (live); stored value = `https://player.vimeo.com/video/<id>` (+`?h=` if hidden).
 - Admin broadcast by email; push to a segment instead of everyone (needs per-segment topics or token lists). Admin phone push needs the Firebase service-account path in `admin/application/config/fcm.php` as well.
-- Swipe Pages webhook for Gut Reset (Step 4 phase B), native Razorpay (masterclass + consultation; written for consultation, not wired), clean-up step.
+- Swipe Pages webhook for Gut Reset (Step 4 phase B), Gut Reset real payment (Razorpay + its own confirm), iOS Razorpay set-up, live Razorpay keys + webhook at go-live, clean-up step.
 - Marketing opt-out for broadcast emails (owner decides later).
 - Launcher name PRANA: Android `android:label` is set; iOS `CFBundleDisplayName` is a manual edit.
 - Launcher icon: if a larger logo (SVG or 1000 px+ PNG) arrives, regenerate the icons so the heart is sharper on high-resolution phones.

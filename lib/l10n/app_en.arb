@@ -386,6 +386,7 @@
   },
   "confirmFreeOrder": "Confirm order",
   "checkingPrice": "Checking price…",
+  "checkPaymentStatus": "Check payment status",
   "testModeNotice": "Test mode: no payment is taken. Your order is recorded as paid so the flow can be checked.",
   "orderSuccessTitle": "Order confirmed",
   "orderSuccessBody": "Thank you! Your masterclass is ready.",

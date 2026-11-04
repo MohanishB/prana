@@ -3,6 +3,7 @@ import '../../../core/models/json_readers.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/api_data.dart';
+import '../../../core/payment/payment_models.dart';
 import '../../../core/session/session_manager.dart';
 import 'consult_checkout_models.dart';
 
@@ -15,11 +16,16 @@ abstract interface class ConsultationCheckoutRepository {
     required String couponCode,
   });
 
-  Future<ConsultationOrderResult> placeOrder({
+  /// Saves the booking. The answer is either a finished booking (free / test mode)
+  /// or a payment the app must make first.
+  Future<OrderStart<ConsultationOrderResult>> placeOrder({
     required int consultationId,
     required CheckoutDetails details,
     required String couponCode,
   });
+
+  /// After Razorpay reports success: the server verifies it and completes the booking.
+  Future<ConsultationOrderResult> confirmPayment(PaymentSucceeded payment);
 
   Future<List<ConsultationBooking>> getMyBookings();
 }
@@ -53,7 +59,7 @@ final class ApiConsultationCheckoutRepository
   }
 
   @override
-  Future<ConsultationOrderResult> placeOrder({
+  Future<OrderStart<ConsultationOrderResult>> placeOrder({
     required int consultationId,
     required CheckoutDetails details,
     required String couponCode,
@@ -69,6 +75,36 @@ final class ApiConsultationCheckoutRepository
         'country_id': details.countryId,
         'phone': details.phone,
         'coupon_code': couponCode,
+      },
+    );
+    return parseData(() {
+      if (data['status'] == 'payment_required') {
+        return OrderStart<ConsultationOrderResult>.payment(
+          PaymentRequest.fromJson(
+            data,
+            bookingId: jsonInt(data['consultation_booking_id']),
+            description: jsonString(data['consultation']),
+          ),
+        );
+      }
+      return OrderStart<ConsultationOrderResult>.paid(
+        ConsultationOrderResult.fromJson(data),
+      );
+    });
+  }
+
+  @override
+  Future<ConsultationOrderResult> confirmPayment(
+    PaymentSucceeded payment,
+  ) async {
+    final data = await postData(
+      _api,
+      ApiConstants.consultationConfirmPayment,
+      authenticated: _loggedIn,
+      body: {
+        'razorpay_order_id': payment.orderId,
+        'razorpay_payment_id': payment.paymentId,
+        'razorpay_signature': payment.signature,
       },
     );
     return parseData(() => ConsultationOrderResult.fromJson(data));

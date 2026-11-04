@@ -64,7 +64,7 @@
 - Offer page, cart (`MasterclassCartCubit`, in memory), checkout, success screen (new-account password). Repositories: `MasterclassOfferRepository`, `MasterclassCheckoutRepository`.
 - Coupon rule (from the website): shown only after the email is checked and only for a new email; changing the email clears it.
 - A guest's order also sends the phone's push token (when notifications are allowed); the server links it only to an account created by that order.
-- Payment is simulated by the server (`CHECKOUT_SIMULATE_PAYMENT`). Do not add Razorpay here until told.
+- With `CHECKOUT_SIMULATE_PAYMENT=true` the server records the order as paid at once; with false it answers `payment_required` and the cubit opens Razorpay through `PaymentGateway` (`core/payment`), then calls `confirmPayment`. Money is never taken twice: if the server cannot be reached after paying, the button becomes "Check payment status" and only re-checks that payment.
 
 ## Watch report (Step 13)
 - `CourseVideoCubit` also takes an optional `VideoWatchTracker` (type `chapter`, ref = chapter video id) and flushes it on `close()`; local resume (`VideoProgressStore`) is unchanged.

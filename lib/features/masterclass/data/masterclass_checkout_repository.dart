@@ -1,8 +1,10 @@
 import '../../../core/checkout/checkout_models.dart';
 import '../../../core/device/device_info.dart';
+import '../../../core/models/json_readers.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/api_data.dart';
+import '../../../core/payment/payment_models.dart';
 import '../../../core/push/push_token_service.dart';
 import '../../../core/session/session_manager.dart';
 import 'masterclass_checkout_models.dart';
@@ -17,12 +19,17 @@ abstract interface class MasterclassCheckoutRepository {
     required String couponCode,
   });
 
-  Future<MasterclassOrderResult> placeOrder({
+  /// Saves the booking. The answer is either a finished order (free / test mode)
+  /// or a payment the app must make first.
+  Future<OrderStart<MasterclassOrderResult>> placeOrder({
     required List<int> courseIds,
     required CheckoutMode mode,
     required CheckoutDetails details,
     required String couponCode,
   });
+
+  /// After Razorpay reports success: the server verifies it and completes the order.
+  Future<MasterclassOrderResult> confirmPayment(PaymentSucceeded payment);
 }
 
 final class ApiMasterclassCheckoutRepository
@@ -61,7 +68,7 @@ final class ApiMasterclassCheckoutRepository
   }
 
   @override
-  Future<MasterclassOrderResult> placeOrder({
+  Future<OrderStart<MasterclassOrderResult>> placeOrder({
     required List<int> courseIds,
     required CheckoutMode mode,
     required CheckoutDetails details,
@@ -82,6 +89,43 @@ final class ApiMasterclassCheckoutRepository
         'course_ids': courseIds,
         'mode': mode.apiValue,
         'coupon_code': couponCode,
+        if (deviceToken != null) ...{
+          'device_token': deviceToken,
+          'device_type': AppDeviceInfo.type,
+        },
+      },
+    );
+    return parseData(() {
+      if (data['status'] == 'payment_required') {
+        return OrderStart<MasterclassOrderResult>.payment(
+          PaymentRequest.fromJson(
+            data,
+            bookingId: jsonInt(data['course_booking_id']),
+            description: ((data['courses'] as List?) ?? const [])
+                .map(jsonString)
+                .join(', '),
+          ),
+        );
+      }
+      return OrderStart<MasterclassOrderResult>.paid(
+        MasterclassOrderResult.fromJson(data),
+      );
+    });
+  }
+
+  @override
+  Future<MasterclassOrderResult> confirmPayment(
+    PaymentSucceeded payment,
+  ) async {
+    final deviceToken = _loggedIn ? null : await _pushTokens.tokenIfAllowed();
+    final data = await postData(
+      _api,
+      ApiConstants.masterclassConfirmPayment,
+      authenticated: _loggedIn,
+      body: {
+        'razorpay_order_id': payment.orderId,
+        'razorpay_payment_id': payment.paymentId,
+        'razorpay_signature': payment.signature,
         if (deviceToken != null) ...{
           'device_token': deviceToken,
           'device_type': AppDeviceInfo.type,

@@ -59,5 +59,5 @@
 - Offer/detail pages, cart, checkout with coupon, simulated payment, list refresh after purchase (`CatalogRefreshCubit`), inbox + push on payment.
 
 ## Next
-- Native Razorpay when the owner says so.
+- Razorpay (Step 14): done through `core/payment`; `MasterclassCheckoutCubit` pays, confirms, and can re-check a payment the server has not confirmed yet.
 - Step 13: reports watch time to the server.

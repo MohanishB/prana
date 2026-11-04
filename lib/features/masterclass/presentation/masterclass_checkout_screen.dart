@@ -35,6 +35,7 @@ class MasterclassCheckoutScreen extends StatelessWidget {
         BlocProvider(
           create: (_) => MasterclassCheckoutCubit(
             deps.masterclassCheckoutRepository,
+            deps.paymentGateway,
             args,
           )..refresh(email: session?.email ?? ''),
         ),
@@ -412,7 +413,10 @@ class _BuyButton extends StatelessWidget {
     return BlocBuilder<MasterclassCheckoutCubit, MasterclassCheckoutState>(
       builder: (context, state) {
         final quote = state.quote;
-        final label = quote == null || state.quoting
+        final awaiting = state.pendingPayment != null;
+        final label = awaiting
+            ? l10n.checkPaymentStatus
+            : quote == null || state.quoting
             ? l10n.checkingPrice
             : quote.isFree
                 ? l10n.confirmFreeOrder
