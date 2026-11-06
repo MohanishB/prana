@@ -13,7 +13,12 @@ import '../features/account/presentation/account_screen.dart';
 import '../features/account/presentation/change_password_screen.dart';
 import '../features/account/presentation/edit_profile_screen.dart';
 import '../features/auth/bloc/auth_bloc.dart';
+import '../features/certificate/bloc/my_certificates_cubit.dart';
 import '../features/certificate/presentation/certificate_screen.dart';
+import '../features/certificate/presentation/my_certificates_screen.dart';
+import '../features/cms/bloc/cms_page_cubit.dart';
+import '../features/cms/data/cms_models.dart';
+import '../features/cms/presentation/cms_page_screen.dart';
 import '../features/consult/bloc/consult_cubit.dart';
 import '../features/consult/bloc/my_consultations_cubit.dart';
 import '../features/consult/data/consult_checkout_models.dart';
@@ -41,6 +46,8 @@ import '../features/library/bloc/library_feed_cubit.dart';
 import '../features/library/domain/library_video.dart';
 import '../features/library/presentation/library_screen.dart';
 import '../features/library/presentation/video_detail_screen.dart';
+import '../features/live_sessions/bloc/live_sessions_cubit.dart';
+import '../features/live_sessions/presentation/live_sessions_screen.dart';
 import '../features/masterclass/bloc/course_detail_cubit.dart';
 import '../features/masterclass/bloc/masterclass_cubit.dart';
 import '../features/masterclass/bloc/masterclass_offers_cubit.dart';
@@ -505,6 +512,48 @@ final GoRouter appRouter = GoRouter(
         }
         return MasterclassOrderSuccessScreen(result: result);
       },
+    ),
+    GoRoute(
+      path: '/contact-support',
+      name: RouteNames.contactSupport,
+      builder: (context, state) => BlocProvider(
+        create: (_) => CmsPageCubit(
+          context.read<AppDependencies>().cmsRepository,
+          CmsPageKey.contactSupport,
+        )..load(),
+        child: const CmsPageScreen(pageKey: CmsPageKey.contactSupport),
+      ),
+    ),
+    GoRoute(
+      path: '/terms-privacy',
+      name: RouteNames.termsPrivacy,
+      builder: (context, state) => BlocProvider(
+        create: (_) => CmsPageCubit(
+          context.read<AppDependencies>().cmsRepository,
+          CmsPageKey.termsPrivacy,
+        )..load(),
+        child: const CmsPageScreen(pageKey: CmsPageKey.termsPrivacy),
+      ),
+    ),
+    GoRoute(
+      path: '/live-sessions',
+      name: RouteNames.liveSessions,
+      builder: (context, state) => BlocProvider(
+        create: (_) => LiveSessionsCubit(
+          context.read<AppDependencies>().liveSessionRepository,
+        )..load(),
+        child: const LiveSessionsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/my-certificates',
+      name: RouteNames.myCertificates,
+      builder: (context, state) => BlocProvider(
+        create: (_) => MyCertificatesCubit(
+          context.read<AppDependencies>().certificateRepository,
+        )..load(),
+        child: const MyCertificatesScreen(),
+      ),
     ),
     GoRoute(
       path: '/certificate/:certificateId',

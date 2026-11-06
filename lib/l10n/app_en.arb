@@ -93,6 +93,23 @@
   "bookedConsultations": "My booked consultations",
   "liveQaSessions": "Live Q&A sessions",
   "myCertificates": "My certificates",
+  "noCertificateGeneratedYet": "No certificate generated yet",
+  "noLiveSessionsAvailable": "Currently no sessions are available",
+  "couldNotOpenLink": "Could not open the link",
+  "cmsComingSoon": "Content coming soon",
+  "contactEmail": "Email us",
+  "contactCall": "Call us",
+  "contactWhatsapp": "Chat on WhatsApp",
+  "contactWebsite": "Visit our website",
+  "contactFollowUs": "Follow us",
+  "liveSessionJoinOpens": "Joining opens {time}",
+  "@liveSessionJoinOpens": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "reminders": "Reminders",
   "dailyAtSix": "Daily at 6:00 AM",
   "faqs": "FAQs",

@@ -80,7 +80,7 @@ class _DetailContent extends StatelessWidget {
             folder:'workshop_${detail.program.bookingId}'),
           service:deps.fileDownloadService),
      if(!detail.notes.any((n)=>n.available&&(n.fileUrl.isNotEmpty||n.downloadUrl.isNotEmpty)))
-       const Padding(padding:EdgeInsets.all(18),child:Text('No notes available yet.')),
+       const Padding(padding:EdgeInsets.all(18),child:Text('Workshop notes are available while the workshop is running.')),
    ]),
   ])),
  ]));

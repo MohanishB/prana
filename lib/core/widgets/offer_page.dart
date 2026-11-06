@@ -8,6 +8,7 @@ import '../theme/app_spacing.dart';
 import 'app_error_view.dart';
 import 'html_rich_text.dart';
 import 'prana_app_bar.dart';
+import 'prana_picture.dart';
 import 'responsive_content.dart';
 
 /// Shared page frame for the offer pages: app bar with back, loading,
@@ -88,21 +89,9 @@ class OfferBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final url = imageUrl;
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.lg),
-      child: SizedBox(
-        height: 160,
-        child: url == null
-            ? ColoredBox(color: scheme.primaryContainer)
-            : Image.network(
-                url,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    ColoredBox(color: scheme.primaryContainer),
-              ),
-      ),
+      child: SizedBox(height: 160, child: PranaPicture(imageUrl: imageUrl)),
     );
   }
 }

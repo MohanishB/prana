@@ -10,6 +10,7 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/prana_app_bar.dart';
+import '../../../core/widgets/prana_picture.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../bloc/my_consultations_cubit.dart';
 import '../data/consult_checkout_models.dart';
@@ -103,15 +104,7 @@ class _BookingCard extends StatelessWidget {
                   child: SizedBox(
                     width: 64,
                     height: 64,
-                    child: booking.imageUrl == null
-                        ? ColoredBox(color: theme.colorScheme.primaryContainer)
-                        : Image.network(
-                            booking.imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => ColoredBox(
-                              color: theme.colorScheme.primaryContainer,
-                            ),
-                          ),
+                    child: PranaPicture(imageUrl: booking.imageUrl),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),

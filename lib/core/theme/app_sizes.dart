@@ -12,6 +12,9 @@ abstract final class AppSizes {
   static const progressRing = 62.0;
   static const progressStroke = 7.0;
 
+  static const offerImage = 56.0;
+  static const socialButton = 56.0;
+  static const socialIcon = 26.0;
   static const thumbnailWidth = 72.0;
   static const thumbnailHeight = 54.0;
   static const workshopHeroHeight = 104.0;

@@ -2,6 +2,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../features/account/data/account_repository.dart';
 import '../../features/auth/data/auth_repository.dart';
+import '../../features/certificate/data/certificate_repository.dart';
+import '../../features/cms/data/cms_repository.dart';
 import '../../features/consult/data/consult_checkout_repository.dart';
 import '../../features/consult/data/consult_repository.dart';
 import '../../features/dosha_quiz/data/dosha_repository.dart';
@@ -10,6 +12,7 @@ import '../../features/gut_reset/data/gut_reset_repository.dart';
 import '../../features/home/data/home_repository.dart';
 import '../../features/library/data/library_data_source.dart';
 import '../../features/library/data/library_repository.dart';
+import '../../features/live_sessions/data/live_session_repository.dart';
 import '../../features/masterclass/data/masterclass_checkout_repository.dart';
 import '../../features/masterclass/data/masterclass_offer_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
@@ -38,6 +41,9 @@ class AppDependencies {
     required this.accountRepository,
     required this.faqRepository,
     required this.authRepository,
+    required this.certificateRepository,
+    required this.cmsRepository,
+    required this.liveSessionRepository,
     required this.masterclassRepository,
     required this.masterclassOfferRepository,
     required this.masterclassCheckoutRepository,
@@ -65,6 +71,9 @@ class AppDependencies {
   final AccountRepository accountRepository;
   final FaqRepository faqRepository;
   final AuthRepository authRepository;
+  final CertificateRepository certificateRepository;
+  final CmsRepository cmsRepository;
+  final LiveSessionRepository liveSessionRepository;
   final MasterclassRepository masterclassRepository;
   final MasterclassOfferRepository masterclassOfferRepository;
   final MasterclassCheckoutRepository masterclassCheckoutRepository;
@@ -103,6 +112,9 @@ class AppDependencies {
       accountRepository: ApiAccountRepository(api, sessionManager),
       faqRepository: ApiFaqRepository(api),
       authRepository: ApiAuthRepository(api, sessionManager, pushTokenService),
+      certificateRepository: ApiCertificateRepository(api),
+      cmsRepository: ApiCmsRepository(api),
+      liveSessionRepository: ApiLiveSessionRepository(api),
       masterclassRepository: ApiMasterclassRepository(api),
       masterclassOfferRepository:
           ApiMasterclassOfferRepository(api, sessionManager),

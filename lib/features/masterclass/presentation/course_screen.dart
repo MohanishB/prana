@@ -15,6 +15,7 @@ import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/downloadable_file_tile.dart';
 import '../../../core/widgets/html_rich_text.dart';
 import '../../../core/widgets/prana_app_bar.dart';
+import '../../../core/widgets/prana_picture.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../bloc/course_detail_cubit.dart';
 import '../bloc/course_quiz_cubit.dart';
@@ -257,20 +258,14 @@ class _CourseIntro extends StatelessWidget {
             ),
           ),
         ],
-        if (course.intro.imageUrl.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.md),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                course.intro.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const _MediaFallback(),
-              ),
-            ),
+        const SizedBox(height: AppSpacing.md),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: PranaPicture(imageUrl: course.intro.imageUrl),
           ),
-        ],
+        ),
         const SizedBox(height: AppSpacing.md),
         _HtmlLikeText(course.intro.descriptionHtml),
       ],
@@ -861,14 +856,3 @@ class _HtmlLikeText extends StatelessWidget {
   @override
   Widget build(BuildContext context) => HtmlRichText(html);
 }
-
-class _MediaFallback extends StatelessWidget {
-  const _MediaFallback();
-
-  @override
-  Widget build(BuildContext context) => ColoredBox(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: const Center(child: Icon(Icons.image_outlined)),
-      );
-}
-

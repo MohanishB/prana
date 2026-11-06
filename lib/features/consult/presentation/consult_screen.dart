@@ -59,7 +59,7 @@ class ConsultScreen extends StatelessWidget {
                         children: [
                           for (final offer in state.consultations)
                             OfferCard(
-                              icon: Icons.monitor_heart_outlined,
+                              imageUrl: offer.imageUrl,
                               title: offer.title,
                               subtitle: offer.shortDescription,
                               price: offer.price.formatted,

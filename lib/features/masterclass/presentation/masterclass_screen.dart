@@ -119,7 +119,7 @@ class _WorkshopsSection extends StatelessWidget {
                   children: [
                     for (final offer in offers)
                       OfferCard(
-                        icon: Icons.calendar_month_outlined,
+                        imageUrl: offer.imageUrl,
                         title: offer.title,
                         subtitle: offer.scheduleText,
                         price: offer.price.formatted,
@@ -191,7 +191,7 @@ class _MasterclassesSection extends StatelessWidget {
                   children: [
                     for (final offer in offers)
                       OfferCard(
-                        icon: Icons.school_outlined,
+                        imageUrl: offer.thumbnailUrl,
                         title: offer.title,
                         subtitle: offer.shortDescription,
                         price: offer.price.formatted,

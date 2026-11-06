@@ -8,6 +8,7 @@ import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/services/dependencies.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/workshop_date_formatter.dart';
+import '../../../core/widgets/prana_picture.dart';
 import '../bloc/workshop_cubit.dart';
 import '../data/workshop_models.dart';
 
@@ -119,15 +120,7 @@ class _ProgramCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (program.imageUrl.isNotEmpty)
-                    Image.network(
-                      program.imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          ColoredBox(color: scheme.primaryContainer),
-                    )
-                  else
-                    ColoredBox(color: scheme.primaryContainer),
+                  PranaPicture(imageUrl: program.imageUrl),
                   Positioned(
                     top: 12,
                     left: 12,

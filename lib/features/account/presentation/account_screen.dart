@@ -12,6 +12,7 @@ import '../../../core/theme/theme_cubit.dart';
 import '../../../core/widgets/prana_app_bar.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../notifications/presentation/push_off_note.dart';
 import '../bloc/account_profile_cubit.dart';
 import '../data/account_models.dart';
 
@@ -81,14 +82,12 @@ class AccountScreen extends StatelessWidget {
                       _AccountTile(
                         icon: Icons.monitor_heart_outlined,
                         title: l10n.liveQaSessions,
+                        onTap: () => context.pushNamed(RouteNames.liveSessions),
                       ),
                       _AccountTile(
                         icon: Icons.workspace_premium_outlined,
                         title: l10n.myCertificates,
-                        onTap: () => context.pushNamed(
-                          RouteNames.certificate,
-                          pathParameters: const {'certificateId': 'ah-4821'},
-                        ),
+                        onTap: () => context.pushNamed(RouteNames.myCertificates),
                       ),
                       _AccountTile(
                         icon: Icons.notifications_none,
@@ -99,6 +98,7 @@ class AccountScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],
+                const PushOffNote(),
                 _AccountGroup(
                   children: [
                     // The Dosha quiz and FAQs are public: guests can open them too.
@@ -116,10 +116,12 @@ class AccountScreen extends StatelessWidget {
                     _AccountTile(
                       icon: Icons.mail_outline,
                       title: l10n.contactSupport,
+                      onTap: () => context.pushNamed(RouteNames.contactSupport),
                     ),
                     _AccountTile(
                       icon: Icons.description_outlined,
                       title: l10n.termsPrivacy,
+                      onTap: () => context.pushNamed(RouteNames.termsPrivacy),
                     ),
                   ],
                 ),

@@ -13,3 +13,7 @@
 - Certificate metadata not returned by the API (recipient, certificate number, formatted issue date).
 
 - Existing persistent certificate download/open behavior remains unchanged; masterclass generation now hands this feature the newly returned download URL.
+
+## Step 15
+- Done: My certificates list (rows: masterclass name, generated date, download/open), newest first, empty message, pull to refresh, retry.
+- Deferred: sharing; certificate for Gut Reset programs (none exist).

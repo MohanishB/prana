@@ -8,6 +8,4 @@
 - No `setState`; asynchronous file state is owned by the shared file-download Cubit.
 
 - Certificate generation belongs to the masterclass course-detail flow. This feature continues to own/open/download already-generated certificate files and must not duplicate the generation API call.
-
-## Note (Steps 1–7)
-- Unchanged. A pushed message never links to a certificate yet (`openInboxRouteOn` has no certificate route).
+- `MyCertificatesScreen` (Account > My certificates) only lists certificates the server says are generated (`masterclasses/my_certificates.php`, newest first). It never calls the generation API. Each row reuses `DownloadableFileTile` with the same file id (`certificate_<courseId>`) as the single certificate screen, so a PDF downloaded from either place is reused.

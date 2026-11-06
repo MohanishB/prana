@@ -12,6 +12,10 @@ abstract final class RouteNames {
   static const course = 'course';
   static const courseVideo = 'courseVideo';
   static const certificate = 'certificate';
+  static const myCertificates = 'myCertificates';
+  static const liveSessions = 'liveSessions';
+  static const contactSupport = 'contactSupport';
+  static const termsPrivacy = 'termsPrivacy';
   static const libraryVideo = 'libraryVideo';
   static const masterclassOffer = 'masterclassOffer';
   static const consultationOffer = 'consultationOffer';

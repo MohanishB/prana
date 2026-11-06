@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
+import 'prana_picture.dart';
 
 /// Section title row used on Home and the tabs (same look as "Keep going").
 class SectionHeader extends StatelessWidget {
@@ -35,19 +36,22 @@ class SectionHeader extends StatelessWidget {
 /// One bookable item: masterclass, consultation or Gut Reset program.
 class OfferCard extends StatelessWidget {
   const OfferCard({
-    required this.icon,
     required this.title,
     required this.subtitle,
     required this.price,
     required this.onTap,
+    this.imageUrl,
     super.key,
   });
 
-  final IconData icon;
   final String title;
   final String subtitle;
   final String price;
   final VoidCallback onTap;
+
+  /// The picture of the item. Without it (or if it cannot be loaded) the Prana
+  /// logo is shown instead.
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,13 @@ class OfferCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             children: [
-              CircleAvatar(child: Icon(icon, size: AppSizes.iconSmall)),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                child: SizedBox.square(
+                  dimension: AppSizes.offerImage,
+                  child: PranaPicture(imageUrl: imageUrl),
+                ),
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(

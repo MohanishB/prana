@@ -45,6 +45,9 @@ abstract final class ApiConstants {
   static const courseDetail = '/masterclasses/course_detail.php';
   static const generateCertificate =
       '/masterclasses/generate_certificate.php';
+  static const myCertificates = '/masterclasses/my_certificates.php';
+  static const liveSessions = '/live_sessions/list.php';
+  static const cmsPage = '/cms/page.php';
   static const submitQuiz = '/masterclasses/submit_quiz.php';
   static const accountProfile = '/account/profile.php';
   static const updateProfile = '/account/update_profile.php';

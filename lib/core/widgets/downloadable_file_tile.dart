@@ -14,6 +14,7 @@ class DownloadableFileTile extends StatelessWidget {
     required this.service,
     this.leading,
     this.subtitle,
+    this.caption,
     super.key,
   });
 
@@ -21,6 +22,9 @@ class DownloadableFileTile extends StatelessWidget {
   final FileDownloadService service;
   final Widget? leading;
   final String? subtitle;
+
+  /// Optional extra line above the download status (for example a date).
+  final String? caption;
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +45,20 @@ class DownloadableFileTile extends StatelessWidget {
               state is FileDownloadReady && state.downloaded;
           final busy =
               state is FileDownloadChecking || state is FileDownloading;
+          final status = subtitle ??
+              (downloaded
+                  ? context.l10n.downloadedOpenFile
+                  : context.l10n.tapToDownloadAndOpen);
 
           return ListTile(
             leading: leading,
             title: Text(file.title),
-            subtitle: Text(
-              subtitle ??
-                  (downloaded
-                      ? context.l10n.downloadedOpenFile
-                      : context.l10n.tapToDownloadAndOpen),
-            ),
+            subtitle: caption == null
+                ? Text(status)
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [Text(caption!), Text(status)],
+                  ),
             trailing: _TrailingState(state: state),
             enabled: !busy,
             onTap: busy

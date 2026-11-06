@@ -17,6 +17,7 @@ import '../../../core/utils/workshop_date_formatter.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/offer_card.dart';
 import '../../../core/widgets/prana_app_bar.dart';
+import '../../../core/widgets/prana_picture.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../masterclass/data/masterclass_models.dart';
@@ -143,7 +144,7 @@ class _HomeSections extends StatelessWidget {
                 if (!identical(program, hero)) _ProgramCard(program: program),
               for (final offer in programOffers)
                 OfferCard(
-                  icon: Icons.calendar_month_outlined,
+                  imageUrl: offer.imageUrl,
                   title: offer.title,
                   subtitle: offer.scheduleText,
                   price: offer.price.formatted,
@@ -170,7 +171,7 @@ class _HomeSections extends StatelessWidget {
                 _BookedCourseCard(course: course),
               for (final offer in home.masterclasses)
                 OfferCard(
-                  icon: Icons.school_outlined,
+                  imageUrl: offer.thumbnailUrl,
                   title: offer.title,
                   subtitle: offer.shortDescription,
                   price: offer.price.formatted,
@@ -194,7 +195,7 @@ class _HomeSections extends StatelessWidget {
             children: [
               for (final offer in home.consultations)
                 OfferCard(
-                  icon: Icons.monitor_heart_outlined,
+                  imageUrl: offer.imageUrl,
                   title: offer.title,
                   subtitle: offer.shortDescription,
                   price: offer.price.formatted,
@@ -301,8 +302,12 @@ class _ProgramCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             children: [
-              const CircleAvatar(
-                child: Icon(Icons.event_available, size: AppSizes.iconSmall),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                child: SizedBox.square(
+                  dimension: AppSizes.offerImage,
+                  child: PranaPicture(imageUrl: program.imageUrl),
+                ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
@@ -345,14 +350,12 @@ class _BookedCourseCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             children: [
-              Container(
-                width: AppSizes.progressRing,
-                height: AppSizes.thumbnailHeight,
-                decoration: BoxDecoration(
-                  color: AppColors.forest2,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                child: SizedBox.square(
+                  dimension: AppSizes.offerImage,
+                  child: PranaPicture(imageUrl: course.thumbnailUrl),
                 ),
-                child: const Icon(Icons.play_arrow, color: AppColors.white),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(

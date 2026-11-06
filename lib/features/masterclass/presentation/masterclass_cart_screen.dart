@@ -7,6 +7,7 @@ import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/prana_app_bar.dart';
+import '../../../core/widgets/prana_picture.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../bloc/masterclass_cart_cubit.dart';
 import '../data/masterclass_checkout_models.dart';
@@ -103,15 +104,7 @@ class _CartTile extends StatelessWidget {
               child: SizedBox(
                 width: 72,
                 height: 54,
-                child: url == null
-                    ? ColoredBox(color: theme.colorScheme.primaryContainer)
-                    : Image.network(
-                        url,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => ColoredBox(
-                          color: theme.colorScheme.primaryContainer,
-                        ),
-                      ),
+                child: PranaPicture(imageUrl: url),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
