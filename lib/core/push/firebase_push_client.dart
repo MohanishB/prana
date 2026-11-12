@@ -145,7 +145,9 @@ final class FirebasePushClient implements PushClient {
         AuthorizationStatus.authorized ||
         AuthorizationStatus.provisional =>
           PushPermission.granted,
-        AuthorizationStatus.denied => PushPermission.denied,
+        AuthorizationStatus.denied ||
+        AuthorizationStatus.deniedPermanently =>
+          PushPermission.denied,
         AuthorizationStatus.notDetermined => PushPermission.notAsked,
       };
 
