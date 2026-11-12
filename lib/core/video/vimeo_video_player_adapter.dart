@@ -308,7 +308,7 @@ final class VimeoVideoPlayerAdapter implements VideoPlayerAdapter {
         const iframe = document.createElement('iframe');
         const separator = sourceUrl.indexOf('?') >= 0 ? '&' : '?';
         iframe.src = sourceUrl + separator +
-          'playsinline=1&transparent=0&controls=1&fullscreen=0';
+          'playsinline=1&transparent=0&controls=1&title=0&byline=0&portrait=0&fullscreen=0';
         iframe.setAttribute(
           'allow',
           'autoplay; fullscreen; picture-in-picture'

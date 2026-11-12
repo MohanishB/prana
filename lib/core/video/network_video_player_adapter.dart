@@ -3,14 +3,29 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../network/api_constants.dart';
 import 'video_playback_snapshot.dart';
 import 'video_player_adapter.dart';
 import 'video_source.dart';
+
+/// Headers sent with every direct video (.mp4) request.
+///
+/// The video server only serves files to requests that come from the app's own
+/// site (hotlink protection), and a native player sends no `Referer` by
+/// itself. The referer is the address of the web-service server the app
+/// already talks to, so it follows the test -> live switch of
+/// [ApiConstants.baseUrl] with no separate setting.
+Map<String, String> videoRequestHeaders({String? baseUrl}) {
+  final uri = Uri.tryParse(baseUrl ?? ApiConstants.baseUrl);
+  if (uri == null || uri.host.isEmpty) return const <String, String>{};
+  return <String, String>{'Referer': '${uri.scheme}://${uri.host}/'};
+}
 
 final class NetworkVideoPlayerAdapter implements VideoPlayerAdapter {
   NetworkVideoPlayerAdapter(this.source)
       : _controller = VideoPlayerController.networkUrl(
           Uri.parse(source.url),
+          httpHeaders: videoRequestHeaders(),
         ) {
     _controller.addListener(_publish);
   }

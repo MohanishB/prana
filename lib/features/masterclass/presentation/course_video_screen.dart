@@ -318,6 +318,9 @@ class _PlaybackControls extends StatelessWidget {
         AppSpacing.xs,
       ),
       child: Column(
+        // Shrink to the controls' own height: a Column inside an Align takes
+        // the full height by default, which pushed the seek bar to the top.
+        mainAxisSize: MainAxisSize.min,
         children: [
           Slider(
             value: maxMilliseconds <= 0 ? 0 : positionMilliseconds,

@@ -340,6 +340,43 @@ class _PlayerSurface extends StatelessWidget {
           final nativeControls = adapter.controlsMode == VideoControlsMode.native;
           final aspect = snapshot.aspectRatio <= 0 ? 16 / 9 : snapshot.aspectRatio;
 
+          if (fullscreen) {
+            // Landscape: the controls float over the bottom of the video. Below
+            // the video they did not fit and the screen overflowed.
+            return ColoredBox(
+              color: Colors.black,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Center(
+                    child: AspectRatio(
+                      aspectRatio: aspect,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          adapter.buildView(),
+                          if (!snapshot.initialized || snapshot.buffering)
+                            const Center(child: CircularProgressIndicator()),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (!nativeControls)
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: ColoredBox(
+                        color: Colors.black54,
+                        child: _PlaybackControls(
+                          snapshot: snapshot,
+                          fullscreen: true,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }
+
           return ClipRRect(
             borderRadius: fullscreen
                 ? BorderRadius.zero
@@ -412,7 +449,7 @@ class _PlaybackControls extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      child: Column(children: [
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
         Slider(
           value: max <= 0 ? 0 : position,
           max: max <= 0 ? 1 : max,

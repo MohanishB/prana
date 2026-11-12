@@ -41,3 +41,7 @@ Dates are IST. "Verified" = PHP lint + sqlite tests and Dart syntax/import/l10n 
 ## Known gaps
 - Nothing has been compiled by the agent; report any compile error and it is fixed in the next delivery.
 - The app test suite (`test/`) is not part of what the agent receives; constructors changed in Step 7 (`ApiAuthRepository`, `ApiMasterclassCheckoutRepository`, `ApiGutResetRepository` take a `PushTokenService`) – update any test that builds them.
+
+- Step 18 (mp4 videos): direct mp4 requests now send `Referer: <scheme>://<host of ApiConstants.baseUrl>/` because the video server only serves requests that come from the app's own site. Vimeo / player.php links are unchanged.
+- Step 18 fix1: fullscreen (landscape) video controls sit at the bottom; bottom tab labels stay on one line on every phone.
+- Step 18 fix2: bottom tab labels never wrap (custom bar, one line, auto-shrink); Vimeo page cannot be scrolled and hides Vimeo's title overlay; 3/7-day workshop landscape controls float over the video (no overflow).

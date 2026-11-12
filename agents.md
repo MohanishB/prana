@@ -39,3 +39,6 @@ Student-facing mobile app (Flutter, iOS + Android) for "Prana by Dimple" academy
 ## Where to look for history
 - `plan.md` (this folder): status of every step.
 - Project docs (claude.ai Project "Prana"): `development-log.md`, `go-live-changelog.md` (DB + admin changes to repeat on live), `notifications-decisions.md`, `step4-gut-reset-decisions.md`, `open-questions.md`.
+
+## Direct video (.mp4) requests
+- `videoRequestHeaders()` in `network_video_player_adapter.dart` adds a `Referer` built from `ApiConstants.baseUrl`; it follows the test -> live switch of the base URL. Only the native (mp4) adapter uses it; Vimeo plays through `player/player.php` in a WebView.
