@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../../core/localization/app_localizations_x.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -53,6 +53,17 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       key: ValueKey(video.id),
                       video: video,
                       isActive: index == state.currentIndex,
+                      onSwipe: (delta) {
+                        final target = index + delta;
+                        if (target < 0 || target >= state.videos.length) {
+                          return;
+                        }
+                        _pageController?.animateToPage(
+                          target,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutCubic,
+                        );
+                      },
                       isDescriptionExpanded:
                           state.expandedDescriptionVideoId == video.id,
                       onToggleDescription: () => context
@@ -107,11 +118,13 @@ class _LibraryFeedPage extends StatefulWidget {
     required this.isActive,
     required this.isDescriptionExpanded,
     required this.onToggleDescription,
+    required this.onSwipe,
     super.key,
   });
 
   final LibraryVideo video;
   final bool isActive;
+  final void Function(int delta) onSwipe;
   final bool isDescriptionExpanded;
   final VoidCallback onToggleDescription;
 
@@ -138,84 +151,84 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
   }
 
   void _syncController() {
-    _controller?.dispose();
+    _controller?.close().ignore();
     _controller = null;
 
     if (!widget.isActive) return;
 
-    _controller = YoutubePlayerController(
-      initialVideoId: widget.video.youtubeVideoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: true,
+    _controller = YoutubePlayerController.fromVideoId(
+      videoId: widget.video.youtubeVideoId,
+      autoPlay: true,
+      params: const YoutubePlayerParams(
+        // PRANA draws its own controls, so YouTube's are hidden.
+        showControls: false,
+        showFullscreenButton: false,
         loop: true,
         enableCaption: true,
-        controlsVisibleAtStart: false,
-        hideControls: false,
-        useHybridComposition: true,
+        playsInline: true,
       ),
     );
   }
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller?.close().ignore();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final video = widget.video;
-    final controller = _controller;
+    return _buildFeedLayout(context, controller: _controller);
+  }
 
-    if (controller == null) {
-      return _buildFeedLayout(
-        context,
-        player: _VideoPoster(video: video),
-        controller: null,
-      );
-    }
-
-    final player = YoutubePlayer(
+  /// The player draws its video in an overlay above the app, so anything that
+  /// must sit on top of the video (controls, swipe, error message) is
+  /// returned from here and is drawn inside that overlay.
+  Widget _buildControlsLayer(
+    YoutubePlayerController controller,
+    _ChromeMode mode,
+  ) {
+    return YoutubeValueBuilder(
       controller: controller,
-      aspectRatio: video.isShortForm ? 9 / 16 : 16 / 9,
-      showVideoProgressIndicator: false,
-      topActions: const [],
-      bottomActions: [
-        CurrentPosition(controller: controller),
-        ProgressBar(
-          controller: controller,
-          isExpanded: true,
-        ),
-        RemainingDuration(controller: controller),
-        FullScreenButton(controller: controller),
-      ],
-    );
+      buildWhen: (o, n) =>
+          o.hasError != n.hasError || o.playerState != n.playerState,
+      builder: (context, value) {
+        if (value.hasError) {
+          return _PlaybackFallback(video: widget.video);
+        }
 
-    if (video.isShortForm) {
-      return _buildFeedLayout(
-        context,
-        player: _PlayerWithErrorFallback(
-          controller: controller,
-          video: video,
-          player: player,
-        ),
-        controller: controller,
-      );
-    }
+        final Widget chrome = switch (mode) {
+          _ChromeMode.none => const SizedBox.shrink(),
+          _ChromeMode.seekOnly => _PlayerSeekControls(controller: controller),
+          _ChromeMode.full => _FeedBottomChrome(
+              video: widget.video,
+              controller: controller,
+              isDescriptionExpanded: widget.isDescriptionExpanded,
+              onToggleDescription: widget.onToggleDescription,
+            ),
+        };
 
-    // youtube_player_flutter 9.x automatically enters fullscreen when a
-    // regular video is rotated to landscape when wrapped by the builder.
-    return YoutubePlayerBuilder(
-      player: player,
-      builder: (context, builtPlayer) {
-        return _buildFeedLayout(
-          context,
-          player: _PlayerWithErrorFallback(
-            controller: controller,
-            video: video,
-            player: builtPlayer,
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            if (value.playerState == PlayerState.playing) {
+              controller.pauseVideo();
+            } else {
+              controller.playVideo();
+            }
+          },
+          onVerticalDragEnd: (details) {
+            final velocity = details.primaryVelocity ?? 0;
+            if (velocity < -250) {
+              widget.onSwipe(1);
+            } else if (velocity > 250) {
+              widget.onSwipe(-1);
+            }
+          },
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: chrome,
           ),
-          controller: controller,
         );
       },
     );
@@ -223,7 +236,6 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
 
   Widget _buildFeedLayout(
     BuildContext context, {
-    required Widget player,
     required YoutubePlayerController? controller,
   }) {
     final video = widget.video;
@@ -245,11 +257,29 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
         final isLandscape =
             constraints.maxWidth > constraints.maxHeight && !shortForm;
 
+        final mode = controller == null
+            ? _ChromeMode.none
+            : isLandscape
+                ? _ChromeMode.seekOnly
+                : shortForm
+                    ? _ChromeMode.full
+                    : _ChromeMode.none;
+
+        final Widget player = controller == null
+            ? _VideoPoster(video: video)
+            : YoutubePlayer(
+                controller: controller,
+                aspectRatio: playerAspectRatio,
+                backgroundColor: Colors.black,
+                // PRANA handles rotation itself: in landscape the video
+                // fills the screen, so the player's own fullscreen is off.
+                autoFullScreen: false,
+                enableFullScreenOnVerticalDrag: false,
+                controlsBuilder: (context, isFullscreen) =>
+                    _buildControlsLayer(controller, mode),
+              );
+
         if (isLandscape) {
-          // Natural device rotation should be reversible without entering the
-          // YouTube fullscreen mode, which can lock the platform orientation.
-          // In landscape we therefore make regular videos occupy the feed
-          // viewport directly and keep PRANA seek/fullscreen controls on top.
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -263,19 +293,13 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
                   ),
                 ),
               ),
-              if (controller != null)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: _PlayerSeekControls(
-                    controller: controller,
-                    allowFullscreen: true,
-                  ),
-                ),
             ],
           );
         }
+
+        // Short-form videos with a live player show their chrome inside the
+        // player overlay; everything else shows it in the page itself.
+        final chromeInPage = !(shortForm && controller != null);
 
         return Stack(
           fit: StackFit.expand,
@@ -294,17 +318,18 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
                 ),
               ),
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: _FeedBottomChrome(
-                video: video,
-                controller: controller,
-                isDescriptionExpanded: widget.isDescriptionExpanded,
-                onToggleDescription: widget.onToggleDescription,
+            if (chromeInPage)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: _FeedBottomChrome(
+                  video: video,
+                  controller: controller,
+                  isDescriptionExpanded: widget.isDescriptionExpanded,
+                  onToggleDescription: widget.onToggleDescription,
+                ),
               ),
-            ),
           ],
         );
       },
@@ -312,34 +337,7 @@ class _LibraryFeedPageState extends State<_LibraryFeedPage> {
   }
 }
 
-class _PlayerWithErrorFallback extends StatelessWidget {
-  const _PlayerWithErrorFallback({
-    required this.controller,
-    required this.video,
-    required this.player,
-  });
-
-  final YoutubePlayerController controller;
-  final LibraryVideo video;
-  final Widget player;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        player,
-        ValueListenableBuilder<YoutubePlayerValue>(
-          valueListenable: controller,
-          builder: (context, value, _) {
-            if (!value.hasError) return const SizedBox.shrink();
-            return _PlaybackFallback(video: video);
-          },
-        ),
-      ],
-    );
-  }
-}
+enum _ChromeMode { none, seekOnly, full }
 
 class _FeedBottomChrome extends StatelessWidget {
   const _FeedBottomChrome({
@@ -359,11 +357,7 @@ class _FeedBottomChrome extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (controller != null)
-          _PlayerSeekControls(
-            controller: controller!,
-            allowFullscreen: !video.isShortForm,
-          ),
+        if (controller != null) _PlayerSeekControls(controller: controller!),
         _VideoMetadataOverlay(
           video: video,
           isExpanded: isDescriptionExpanded,
@@ -374,27 +368,34 @@ class _FeedBottomChrome extends StatelessWidget {
   }
 }
 
-class _PlayerSeekControls extends StatelessWidget {
-  const _PlayerSeekControls({
-    required this.controller,
-    required this.allowFullscreen,
-  });
+class _PlayerSeekControls extends StatefulWidget {
+  const _PlayerSeekControls({required this.controller});
 
   final YoutubePlayerController controller;
-  final bool allowFullscreen;
+
+  @override
+  State<_PlayerSeekControls> createState() => _PlayerSeekControlsState();
+}
+
+class _PlayerSeekControlsState extends State<_PlayerSeekControls> {
+  double? _dragMs;
 
   @override
   Widget build(BuildContext context) {
+    final controller = widget.controller;
+
     return ColoredBox(
       color: Colors.black.withValues(alpha: 0.72),
-      child: ValueListenableBuilder<YoutubePlayerValue>(
-        valueListenable: controller,
-        builder: (context, value, _) {
-          final duration = value.metaData.duration;
-          final durationMs = duration.inMilliseconds;
-          final positionMs = value.position.inMilliseconds
-              .clamp(0, durationMs > 0 ? durationMs : 0);
+      child: YoutubeValueBuilder(
+        controller: controller,
+        buildWhen: (o, n) =>
+            o.playerState != n.playerState ||
+            o.metaData.duration != n.metaData.duration,
+        builder: (context, value) {
+          final durationMs = value.metaData.duration.inMilliseconds;
           final maxMs = durationMs > 0 ? durationMs.toDouble() : 1.0;
+          final playing = value.playerState == PlayerState.playing ||
+              value.playerState == PlayerState.buffering;
 
           return Padding(
             padding: const EdgeInsets.fromLTRB(
@@ -405,29 +406,50 @@ class _PlayerSeekControls extends StatelessWidget {
             ),
             child: Row(
               children: [
-                PlayPauseButton(controller: controller),
+                IconButton(
+                  color: Colors.white,
+                  onPressed: () {
+                    if (playing) {
+                      controller.pauseVideo();
+                    } else {
+                      controller.playVideo();
+                    }
+                  },
+                  icon: Icon(playing ? Icons.pause : Icons.play_arrow),
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
-                  child: Slider(
-                    min: 0,
-                    max: maxMs,
-                    value: positionMs.toDouble().clamp(0, maxMs),
-                    onChanged: durationMs <= 0
-                        ? null
-                        : (newValue) {
-                            controller.seekTo(
-                              Duration(milliseconds: newValue.round()),
-                            );
-                          },
+                  child: StreamBuilder<YoutubeVideoState>(
+                    stream: controller.videoStateStream,
+                    initialData: const YoutubeVideoState(),
+                    builder: (context, snapshot) {
+                      final positionMs = (_dragMs ??
+                              (snapshot.data?.position.inMilliseconds ?? 0)
+                                  .toDouble())
+                          .clamp(0.0, maxMs)
+                          .toDouble();
+
+                      return Slider(
+                        min: 0,
+                        max: maxMs,
+                        value: positionMs,
+                        onChanged: durationMs <= 0
+                            ? null
+                            : (newValue) =>
+                                setState(() => _dragMs = newValue),
+                        onChangeEnd: durationMs <= 0
+                            ? null
+                            : (newValue) {
+                                controller.seekTo(
+                                  seconds: newValue / 1000,
+                                  allowSeekAhead: true,
+                                );
+                                setState(() => _dragMs = null);
+                              },
+                      );
+                    },
                   ),
                 ),
-                if (allowFullscreen) ...[
-                  const SizedBox(width: AppSpacing.xs),
-                  FullScreenButton(
-                    controller: controller,
-                    color: Colors.white,
-                  ),
-                ],
               ],
             ),
           );

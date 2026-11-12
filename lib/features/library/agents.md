@@ -11,7 +11,7 @@
 - Keep the YouTube API key out of source control. It is required only when `LIBRARY_DATA_SOURCE=youtube`.
 - Do not scrape YouTube HTML.
 
-- Mobile YouTube playback currently uses `youtube_player_flutter` 9.1.x. Do not move to `youtube_player_iframe` 6.x / `youtube_player_flutter` 10.x until the app toolchain is Flutter >=3.38 and Dart >=3.10.
+- Mobile YouTube playback uses `youtube_player_iframe` 6.x. Do not go back to `youtube_player_flutter` 9.x (its `flutter_inappwebview` fails on the AGP 9 Android build). Anything that must appear above the video goes in `controlsBuilder`, because the player draws in an overlay.
 - Do not set a fabricated iframe `origin`; use the player package defaults and preserve the external YouTube fallback for playback errors.
 
 - Keep the feed visually swipe-first: use the adaptive portrait stage for short-form videos and 16:9 for regular videos.
@@ -42,6 +42,3 @@
 - Do not override `YoutubePlayerBuilder.onExitFullScreen` orientation in the feed; package fullscreen orientation callbacks can fire during rebuilds and cause an immediate return to portrait on some devices.
 - Keep a PRANA-owned seek slider bound directly to `YoutubePlayerController` values so its thumb follows playback time continuously and seeking remains independent of the description overlay.
 - Regular videos use reversible orientation-aware landscape presentation on natural device rotation; do not force YouTube fullscreen on sensor rotation because its fullscreen mode may lock orientation. The explicit fullscreen button remains available.
-
-## Note (Steps 1–7)
-- Unchanged by the steps above.

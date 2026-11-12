@@ -10,7 +10,7 @@ Implemented:
 - Debounced keyword search scoped to the channel.
 - Real thumbnails, titles, descriptions, durations and pagination.
 - Vertical swipe video feed with one active embedded YouTube player.
-- Mobile playback uses `youtube_player_flutter` 9.1.x for Android/iOS compatibility and improved YouTube error handling.
+- Mobile playback uses `youtube_player_iframe` 6.x (WebView-based). Its video is drawn in an overlay above the app, so PRANA's controls, tap-to-pause, vertical-swipe paging and the error fallback are supplied through `controlsBuilder`. The package's own fullscreen is disabled; landscape fills the screen instead.
 - Non-active feed pages dispose their player; playback errors fall back to opening the video in YouTube.
 - Playback UI uses a Reels-style full-height portrait 9:16 stage on phones for short-form videos, while regular videos remain centered at 16:9.
 - Portrait playback width is capped proportionally on tablets/iPads so content is not unnaturally stretched.
@@ -30,7 +30,7 @@ Production follow-up:
 
 Validation follow-up:
 - Verify inline playback, vertical paging, adaptive short-form presentation and fullscreen on representative Android and iOS devices.
-- Keep `youtube_player_flutter` on the 9.1.x line until the project is upgraded to Flutter >=3.38 / Dart >=3.10; the 10.x/iframe 6.x line requires that newer toolchain.
+- Moved from `youtube_player_flutter` 9.1.x to `youtube_player_iframe` 6.x (Step 21): 9.x depends on `flutter_inappwebview_android` 1.1.3, which fails with the AGP 9 / Flutter 3.50 Android build. Needs Flutter >=3.38 / Dart >=3.10.
 
 - Backend `isShort: true` is treated as authoritative, but `isShort: false` does not suppress the existing mobile presentation heuristic. This preserves the established portrait/Reels layout for short-duration portrait uploads (for example <= 180 seconds) even when the backend classifies them as normal videos.
 
