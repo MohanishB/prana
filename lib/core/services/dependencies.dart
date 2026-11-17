@@ -6,7 +6,6 @@ import '../../features/certificate/data/certificate_repository.dart';
 import '../../features/cms/data/cms_repository.dart';
 import '../../features/consult/data/consult_checkout_repository.dart';
 import '../../features/consult/data/consult_repository.dart';
-import '../../features/dosha_quiz/data/dosha_repository.dart';
 import '../../features/faq/data/faq_repository.dart';
 import '../../features/gut_reset/data/gut_reset_repository.dart';
 import '../../features/home/data/home_repository.dart';
@@ -18,6 +17,7 @@ import '../../features/masterclass/data/masterclass_offer_repository.dart';
 import '../../features/masterclass/data/masterclass_repository.dart';
 import '../../features/notifications/data/device_token_repository.dart';
 import '../../features/notifications/data/notification_repository.dart';
+import '../../features/prakriti_quiz/data/prakriti_repository.dart';
 import '../../features/workshops/data/workshop_repository.dart';
 import '../data/country_repository.dart';
 import '../files/file_download_service.dart';
@@ -50,7 +50,8 @@ class AppDependencies {
     required this.homeRepository,
     required this.consultRepository,
     required this.consultCheckoutRepository,
-    required this.doshaRepository,
+    required this.prakritiRepository,
+    required this.prakritiProgressStore,
     required this.gutResetRepository,
     required this.countryRepository,
     required this.workshopRepository,
@@ -80,7 +81,8 @@ class AppDependencies {
   final HomeRepository homeRepository;
   final ConsultRepository consultRepository;
   final ConsultationCheckoutRepository consultCheckoutRepository;
-  final DoshaRepository doshaRepository;
+  final PrakritiRepository prakritiRepository;
+  final PrakritiProgressStore prakritiProgressStore;
   final GutResetRepository gutResetRepository;
   final CountryRepository countryRepository;
   final WorkshopRepository workshopRepository;
@@ -127,7 +129,8 @@ class AppDependencies {
       consultRepository: ApiConsultRepository(api, sessionManager),
       consultCheckoutRepository:
           ApiConsultationCheckoutRepository(api, sessionManager),
-      doshaRepository: ApiDoshaRepository(api, sessionManager),
+      prakritiRepository: ApiPrakritiRepository(api, sessionManager),
+      prakritiProgressStore: SecurePrakritiProgressStore(secureStorage),
       gutResetRepository:
           ApiGutResetRepository(api, sessionManager, pushTokenService),
       countryRepository: ApiCountryRepository(api),

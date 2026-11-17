@@ -93,7 +93,14 @@ class _OfferBody extends StatelessWidget {
                 OfferBanner(imageUrl: offer.imageUrl),
                 const SizedBox(height: AppSpacing.md),
                 Text(offer.title, style: theme.textTheme.titleLarge),
-                if (offer.subTitle.isNotEmpty) ...[
+                if (offer.headline.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(offer.headline, style: theme.textTheme.titleMedium),
+                ],
+                if (offer.description.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(offer.description, style: theme.textTheme.bodyMedium),
+                ] else if (offer.subTitle.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.xxs),
                   Text(offer.subTitle, style: theme.textTheme.bodyMedium),
                 ],

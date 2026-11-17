@@ -1,6 +1,8 @@
 abstract final class RouteNames {
   static const forgotPassword = 'forgotPassword';
   static const forgotPasswordPath = 'forgot-password';
+  static const register = 'register';
+  static const registerPath = 'register';
   static const home = 'home';
   static const masterclass = 'masterclass';
   static const consult = 'consult';
@@ -28,8 +30,7 @@ abstract final class RouteNames {
   static const myConsultations = 'myConsultations';
   static const gutResetCheckout = 'gutResetCheckout';
   static const gutResetBooked = 'gutResetBooked';
-  static const doshaQuiz = 'doshaQuiz';
-  static const doshaQuizResult = 'doshaQuizResult';
+  static const prakritiQuiz = 'prakritiQuiz';
   static const masterclassCart = 'masterclassCart';
   static const masterclassCheckout = 'masterclassCheckout';
   static const masterclassOrderSuccess = 'masterclassOrderSuccess';

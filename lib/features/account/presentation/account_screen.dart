@@ -107,7 +107,7 @@ class AccountScreen extends StatelessWidget {
                       icon: Icons.spa_outlined,
                       title: l10n.doshaQuiz,
                       subtitle: l10n.doshaQuizSubtitle,
-                      onTap: () => context.pushNamed(RouteNames.doshaQuiz),
+                      onTap: () => context.pushNamed(RouteNames.prakritiQuiz),
                     ),
                     _AccountTile(
                       icon: Icons.help_outline,

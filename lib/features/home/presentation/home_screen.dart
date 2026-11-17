@@ -146,7 +146,7 @@ class _HomeSections extends StatelessWidget {
                 OfferCard(
                   imageUrl: offer.imageUrl,
                   title: offer.title,
-                  subtitle: offer.scheduleText,
+                  subtitle: offer.cardText,
                   price: offer.price.formatted,
                   onTap: () => context.pushNamed(
                     RouteNames.programOffer,
@@ -173,7 +173,7 @@ class _HomeSections extends StatelessWidget {
                 OfferCard(
                   imageUrl: offer.thumbnailUrl,
                   title: offer.title,
-                  subtitle: offer.shortDescription,
+                  subtitle: offer.cardText,
                   price: offer.price.formatted,
                   onTap: () => context.pushNamed(
                     RouteNames.masterclassOffer,

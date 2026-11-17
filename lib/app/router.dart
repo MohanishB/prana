@@ -28,9 +28,6 @@ import '../features/consult/presentation/consultation_checkout_screen.dart';
 import '../features/consult/presentation/consultation_offer_screen.dart';
 import '../features/consult/presentation/consultation_schedule_screen.dart';
 import '../features/consult/presentation/my_consultations_screen.dart';
-import '../features/dosha_quiz/data/dosha_models.dart';
-import '../features/dosha_quiz/presentation/dosha_quiz_result_screen.dart';
-import '../features/dosha_quiz/presentation/dosha_quiz_screen.dart';
 import '../features/faq/bloc/faq_cubit.dart';
 import '../features/faq/presentation/faq_screen.dart';
 import '../features/gut_reset/bloc/gut_reset_offers_cubit.dart';
@@ -63,6 +60,7 @@ import '../features/masterclass/presentation/masterclass_screen.dart';
 import '../features/notifications/bloc/notification_badge_cubit.dart';
 import '../features/notifications/bloc/notifications_cubit.dart';
 import '../features/notifications/presentation/notifications_screen.dart';
+import '../features/prakriti_quiz/presentation/prakriti_quiz_screen.dart';
 import '../features/shell/presentation/prana_shell.dart';
 import '../features/workshops/presentation/workshop_day_video.dart';
 import '../features/workshops/presentation/workshop_detail.dart';
@@ -444,22 +442,9 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/dosha-quiz',
-      name: RouteNames.doshaQuiz,
-      builder: (context, state) => const DoshaQuizScreen(),
-    ),
-    GoRoute(
-      path: '/dosha-quiz-result',
-      name: RouteNames.doshaQuizResult,
-      builder: (context, state) {
-        final result = state.extra;
-        if (result is! DoshaResult) {
-          return Scaffold(
-            body: Center(child: Text(context.l10n.errorGeneric)),
-          );
-        }
-        return DoshaQuizResultScreen(result: result);
-      },
+      path: '/prakriti-quiz',
+      name: RouteNames.prakritiQuiz,
+      builder: (context, state) => const PrakritiQuizScreen(),
     ),
     GoRoute(
       path: '/my-consultations',

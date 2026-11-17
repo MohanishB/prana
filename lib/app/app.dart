@@ -12,7 +12,9 @@ import '../core/theme/theme_cubit.dart';
 import '../features/auth/bloc/auth_bloc.dart';
 import '../core/services/dependencies.dart';
 import '../features/auth/bloc/forgot_password_cubit.dart';
+import '../features/auth/bloc/register_cubit.dart';
 import '../features/auth/presentation/forgot_password_screen.dart';
+import '../features/auth/presentation/register_screen.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/notifications/bloc/notification_badge_cubit.dart';
 import '../features/notifications/bloc/push_messages_cubit.dart';
@@ -118,6 +120,16 @@ final loginRouter = GoRouter(
               context.read<AppDependencies>().authRepository,
             ),
             child: const ForgotPasswordScreen(),
+          ),
+        ),
+        GoRoute(
+          path: RouteNames.registerPath,
+          name: RouteNames.register,
+          builder: (context, state) => BlocProvider(
+            create: (_) => RegisterCubit(
+              context.read<AppDependencies>().authRepository,
+            ),
+            child: const RegisterScreen(),
           ),
         ),
       ],

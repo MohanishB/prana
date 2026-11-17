@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prana/core/errors/app_exception.dart';
 import 'package:prana/features/auth/bloc/forgot_password_cubit.dart';
+import 'package:prana/features/auth/data/auth_models.dart';
 import 'package:prana/features/auth/data/auth_repository.dart';
 import 'package:prana/core/session/user_session.dart';
 
@@ -24,6 +25,9 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() async {}
+
+  @override
+  Future<void> register(RegisterRequest request) async {}
 }
 
 void main() {

@@ -480,7 +480,9 @@ class ApiClient {
       'PHOTO_UPLOAD_ERROR' => AppErrorType.photoUpload,
       _ when statusCode == HttpStatus.tooManyRequests =>
         AppErrorType.tooManyRequests,
-      _ when (code ?? '').startsWith('CHECKOUT_') => AppErrorType.checkout,
+      _ when (code ?? '').startsWith('CHECKOUT_') ||
+              (code ?? '').startsWith('REGISTER_') =>
+        AppErrorType.checkout,
       _ when statusCode >= 500 => AppErrorType.server,
       _ => AppErrorType.generic,
     };

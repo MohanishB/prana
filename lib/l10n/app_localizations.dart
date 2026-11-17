@@ -754,6 +754,138 @@ abstract class AppLocalizations {
   /// **'The email or password is incorrect. Please try again.'**
   String get errorInvalidCredentials;
 
+  /// No description provided for @registerLink.
+  ///
+  /// In en, this message translates to:
+  /// **'New here? Register'**
+  String get registerLink;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get registerTitle;
+
+  /// No description provided for @registerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Register to get your daily health tips, take the Prakriti quiz and manage your bookings.'**
+  String get registerSubtitle;
+
+  /// No description provided for @registerFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First name'**
+  String get registerFirstName;
+
+  /// No description provided for @registerFirstNameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your first name (letters and numbers only)'**
+  String get registerFirstNameInvalid;
+
+  /// No description provided for @registerLastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name (optional)'**
+  String get registerLastName;
+
+  /// No description provided for @registerLastNameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid last name'**
+  String get registerLastNameInvalid;
+
+  /// No description provided for @registerGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender (optional)'**
+  String get registerGender;
+
+  /// No description provided for @registerMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get registerMale;
+
+  /// No description provided for @registerFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get registerFemale;
+
+  /// No description provided for @registerDob.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth (optional)'**
+  String get registerDob;
+
+  /// No description provided for @registerCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get registerCountry;
+
+  /// No description provided for @registerCountryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your country'**
+  String get registerCountryRequired;
+
+  /// No description provided for @registerPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number'**
+  String get registerPhone;
+
+  /// No description provided for @registerPhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your mobile number'**
+  String get registerPhoneRequired;
+
+  /// No description provided for @registerPhoneIndia.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your valid mobile number of 10 digits'**
+  String get registerPhoneIndia;
+
+  /// No description provided for @registerPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your valid mobile number'**
+  String get registerPhoneInvalid;
+
+  /// No description provided for @registerCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City (optional)'**
+  String get registerCity;
+
+  /// No description provided for @registerPincode.
+  ///
+  /// In en, this message translates to:
+  /// **'Pincode (optional)'**
+  String get registerPincode;
+
+  /// No description provided for @registerPasswordShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get registerPasswordShort;
+
+  /// No description provided for @registerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerButton;
+
+  /// No description provided for @registerHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Log in'**
+  String get registerHaveAccount;
+
   /// No description provided for @forgotPasswordLink.
   ///
   /// In en, this message translates to:
@@ -1995,6 +2127,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Take the quiz again'**
   String get doshaRetake;
+
+  /// No description provided for @prakritiStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the quiz'**
+  String get prakritiStart;
+
+  /// No description provided for @prakritiResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue where you stopped'**
+  String get prakritiResume;
+
+  /// No description provided for @prakritiStartOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get prakritiStartOver;
+
+  /// No description provided for @prakritiProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Part {part} of {parts} · Question {current} of {total}'**
+  String prakritiProgress(int part, int parts, int current, int total);
+
+  /// No description provided for @prakritiVersionChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'The quiz was updated, so please start again.'**
+  String get prakritiVersionChanged;
+
+  /// No description provided for @prakritiSeeResult.
+  ///
+  /// In en, this message translates to:
+  /// **'See my result'**
+  String get prakritiSeeResult;
+
+  /// No description provided for @prakritiYourBodyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Your body type'**
+  String get prakritiYourBodyType;
+
+  /// No description provided for @prakritiVata.
+  ///
+  /// In en, this message translates to:
+  /// **'Vata'**
+  String get prakritiVata;
+
+  /// No description provided for @prakritiPitta.
+  ///
+  /// In en, this message translates to:
+  /// **'Pitta'**
+  String get prakritiPitta;
+
+  /// No description provided for @prakritiKapha.
+  ///
+  /// In en, this message translates to:
+  /// **'Kapha'**
+  String get prakritiKapha;
+
+  /// No description provided for @prakritiWhatAreDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'What are doshas?'**
+  String get prakritiWhatAreDoshas;
+
+  /// No description provided for @prakritiStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths'**
+  String get prakritiStrengths;
+
+  /// No description provided for @prakritiWatchOuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch-outs'**
+  String get prakritiWatchOuts;
+
+  /// No description provided for @prakritiFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get prakritiFood;
+
+  /// No description provided for @prakritiRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'Routine'**
+  String get prakritiRoutine;
+
+  /// No description provided for @prakritiMovementMind.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement and mind'**
+  String get prakritiMovementMind;
+
+  /// No description provided for @prakritiPranaPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Prana plan'**
+  String get prakritiPranaPlan;
+
+  /// No description provided for @prakritiRetake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the quiz again'**
+  String get prakritiRetake;
+
+  /// No description provided for @prakritiTakenOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken on {date}'**
+  String prakritiTakenOn(String date);
+
+  /// No description provided for @prakritiLoginRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to take the Prakriti quiz.'**
+  String get prakritiLoginRequired;
 
   /// No description provided for @gutResetConfirmTitle.
   ///

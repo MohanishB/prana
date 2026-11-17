@@ -12,6 +12,9 @@ abstract interface class AuthRepository {
   Future<void> login({required String email, required String password});
   Future<void> logout();
 
+  /// Creates the account and signs the student in (the server sends a welcome email).
+  Future<void> register(RegisterRequest request);
+
   /// Asks the server to email a reset link. Same result whether or not the email is registered.
   Future<void> requestPasswordReset(String email);
 }
@@ -52,6 +55,20 @@ final class ApiAuthRepository implements AuthRepository {
     final json = await _api.post(
       ApiConstants.login,
       body: request.toJson(),
+      authenticated: false,
+    );
+    final response = LoginResponse.fromJson(json);
+    await _sessionManager.setSession(response.session);
+  }
+
+  @override
+  Future<void> register(RegisterRequest request) async {
+    final json = await _api.post(
+      ApiConstants.register,
+      body: request.toJson(
+        deviceToken: await _pushTokens.tokenForLogin(),
+        deviceType: AppDeviceInfo.type,
+      ),
       authenticated: false,
     );
     final response = LoginResponse.fromJson(json);

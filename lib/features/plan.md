@@ -30,7 +30,4 @@
 - Tablet and landscape QA.
 - Accessibility and text-scaling QA.
 - FAQ: authenticated API-driven expandable FAQ list with support note.
-
-## Status after Step 7
-- Done: guest catalogue, masterclass/consultation/Gut Reset checkout (test payment), Dosha quiz, My consultations, Gut Reset programme start, inbox, push (Android).
-- Still open: native Razorpay, Swipe Pages webhook, scheduled reminders, server video progress, iOS push.
+- Prakriti quiz: new 40-question body type quiz (open to guests); see `prakriti_quiz/agents.md`. Replaces the old dosha_quiz feature.

@@ -10,6 +10,7 @@ abstract final class ApiConstants {
   static const workshopMarkDayDone = '/gut_reset/mark_day_done.php';
   static const workshopStartDayOne = '/gut_reset/start_day_one.php';
   static const login = '/auth/login.php';
+  static const register = '/auth/register.php';
   static const logout = '/auth/logout.php';
   static const forgotPassword = '/auth/forgot_password.php';
   static const devicesRegister = '/devices/register.php';
@@ -35,6 +36,9 @@ abstract final class ApiConstants {
       '/checkout/consultation_confirm_payment.php';
   static const doshaQuestions = '/dosha/questions.php';
   static const doshaSubmit = '/dosha/submit.php';
+  static const prakritiQuestions = '/prakriti/questions.php';
+  static const prakritiSubmit = '/prakriti/submit.php';
+  static const prakritiMyResult = '/prakriti/my_result.php';
   static const gutResetCreateOrder = '/checkout/gut_reset_create_order.php';
   static const myConsultations = '/consultation/my_bookings.php';
   static const videoProgress = '/video/progress.php';

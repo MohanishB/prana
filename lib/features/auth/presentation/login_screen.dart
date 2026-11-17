@@ -155,6 +155,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(l10n.skipLogin),
                         ),
                         const SizedBox(height: AppSpacing.sm),
+                        TextButton(
+                          onPressed: loading
+                              ? null
+                              : () => context
+                                  .push('/${RouteNames.registerPath}'),
+                          child: Text(l10n.registerLink),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
                         Text(
                           l10n.skipLoginHint,
                           textAlign: TextAlign.center,

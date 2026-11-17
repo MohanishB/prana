@@ -360,6 +360,75 @@ class AppLocalizationsEn extends AppLocalizations {
       'The email or password is incorrect. Please try again.';
 
   @override
+  String get registerLink => 'New here? Register';
+
+  @override
+  String get registerTitle => 'Create your account';
+
+  @override
+  String get registerSubtitle =>
+      'Register to get your daily health tips, take the Prakriti quiz and manage your bookings.';
+
+  @override
+  String get registerFirstName => 'First name';
+
+  @override
+  String get registerFirstNameInvalid =>
+      'Enter your first name (letters and numbers only)';
+
+  @override
+  String get registerLastName => 'Last name (optional)';
+
+  @override
+  String get registerLastNameInvalid => 'Enter a valid last name';
+
+  @override
+  String get registerGender => 'Gender (optional)';
+
+  @override
+  String get registerMale => 'Male';
+
+  @override
+  String get registerFemale => 'Female';
+
+  @override
+  String get registerDob => 'Date of birth (optional)';
+
+  @override
+  String get registerCountry => 'Country';
+
+  @override
+  String get registerCountryRequired => 'Select your country';
+
+  @override
+  String get registerPhone => 'Mobile number';
+
+  @override
+  String get registerPhoneRequired => 'Enter your mobile number';
+
+  @override
+  String get registerPhoneIndia =>
+      'Enter your valid mobile number of 10 digits';
+
+  @override
+  String get registerPhoneInvalid => 'Enter your valid mobile number';
+
+  @override
+  String get registerCity => 'City (optional)';
+
+  @override
+  String get registerPincode => 'Pincode (optional)';
+
+  @override
+  String get registerPasswordShort => 'Password must be at least 6 characters';
+
+  @override
+  String get registerButton => 'Register';
+
+  @override
+  String get registerHaveAccount => 'Already have an account? Log in';
+
+  @override
   String get forgotPasswordLink => 'Forgot password?';
 
   @override
@@ -1081,6 +1150,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get doshaRetake => 'Take the quiz again';
+
+  @override
+  String get prakritiStart => 'Start the quiz';
+
+  @override
+  String get prakritiResume => 'Continue where you stopped';
+
+  @override
+  String get prakritiStartOver => 'Start over';
+
+  @override
+  String prakritiProgress(int part, int parts, int current, int total) {
+    return 'Part $part of $parts · Question $current of $total';
+  }
+
+  @override
+  String get prakritiVersionChanged =>
+      'The quiz was updated, so please start again.';
+
+  @override
+  String get prakritiSeeResult => 'See my result';
+
+  @override
+  String get prakritiYourBodyType => 'Your body type';
+
+  @override
+  String get prakritiVata => 'Vata';
+
+  @override
+  String get prakritiPitta => 'Pitta';
+
+  @override
+  String get prakritiKapha => 'Kapha';
+
+  @override
+  String get prakritiWhatAreDoshas => 'What are doshas?';
+
+  @override
+  String get prakritiStrengths => 'Strengths';
+
+  @override
+  String get prakritiWatchOuts => 'Watch-outs';
+
+  @override
+  String get prakritiFood => 'Food';
+
+  @override
+  String get prakritiRoutine => 'Routine';
+
+  @override
+  String get prakritiMovementMind => 'Movement and mind';
+
+  @override
+  String get prakritiPranaPlan => 'Your Prana plan';
+
+  @override
+  String get prakritiRetake => 'Take the quiz again';
+
+  @override
+  String prakritiTakenOn(String date) {
+    return 'Taken on $date';
+  }
+
+  @override
+  String get prakritiLoginRequired =>
+      'Please log in to take the Prakriti quiz.';
 
   @override
   String get gutResetConfirmTitle => 'Book now (test mode)?';

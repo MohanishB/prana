@@ -79,9 +79,13 @@ class _Content extends StatelessWidget {
           const SizedBox(height: AppSpacing.xxs),
           Text(offer.priceNote, style: theme.textTheme.bodySmall),
         ],
-        if (offer.shortDescription.isNotEmpty) ...[
+        if (offer.headline.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.sm),
-          Text(offer.shortDescription, style: theme.textTheme.bodyMedium),
+          Text(offer.headline, style: theme.textTheme.titleMedium),
+        ],
+        if (offer.cardText.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(offer.cardText, style: theme.textTheme.bodyMedium),
         ],
         OfferHtmlSection(title: '', html: detail.descriptionHtml),
         OfferHtmlSection(title: detail.aboutTitle, html: detail.aboutHtml),

@@ -9,6 +9,8 @@ class MasterclassOffer {
     required this.title,
     required this.heading,
     required this.shortDescription,
+    this.headline = '',
+    this.description = '',
     required this.thumbnailUrl,
     required this.price,
     required this.includesMasterclass,
@@ -19,6 +21,12 @@ class MasterclassOffer {
   final String title;
   final String heading;
   final String shortDescription;
+
+  /// One line under the course name (set in the admin, "App headline").
+  final String headline;
+
+  /// Two-line text under the headline (set in the admin, "App description").
+  final String description;
   final String? thumbnailUrl;
   final Money price;
 
@@ -26,12 +34,17 @@ class MasterclassOffer {
   final bool includesMasterclass;
   final String priceNote;
 
+  /// Text for list cards: the app description, or the older short text.
+  String get cardText => description.isNotEmpty ? description : shortDescription;
+
   factory MasterclassOffer.fromJson(Map<String, dynamic> json) =>
       MasterclassOffer(
         courseId: jsonInt(json['course_id']),
         title: htmlToSingleLine(jsonString(json['title'])),
         heading: htmlToSingleLine(jsonString(json['heading'])),
         shortDescription: htmlToSingleLine(jsonString(json['short_desc'])),
+        headline: htmlToSingleLine(jsonString(json['headline'])),
+        description: htmlToSingleLine(jsonString(json['description'])),
         thumbnailUrl: jsonNullableString(json['thumbnail_url']),
         price: Money.fromJson(json['price']),
         includesMasterclass: json['includes_masterclass'] == true,

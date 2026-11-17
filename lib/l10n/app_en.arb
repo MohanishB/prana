@@ -138,6 +138,28 @@
   "emailInvalid": "Please enter a valid email address.",
   "passwordRequired": "Please enter your password.",
   "errorInvalidCredentials": "The email or password is incorrect. Please try again.",
+  "registerLink": "New here? Register",
+  "registerTitle": "Create your account",
+  "registerSubtitle": "Register to get your daily health tips, take the Prakriti quiz and manage your bookings.",
+  "registerFirstName": "First name",
+  "registerFirstNameInvalid": "Enter your first name (letters and numbers only)",
+  "registerLastName": "Last name (optional)",
+  "registerLastNameInvalid": "Enter a valid last name",
+  "registerGender": "Gender (optional)",
+  "registerMale": "Male",
+  "registerFemale": "Female",
+  "registerDob": "Date of birth (optional)",
+  "registerCountry": "Country",
+  "registerCountryRequired": "Select your country",
+  "registerPhone": "Mobile number",
+  "registerPhoneRequired": "Enter your mobile number",
+  "registerPhoneIndia": "Enter your valid mobile number of 10 digits",
+  "registerPhoneInvalid": "Enter your valid mobile number",
+  "registerCity": "City (optional)",
+  "registerPincode": "Pincode (optional)",
+  "registerPasswordShort": "Password must be at least 6 characters",
+  "registerButton": "Register",
+  "registerHaveAccount": "Already have an account? Log in",
   "forgotPasswordLink": "Forgot password?",
   "forgotPasswordTitle": "Forgot password",
   "forgotPasswordDescription": "Enter the email you signed up with. We'll send you a link to set a new password.",
@@ -520,6 +542,49 @@
     }
   },
   "doshaRetake": "Take the quiz again",
+  "prakritiStart": "Start the quiz",
+  "prakritiResume": "Continue where you stopped",
+  "prakritiStartOver": "Start over",
+  "prakritiProgress": "Part {part} of {parts} · Question {current} of {total}",
+  "@prakritiProgress": {
+    "placeholders": {
+      "part": {
+        "type": "int"
+      },
+      "parts": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "prakritiVersionChanged": "The quiz was updated, so please start again.",
+  "prakritiSeeResult": "See my result",
+  "prakritiYourBodyType": "Your body type",
+  "prakritiVata": "Vata",
+  "prakritiPitta": "Pitta",
+  "prakritiKapha": "Kapha",
+  "prakritiWhatAreDoshas": "What are doshas?",
+  "prakritiStrengths": "Strengths",
+  "prakritiWatchOuts": "Watch-outs",
+  "prakritiFood": "Food",
+  "prakritiRoutine": "Routine",
+  "prakritiMovementMind": "Movement and mind",
+  "prakritiPranaPlan": "Your Prana plan",
+  "prakritiRetake": "Take the quiz again",
+  "prakritiTakenOn": "Taken on {date}",
+  "@prakritiTakenOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "prakritiLoginRequired": "Please log in to take the Prakriti quiz.",
   "gutResetConfirmTitle": "Book now (test mode)?",
   "gutResetConfirmBody": "No payment is taken. Your booking is recorded as paid so the flow can be checked.",
   "gutResetBookedStarts": "Your program starts on {date}. Its days open on Friday, Saturday and Sunday.",
