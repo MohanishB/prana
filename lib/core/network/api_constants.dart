@@ -11,6 +11,7 @@ abstract final class ApiConstants {
   static const workshopStartDayOne = '/gut_reset/start_day_one.php';
   static const login = '/auth/login.php';
   static const logout = '/auth/logout.php';
+  static const forgotPassword = '/auth/forgot_password.php';
   static const devicesRegister = '/devices/register.php';
   // Home data for a logged-in student, and the public (guest) catalogue.
   static const home = '/home/home.php';

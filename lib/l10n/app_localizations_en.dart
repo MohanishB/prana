@@ -360,6 +360,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'The email or password is incorrect. Please try again.';
 
   @override
+  String get forgotPasswordLink => 'Forgot password?';
+
+  @override
+  String get forgotPasswordTitle => 'Forgot password';
+
+  @override
+  String get forgotPasswordDescription =>
+      'Enter the email you signed up with. We\'ll send you a link to set a new password.';
+
+  @override
+  String get forgotPasswordSend => 'Send reset link';
+
+  @override
+  String get forgotPasswordSending => 'Sending...';
+
+  @override
+  String get forgotPasswordSent =>
+      'If this email is registered, we have sent a link to reset your password. Please check your inbox (and spam folder).';
+
+  @override
+  String get backToSignIn => 'Back to sign in';
+
+  @override
+  String get errorTooManyRequests =>
+      'Too many requests. Please wait a while and try again.';
+
+  @override
   String get errorAccountInactive =>
       'Your account is inactive. Please contact PRANA support.';
 

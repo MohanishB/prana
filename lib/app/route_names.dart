@@ -1,4 +1,6 @@
 abstract final class RouteNames {
+  static const forgotPassword = 'forgotPassword';
+  static const forgotPasswordPath = 'forgot-password';
   static const home = 'home';
   static const masterclass = 'masterclass';
   static const consult = 'consult';

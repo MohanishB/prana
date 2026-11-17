@@ -16,7 +16,10 @@
 - Transient refresh failures may keep the locally stored session so the app can recover when connectivity returns.
 - Terminal refresh failures must resolve to the unauthenticated/login state.
 
-## Added in Steps 1–7
-- `AuthGuest` ("Skip login") exists beside `AuthAuthenticated`; the bell, inbox and My programs need a student.
-- Login sends a real FCM token (`PushTokenService.tokenForLogin`) or a `local-<install id>` stand-in. The server never pushes to `local-…`.
-- Logout (`ApiAuthRepository.logout`): calls `/auth/logout.php` (switches this phone off), clears the session, then deletes the FCM token. Order matters: session first, so a refreshed token cannot be registered to the old student. Sign-out must work offline.
+## Forgot password
+- Link "Forgot password?" is a small text button under the password field on the login screen; it opens `/forgot-password` (child route of the signed-out `loginRouter` in `app/app.dart`, name `RouteNames.forgotPassword`).
+- `ForgotPasswordCubit` (Idle / Sending / Sent / Failure) calls `AuthRepository.requestPasswordReset(email)` → `POST /auth/forgot_password.php` (public, no token).
+- The server answers the same whether or not the email is registered; the app must show the same "if this email is registered..." text and must never say which case it was.
+- The new password is set on the student web page opened from the emailed link; the app has no reset form.
+- The screen uses a plain `AppBar` (not `PranaAppBar`) because the account/bell actions do not exist in the signed-out router.
+- `TOO_MANY_REQUESTS` / HTTP 429 → `AppErrorType.tooManyRequests`.

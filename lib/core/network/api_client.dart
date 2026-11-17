@@ -463,6 +463,7 @@ class ApiClient {
   AppErrorType _mapError(String? code, int statusCode) {
     return switch (code) {
       'INVALID_CREDENTIALS' => AppErrorType.invalidCredentials,
+      'TOO_MANY_REQUESTS' => AppErrorType.tooManyRequests,
       'ACCOUNT_INACTIVE' => AppErrorType.accountInactive,
       'REFRESH_WINDOW_EXPIRED' => AppErrorType.refreshWindowExpired,
       'TOKEN_MISSING' || 'TOKEN_INVALID' => AppErrorType.unauthorized,
@@ -477,6 +478,8 @@ class ApiClient {
       'PROFILE_NOT_FOUND' => AppErrorType.profileNotFound,
       'CURRENT_PASSWORD_INCORRECT' => AppErrorType.currentPasswordIncorrect,
       'PHOTO_UPLOAD_ERROR' => AppErrorType.photoUpload,
+      _ when statusCode == HttpStatus.tooManyRequests =>
+        AppErrorType.tooManyRequests,
       _ when (code ?? '').startsWith('CHECKOUT_') => AppErrorType.checkout,
       _ when statusCode >= 500 => AppErrorType.server,
       _ => AppErrorType.generic,

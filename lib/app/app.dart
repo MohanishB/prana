@@ -7,8 +7,12 @@ import 'package:go_router/go_router.dart';
 import '../core/bloc/catalog_refresh_cubit.dart';
 import '../core/localization/app_localizations_x.dart';
 import '../core/theme/app_theme.dart';
+import 'route_names.dart';
 import '../core/theme/theme_cubit.dart';
 import '../features/auth/bloc/auth_bloc.dart';
+import '../core/services/dependencies.dart';
+import '../features/auth/bloc/forgot_password_cubit.dart';
+import '../features/auth/presentation/forgot_password_screen.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/notifications/bloc/notification_badge_cubit.dart';
 import '../features/notifications/bloc/push_messages_cubit.dart';
@@ -102,7 +106,22 @@ class PranaApp extends StatelessWidget {
 
 final loginRouter = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (_, __) => const LoginScreen()),
+    GoRoute(
+      path: '/',
+      builder: (_, __) => const LoginScreen(),
+      routes: [
+        GoRoute(
+          path: RouteNames.forgotPasswordPath,
+          name: RouteNames.forgotPassword,
+          builder: (context, state) => BlocProvider(
+            create: (_) => ForgotPasswordCubit(
+              context.read<AppDependencies>().authRepository,
+            ),
+            child: const ForgotPasswordScreen(),
+          ),
+        ),
+      ],
+    ),
   ],
 );
 

@@ -754,6 +754,54 @@ abstract class AppLocalizations {
   /// **'The email or password is incorrect. Please try again.'**
   String get errorInvalidCredentials;
 
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the email you signed up with. We\'ll send you a link to set a new password.'**
+  String get forgotPasswordDescription;
+
+  /// No description provided for @forgotPasswordSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get forgotPasswordSend;
+
+  /// No description provided for @forgotPasswordSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get forgotPasswordSending;
+
+  /// No description provided for @forgotPasswordSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If this email is registered, we have sent a link to reset your password. Please check your inbox (and spam folder).'**
+  String get forgotPasswordSent;
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get backToSignIn;
+
+  /// No description provided for @errorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait a while and try again.'**
+  String get errorTooManyRequests;
+
   /// No description provided for @errorAccountInactive.
   ///
   /// In en, this message translates to:

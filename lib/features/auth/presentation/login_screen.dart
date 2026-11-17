@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/errors/app_error_localization.dart';
 import '../../../core/localization/app_localizations_x.dart';
@@ -8,6 +9,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/validation/app_validators.dart';
 import '../../../core/widgets/prana_logo.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../../../app/route_names.dart';
 import '../bloc/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -101,6 +103,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               AppValidators.isValidPassword(value ?? '')
                                   ? null
                                   : l10n.passwordRequired,
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: loading
+                                ? null
+                                : () => context
+                                    .push('/${RouteNames.forgotPasswordPath}'),
+                            style: TextButton.styleFrom(
+                              minimumSize: Size.zero,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xs,
+                                vertical: AppSpacing.xs,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              textStyle:
+                                  Theme.of(context).textTheme.bodySmall,
+                            ),
+                            child: Text(l10n.forgotPasswordLink),
+                          ),
                         ),
                         if (error != null) ...[
                           const SizedBox(height: AppSpacing.md),

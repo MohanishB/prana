@@ -10,6 +10,7 @@ extension AppErrorLocalization on AppException {
       AppErrorType.timeout => context.l10n.errorTimeout,
       AppErrorType.invalidResponse => context.l10n.errorInvalidResponse,
       AppErrorType.invalidCredentials => context.l10n.errorInvalidCredentials,
+      AppErrorType.tooManyRequests => context.l10n.errorTooManyRequests,
       AppErrorType.accountInactive => context.l10n.errorAccountInactive,
       AppErrorType.refreshWindowExpired => context.l10n.errorSessionExpired,
       AppErrorType.unauthorized => context.l10n.errorSessionExpired,

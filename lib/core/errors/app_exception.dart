@@ -3,6 +3,7 @@ enum AppErrorType {
   timeout,
   invalidResponse,
   invalidCredentials,
+  tooManyRequests,
   accountInactive,
   refreshWindowExpired,
   unauthorized,

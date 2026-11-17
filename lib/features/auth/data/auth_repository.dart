@@ -11,6 +11,9 @@ abstract interface class AuthRepository {
   Future<UserSession?> restoreSession();
   Future<void> login({required String email, required String password});
   Future<void> logout();
+
+  /// Asks the server to email a reset link. Same result whether or not the email is registered.
+  Future<void> requestPasswordReset(String email);
 }
 
 final class ApiAuthRepository implements AuthRepository {
@@ -53,6 +56,15 @@ final class ApiAuthRepository implements AuthRepository {
     );
     final response = LoginResponse.fromJson(json);
     await _sessionManager.setSession(response.session);
+  }
+
+  @override
+  Future<void> requestPasswordReset(String email) async {
+    await _api.post(
+      ApiConstants.forgotPassword,
+      body: {'email': email.trim()},
+      authenticated: false,
+    );
   }
 
   /// Signs out: tells the server to stop sending pushes to this phone, forgets the push

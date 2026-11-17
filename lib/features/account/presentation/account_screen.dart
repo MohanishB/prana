@@ -89,11 +89,12 @@ class AccountScreen extends StatelessWidget {
                         title: l10n.myCertificates,
                         onTap: () => context.pushNamed(RouteNames.myCertificates),
                       ),
-                      _AccountTile(
-                        icon: Icons.notifications_none,
-                        title: l10n.reminders,
-                        subtitle: l10n.dailyAtSix,
-                      ),
+                      // Hidden for now ("Reminders" has no screen yet). Put it back when it does.
+                      // _AccountTile(
+                      //   icon: Icons.notifications_none,
+                      //   title: l10n.reminders,
+                      //   subtitle: l10n.dailyAtSix,
+                      // ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
